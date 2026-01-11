@@ -1,73 +1,3 @@
-// 'use client';
-
-// import { useState } from 'react';
-// import { useRouter } from 'next/navigation';
-
-// export default function LoginPage() {
-//   const router = useRouter();
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [loading, setLoading] = useState(false);
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     setLoading(true);
-
-//     const res = await fetch('/api/login', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ email, password }),
-//     });
-
-//     setLoading(false);
-
-//     if (res.ok) {
-//       router.push('/dashboard');
-//     } else {
-//       alert('Invalid credentials');
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-//       <form
-//         onSubmit={handleSubmit}
-//         className="bg-white p-6 rounded shadow w-96 space-y-4"
-//       >
-//         <h1 className="text-2xl font-bold text-center">Login</h1>
-
-//         <input
-//           type="email"
-//           placeholder="Email"
-//           className="w-full border p-2 rounded"
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//           required
-//         />
-
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           className="w-full border p-2 rounded"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//           required
-//         />
-
-//         <button
-//           type="submit"
-//           disabled={loading}
-//           className="w-full bg-blue-600 text-white p-2 rounded"
-//         >
-//           {loading ? 'Logging in...' : 'Login'}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
-
-
-
 'use client';
 import { useState } from 'react';
 import { Heart, Activity, Users, Shield, ArrowRight } from 'lucide-react';
@@ -78,10 +8,21 @@ export default function HospitalAuth() {
     email: '',
     password: '',
     fullName: '',
-    role: 'doctor',
+    role: '',
     hospitalId: ''
   });
   const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  const [isRoleOpen, setIsRoleOpen] = useState(false);
+
+const roles = [
+  { label: 'Doctor', value: 'doctor' },
+  { label: 'Nurse', value: 'nurse' },
+  { label: 'Administrator', value: 'admin' },
+  { label: 'Receptionist', value: 'receptionist' },
+  { label: 'Pharmacist', value: 'pharmacist' },
+];
+
 
   const handleSubmit = (e:any) => {
     e.preventDefault();
@@ -95,23 +36,23 @@ export default function HospitalAuth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 flex items-center justify-center p-4 font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center p-4 font-sans relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
       </div>
 
       {/* Medical cross pattern overlay */}
       <div className="absolute inset-0 opacity-5" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 20v20M20 30h20' stroke='%230891b2' stroke-width='1' fill='none'/%3E%3C/svg%3E")`,
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 20v20M20 30h20' stroke='%2310b981' stroke-width='1' fill='none'/%3E%3C/svg%3E")`,
         backgroundSize: '60px 60px'
       }}></div>
 
       <div className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row bg-white rounded-3xl shadow-2xl overflow-hidden">
         {/* Left Panel - Branding */}
-        <div className="lg:w-2/5 bg-gradient-to-br from-cyan-600 via-blue-600 to-blue-700 p-12 text-white relative overflow-hidden">
+        <div className="lg:w-2/5 bg-gradient-to-br from-emerald-600 via-teal-600 to-teal-700 p-12 text-white relative overflow-hidden">
           <div className="absolute inset-0 opacity-10" style={{
             backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
             backgroundSize: '40px 40px'
@@ -127,7 +68,7 @@ export default function HospitalAuth() {
                   <h1 className="text-3xl font-bold tracking-tight" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
                     MediCare
                   </h1>
-                  <p className="text-cyan-100 text-sm font-medium">Hospital Management</p>
+                  <p className="text-emerald-100 text-sm font-medium">Hospital Management</p>
                 </div>
               </div>
 
@@ -135,7 +76,7 @@ export default function HospitalAuth() {
                 <h2 className="text-4xl font-bold leading-tight mb-6" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
                   Empowering Healthcare Professionals
                 </h2>
-                <p className="text-cyan-50 text-lg leading-relaxed opacity-90">
+                <p className="text-emerald-50 text-lg leading-relaxed opacity-90">
                   Streamline patient care, manage records, and collaborate seamlessly with our comprehensive hospital management platform.
                 </p>
               </div>
@@ -148,7 +89,7 @@ export default function HospitalAuth() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Secure & Compliant</h3>
-                  <p className="text-cyan-100 text-sm opacity-90">HIPAA compliant with end-to-end encryption</p>
+                  <p className="text-emerald-100 text-sm opacity-90">HIPAA compliant with end-to-end encryption</p>
                 </div>
               </div>
 
@@ -158,7 +99,7 @@ export default function HospitalAuth() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Patient-Centered</h3>
-                  <p className="text-cyan-100 text-sm opacity-90">Designed to improve patient outcomes</p>
+                  <p className="text-emerald-100 text-sm opacity-90">Designed to improve patient outcomes</p>
                 </div>
               </div>
 
@@ -168,7 +109,7 @@ export default function HospitalAuth() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Team Collaboration</h3>
-                  <p className="text-cyan-100 text-sm opacity-90">Real-time updates across departments</p>
+                  <p className="text-emerald-100 text-sm opacity-90">Real-time updates across departments</p>
                 </div>
               </div>
             </div>
@@ -185,7 +126,7 @@ export default function HospitalAuth() {
                 onClick={() => setIsLogin(true)}
                 className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
                   isLogin
-                    ? 'bg-white text-blue-600 shadow-md'
+                    ? 'bg-white text-emerald-600 shadow-md'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
                 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}
@@ -197,7 +138,7 @@ export default function HospitalAuth() {
                 onClick={() => setIsLogin(false)}
                 className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
                   !isLogin
-                    ? 'bg-white text-blue-600 shadow-md'
+                    ? 'bg-white text-emerald-600 shadow-md'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
                 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}
@@ -231,9 +172,9 @@ export default function HospitalAuth() {
                     onFocus={() => setFocusedField('fullName')}
                     onBlur={() => setFocusedField(null)}
                     placeholder="Dr. John Smith"
-                    className={`w-full px-4 py-3.5 bg-slate-50 border-2 rounded-xl focus:outline-none transition-all duration-300 ${
+                    className={`w-full px-4 py-3.5 bg-slate-50 border-2 placeholder-slate-400 rounded-xl focus:outline-none transition-all duration-300 ${
                       focusedField === 'fullName'
-                        ? 'border-blue-500 bg-white shadow-lg shadow-blue-100'
+                        ? 'border-emerald-500 bg-white shadow-lg shadow-emerald-100'
                         : 'border-transparent hover:border-slate-200'
                     }`}
                     required
@@ -253,9 +194,9 @@ export default function HospitalAuth() {
                   onFocus={() => setFocusedField('email')}
                   onBlur={() => setFocusedField(null)}
                   placeholder="doctor@hospital.com"
-                  className={`w-full px-4 py-3.5 bg-slate-50 border-2 rounded-xl focus:outline-none transition-all duration-300 ${
+                  className={`w-full px-4 py-3.5 bg-slate-50 border-2 placeholder-slate-400 rounded-xl focus:outline-none transition-all duration-300 ${
                     focusedField === 'email'
-                      ? 'border-blue-500 bg-white shadow-lg shadow-blue-100'
+                      ? 'border-emerald-500 bg-white shadow-lg shadow-emerald-100'
                       : 'border-transparent hover:border-slate-200'
                   }`}
                   required
@@ -274,9 +215,9 @@ export default function HospitalAuth() {
                   onFocus={() => setFocusedField('password')}
                   onBlur={() => setFocusedField(null)}
                   placeholder="••••••••"
-                  className={`w-full px-4 py-3.5 bg-slate-50 border-2 rounded-xl focus:outline-none transition-all duration-300 ${
+                  className={`w-full px-4 py-3.5 bg-slate-50 border-2 placeholder-slate-400 rounded-xl focus:outline-none transition-all duration-300 ${
                     focusedField === 'password'
-                      ? 'border-blue-500 bg-white shadow-lg shadow-blue-100'
+                      ? 'border-emerald-500 bg-white shadow-lg shadow-emerald-100'
                       : 'border-transparent hover:border-slate-200'
                   }`}
                   required
@@ -285,7 +226,7 @@ export default function HospitalAuth() {
 
               {!isLogin && (
                 <>
-                  <div className="relative">
+                  {/* <div className="relative">
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Role
                     </label>
@@ -295,20 +236,90 @@ export default function HospitalAuth() {
                       onChange={handleChange}
                       onFocus={() => setFocusedField('role')}
                       onBlur={() => setFocusedField(null)}
-                      className={`w-full px-4 py-3.5 bg-slate-50 border-2 rounded-xl focus:outline-none transition-all duration-300 ${
-                        focusedField === 'role'
-                          ? 'border-blue-500 bg-white shadow-lg shadow-blue-100'
-                          : 'border-transparent hover:border-slate-200'
-                      }`}
+                     className={`w-full px-4 py-3.5 bg-slate-50 border-2 rounded-xl
+  focus:outline-none focus:ring-0 focus:ring-offset-0
+  accent-emerald-600
+  transition-all duration-300 text-slate-700 font-medium ${
+    focusedField === 'role'
+      ? 'border-emerald-500 bg-white shadow-lg shadow-emerald-100'
+      : 'border-transparent hover:border-slate-200'
+  }`}
+
+                      style={{
+                        appearance: 'none',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' placeholder-slate-400 height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 1rem center',
+                        paddingRight: '3rem'
+                      }}
                       required
                     >
+                      <option value="" disabled>Select your role</option>
                       <option value="doctor">Doctor</option>
                       <option value="nurse">Nurse</option>
                       <option value="admin">Administrator</option>
                       <option value="receptionist">Receptionist</option>
                       <option value="pharmacist">Pharmacist</option>
                     </select>
-                  </div>
+                  </div> */}
+
+
+<div className="relative">
+  <label className="block text-sm font-semibold text-slate-700 mb-2">
+    Role
+  </label>
+
+  {/* Dropdown Button */}
+  <button
+    type="button"
+    onClick={() => setIsRoleOpen(!isRoleOpen)}
+    onBlur={() => setTimeout(() => setIsRoleOpen(false), 150)}
+    className={`w-full px-4 py-3.5 bg-slate-50 border-2 rounded-xl
+      text-left font-medium flex items-center justify-between
+      focus:outline-none transition-all duration-300 ${
+        focusedField === 'role'
+          ? 'border-emerald-500 bg-white shadow-lg shadow-emerald-100'
+          : 'border-transparent hover:border-slate-200'
+      }`}
+  >
+    <span className={formData.role ? 'text-slate-700' : 'text-slate-400'}>
+      {roles.find(r => r.value === formData.role)?.label || 'Select your role'}
+    </span>
+
+    <svg
+      className={`w-4 h-4 text-emerald-600 transition-transform ${
+        isRoleOpen ? 'rotate-180' : ''
+      }`}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+
+  {/* Dropdown Options */}
+  {isRoleOpen && (
+    <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+      {roles.map((role) => (
+        <div
+          key={role.value}
+          onMouseDown={() => {
+            setFormData(prev => ({ ...prev, role: role.value }));
+            setIsRoleOpen(false);
+          }}
+          className={`px-4 py-3 cursor-pointer transition-all ${
+            formData.role === role.value
+              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold'
+              : 'text-slate-700 hover:bg-gradient-to-r hover:from-emerald-600 hover:to-teal-600 hover:text-white'
+          }`}
+        >
+          {role.label}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
                   <div className="relative">
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -322,9 +333,9 @@ export default function HospitalAuth() {
                       onFocus={() => setFocusedField('hospitalId')}
                       onBlur={() => setFocusedField(null)}
                       placeholder="HSP-12345"
-                      className={`w-full px-4 py-3.5 bg-slate-50 border-2 rounded-xl focus:outline-none transition-all duration-300 ${
+                      className={`w-full px-4 py-3.5 bg-slate-50 border-2 placeholder-slate-400 rounded-xl focus:outline-none transition-all duration-300 ${
                         focusedField === 'hospitalId'
-                          ? 'border-blue-500 bg-white shadow-lg shadow-blue-100'
+                          ? 'border-emerald-500 bg-white shadow-lg shadow-emerald-100'
                           : 'border-transparent hover:border-slate-200'
                       }`}
                       required
@@ -338,13 +349,13 @@ export default function HospitalAuth() {
                   <label className="flex items-center cursor-pointer group">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                      className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 cursor-pointer"
                     />
                     <span className="ml-2 text-slate-600 group-hover:text-slate-900">
                       Remember me
                     </span>
                   </label>
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
+                  <a href="#" className="text-emerald-600 hover:text-emerald-700 font-medium">
                     Forgot password?
                   </a>
                 </div>
@@ -352,7 +363,7 @@ export default function HospitalAuth() {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-cyan-700 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center group"
+                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-4 focus:ring-emerald-300 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center group"
                 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}
               >
                 {isLogin ? 'Sign In' : 'Create Account'}
@@ -362,11 +373,11 @@ export default function HospitalAuth() {
               {!isLogin && (
                 <p className="text-center text-sm text-slate-600 mt-4">
                   By signing up, you agree to our{' '}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
+                  <a href="#" className="text-emerald-600 hover:text-emerald-700 font-medium">
                     Terms of Service
                   </a>{' '}
                   and{' '}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
+                  <a href="#" className="text-emerald-600 hover:text-emerald-700 font-medium">
                     Privacy Policy
                   </a>
                 </p>
@@ -380,7 +391,7 @@ export default function HospitalAuth() {
                   <button
                     type="button"
                     onClick={() => setIsLogin(false)}
-                    className="text-blue-600 hover:text-blue-700 font-semibold"
+                    className="text-emerald-600 hover:text-emerald-700 font-semibold"
                   >
                     Sign up here
                   </button>
@@ -391,8 +402,7 @@ export default function HospitalAuth() {
         </div>
       </div>
 
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
         * {
           font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -431,6 +441,28 @@ export default function HospitalAuth() {
         input:-webkit-autofill:focus {
           -webkit-box-shadow: 0 0 0px 1000px #f8fafc inset;
           transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* Custom select dropdown styling */
+        select option {
+          background-color: white;
+          color: #334155;
+          padding: 12px;
+        }
+
+        select option:hover,
+        select option:checked {
+          background-color: #d1fae5;
+          color: #059669;
+        }
+
+        select option[value=""] {
+          color: #94a3b8;
+        }
+
+        /* Remove default select arrow in IE */
+        select::-ms-expand {
+          display: none;
         }
       `}</style>
     </div>
