@@ -1,9 +1,11 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Heart, Activity, Users, Shield, ArrowRight } from 'lucide-react';
-
+import { loginApi,signupApi } from '../lib/auth';
 export default function HospitalAuth() {
   const [isLogin, setIsLogin] = useState(true);
+let router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -24,16 +26,62 @@ const roles = [
 ];
 
 
-  const handleSubmit = (e:any) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
+  // const handleSubmit = (e:any) => {
+  //   e.preventDefault();
+  //   console.log('Form submitted:', formData);
     // Add your authentication logic here
-  };
+  // };
 
   const handleChange = (e:any) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
+
+
+const handleSubmit = async (e: any) => {
+  e.preventDefault();
+console.log(e,'aaaaaaaaaaaa');
+
+  try {
+    if (isLogin) {
+      // 🔐 LOGIN
+      const res = await loginApi(formData.email, formData.password);
+console.log(res,'resssssssssssssssss');
+console.log(res.access_token);
+
+
+      if (res.access_token) {
+        localStorage.setItem('token', res.access_token);
+        localStorage.setItem('user', JSON.stringify(res.user));
+        alert('Login Successful');
+        router.push('/dashboard')  // later
+      } else {
+        alert(res.message || 'Login failed');
+      }
+
+    } else {
+      // 📝 SIGNUP
+      const res = await signupApi({
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        hospitalId: formData.hospitalId,
+      });
+
+      if (res.success) {
+        alert('Signup successful, please login');
+        setIsLogin(true);
+      } else {
+        alert(res.message || 'Signup failed');
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    alert('Server error');
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center p-4 font-sans relative overflow-hidden">
