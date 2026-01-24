@@ -533,39 +533,8 @@ import {
   User, Phone, Mail, MapPin, Calendar, Edit, Trash2, Eye, Plus, X, FileText, Sheet
 } from 'lucide-react';
 
+import {getPatients,createPatientApi,updatePatientApi} from '../../lib/commonApis';
  
-
-
-// Generate static patient data
-const generatePatients = () => {
-  const firstNames = ['Rajesh', 'Priya', 'Amit', 'Sneha', 'Vikram', 'Anita', 'Rahul', 'Neha', 'Sanjay', 'Pooja', 'Arun', 'Kavita', 'Deepak', 'Meera', 'Suresh', 'Ritu', 'Manoj', 'Sunita', 'Ajay', 'Preeti'];
-  const lastNames = ['Kumar', 'Sharma', 'Singh', 'Verma', 'Patel', 'Gupta', 'Reddy', 'Mehta', 'Joshi', 'Rao', 'Nair', 'Iyer', 'Chopra', 'Malhotra', 'Agarwal', 'Shah', 'Desai', 'Pillai', 'Menon', 'Sinha'];
-  const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad', 'Jaipur', 'Chandigarh'];
-  const areas = ['Sector 17', 'MG Road', 'Park Street', 'Anna Nagar', 'Koramangala', 'Banjara Hills', 'Civil Lines', 'Model Town', 'Vasant Vihar', 'Jubilee Hills'];
-
-  const patients = [];
-  for (let i = 1; i <= 150; i++) {
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-    const city = cities[Math.floor(Math.random() * cities.length)];
-    const area = areas[Math.floor(Math.random() * areas.length)];
-    
-    const createdDate = new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
-    const updatedDate = new Date(createdDate.getTime() + Math.random() * 90 * 24 * 60 * 60 * 1000);
-
-    patients.push({
-      id: i,
-      name: `${firstName} ${lastName}`,
-      phone: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
-      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@email.com`,
-      address: `${area}, ${city}`,
-      created_date: createdDate.toISOString().split('T')[0],
-      updated_date: updatedDate.toISOString().split('T')[0]
-    });
-  }
-  return patients;
-};
-
 // Modal Component
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   if (!isOpen) return null;
@@ -613,15 +582,36 @@ export default function PatientsPage() {
   
   // Form state
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
-  });
+  name: '',
+  phone: '',
+  address: '',
+  city: '',
+  state: '',
+  country: '',
+  pincode: '',
+});
 
-    useEffect(() => {
-    setPatients(generatePatients());
-  }, []);
+
+   useEffect(() => {
+  getPatients(10, 1)
+    .then(res => {
+      const apiPatients = res.data.data.map((item) => ({
+        id: item.id,
+        name: item.name,
+        phone: item.phone,
+        email: item.user?.email || '-',   // API me email nahi hai
+        address: `${item.address}, ${item.city}, ${item.state}, ${item.country} - ${item.pincode}`,
+        created_date: item.createdAt.split('T')[0],
+        updated_date: item.updatedAt.split('T')[0],
+      }));
+
+      setPatients(apiPatients);
+    })
+    .catch(err => {
+      console.error(err.message);
+    });
+}, []);
+
 
   // Handle form change
   const handleFormChange = (e) => {
@@ -629,43 +619,61 @@ export default function PatientsPage() {
   };
 
   // Add Patient
-  const handleAddPatient = (e) => {
-    e.preventDefault();
-    const newPatient = {
-      id: patients.length + 1,
-      ...formData,
-      created_date: new Date().toISOString().split('T')[0],
-      updated_date: new Date().toISOString().split('T')[0]
-    };
-    setPatients([...patients, newPatient]);
+  const handleAddPatient = async (e) => {
+  e.preventDefault();
+
+  try {
+    await createPatientApi(formData);
+
+    // list refresh
+    const res = await getPatients(10, 1);
+    const apiPatients = res.data.data.map(mapPatient);
+    setPatients(apiPatients);
+
     setShowAddModal(false);
-    setFormData({ name: '', phone: '', email: '', address: '' });
-  };
+    resetForm();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
   // Edit Patient
   const handleEditClick = (patient) => {
-    setSelectedPatient(patient);
-    setFormData({
-      name: patient.name,
-      phone: patient.phone,
-      email: patient.email,
-      address: patient.address
-    });
-    setShowEditModal(true);
-  };
+  setSelectedPatient(patient);
 
-  const handleUpdatePatient = (e) => {
-    e.preventDefault();
-    const updatedPatients = patients.map(p =>
-      p.id === selectedPatient.id
-        ? { ...p, ...formData, updated_date: new Date().toISOString().split('T')[0] }
-        : p
-    );
-    setPatients(updatedPatients);
+  setFormData({
+    name: patient.name,
+    phone: patient.phone,
+    address: patient.address.split(',')[0],
+    city: '',
+    state: '',
+    country: '',
+    pincode: '',
+  });
+
+  setShowEditModal(true);
+};
+
+
+ const handleUpdatePatient = async (e) => {
+  e.preventDefault();
+
+  try {
+    await updatePatientApi(selectedPatient.id, formData);
+
+    const res = await getPatients(10, 1);
+    const apiPatients = res.data.data.map(mapPatient);
+    setPatients(apiPatients);
+
     setShowEditModal(false);
     setSelectedPatient(null);
-    setFormData({ name: '', phone: '', email: '', address: '' });
-  };
+    resetForm();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
   // Delete Patient
   const handleDeleteClick = (patient) => {
@@ -684,6 +692,29 @@ export default function PatientsPage() {
     setSelectedPatient(patient);
     setShowViewModal(true);
   };
+
+  const mapPatient = (item) => ({
+  id: item.id,
+  name: item.name,
+  phone: item.phone,
+  email: item.user?.email || '-',
+  address: `${item.address}, ${item.city}, ${item.state}, ${item.country} - ${item.pincode}`,
+  created_date: item.createdAt.split('T')[0],
+  updated_date: item.updatedAt.split('T')[0],
+});
+
+const resetForm = () => {
+  setFormData({
+    name: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    country: '',
+    pincode: '',
+  });
+};
+
 
   // Rest of your existing code for sorting, filtering, pagination, export...
   const sortedPatients = useMemo(() => {
@@ -1039,7 +1070,7 @@ export default function PatientsPage() {
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address *</label>
-            <input type="email" name="email" value={formData.email} onChange={handleFormChange} required className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700" />
+            {/* <input type="email" name="email" value={formData.email} onChange={handleFormChange} required className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700" /> */}
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Address *</label>
@@ -1087,7 +1118,7 @@ export default function PatientsPage() {
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-slate-800">{selectedPatient.name}</h3>
-                <p className="text-slate-600">ID: #{selectedPatient.id}</p>
+                <p className="text-slate-600">ID: #99999999999999999{selectedPatient.id}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-6">
@@ -1128,3 +1159,4 @@ export default function PatientsPage() {
     </div>
   );
 }
+
