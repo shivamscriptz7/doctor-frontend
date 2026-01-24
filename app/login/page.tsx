@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Heart, Activity, Users, Shield, ArrowRight } from 'lucide-react';
-import { loginApi,signupApi } from '../lib/auth';
+import { loginApi,signupApi } from '../lib/commonApis';
 export default function HospitalAuth() {
   const [isLogin, setIsLogin] = useState(true);
 let router = useRouter();
