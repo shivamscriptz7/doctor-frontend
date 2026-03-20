@@ -533,7 +533,7 @@ import {
   User, Phone, Mail, MapPin, Calendar, Edit, Trash2, Eye, Plus, X, FileText, Sheet
 } from 'lucide-react';
 
-import {getPatients,createPatientApi,updatePatientApi} from '../../lib/commonApis';
+import {getPatients,createPatientApi,updatePatientApi,deletePatientApi} from '../../lib/commonApis';
  
 // Modal Component
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
@@ -546,18 +546,18 @@ function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
-      <div className="flex min-h-full items-center justify-center p-4">
-        <div className={`relative bg-white rounded-2xl shadow-2xl w-full ${sizeClasses[size]}`} onClick={(e) => e.stopPropagation()}>
-          <div className="flex items-center justify-between p-6 border-b border-slate-200">
-            <h2 className="text-2xl font-bold text-slate-800">{title}</h2>
-            <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-              <X className="w-5 h-5 text-slate-600" />
-            </button>
-          </div>
-          <div className="p-6">{children}</div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      <div
+        className={`relative bg-white rounded-2xl shadow-2xl w-full ${sizeClasses[size]} border border-slate-100 flex flex-col max-h-[90vh]`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-emerald-100 rounded-t-2xl flex-shrink-0">
+          <h2 className="text-lg font-bold text-slate-800">{title}</h2>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+            <X className="w-5 h-5 text-slate-500" />
+          </button>
         </div>
+        <div className="p-6 overflow-y-auto">{children}</div>
       </div>
     </div>
   );
@@ -681,11 +681,29 @@ export default function PatientsPage() {
     setShowDeleteModal(true);
   };
 
-  const handleDeletePatient = () => {
-    setPatients(patients.filter(p => p.id !== selectedPatient.id));
+  // const handleDeletePatient = () => {
+  //   setPatients(patients.filter(p => p.id !== selectedPatient.id));
+  //   setShowDeleteModal(false);
+  //   setSelectedPatient(null);
+  // };
+
+  const handleDeletePatient = async () => {
+  if (!selectedPatient) return;
+
+  try {
+    await deletePatientApi(selectedPatient.id);
+
+    setPatients(prev =>
+      prev.filter(p => p.id !== selectedPatient.id)
+    );
+
     setShowDeleteModal(false);
     setSelectedPatient(null);
-  };
+  } catch (error) {
+    alert(error.message || 'Failed to delete patient');
+  }
+};
+
 
   // View Patient
   const handleViewClick = (patient) => {
