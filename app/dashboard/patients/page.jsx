@@ -716,7 +716,7 @@ export default function PatientsPage() {
   name: item.name,
   phone: item.phone,
   email: item.user?.email || '-',
-  address: `${item.address}, ${item.city}, ${item.state}, ${item.country} - ${item.pincode}`,
+  address: item.address,
   created_date: item.createdAt.split('T')[0],
   updated_date: item.updatedAt.split('T')[0],
 });

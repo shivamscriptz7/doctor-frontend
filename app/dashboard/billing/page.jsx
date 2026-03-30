@@ -1,350 +1,33 @@
-// 'use client';
-
-// import { useState } from 'react';
-// import { Plus, Search, Download, DollarSign, Eye, Printer, Send, Filter, CheckCircle, Clock, XCircle } from 'lucide-react';
-
-// export default function BillingPage() {
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const [filterStatus, setFilterStatus] = useState('all');
-//   const [showExportMenu, setShowExportMenu] = useState(false);
-
-//   const invoices = [
-//     { 
-//       id: 'INV-2024-001', 
-//       patient: 'Rajesh Kumar', 
-//       date: '2024-01-10', 
-//       amount: 15750, 
-//       status: 'paid',
-//       paymentMethod: 'Card',
-//       services: ['Consultation', 'Lab Tests', 'Medicines']
-//     },
-//     { 
-//       id: 'INV-2024-002', 
-//       patient: 'Priya Sharma', 
-//       date: '2024-01-11', 
-//       amount: 8500, 
-//       status: 'pending',
-//       paymentMethod: '-',
-//       services: ['X-Ray', 'Consultation']
-//     },
-//     { 
-//       id: 'INV-2024-003', 
-//       patient: 'Amit Patel', 
-//       date: '2024-01-12', 
-//       amount: 42300, 
-//       status: 'paid',
-//       paymentMethod: 'Insurance',
-//       services: ['Surgery', 'Hospital Stay', 'Medicines']
-//     },
-//     { 
-//       id: 'INV-2024-004', 
-//       patient: 'Sneha Verma', 
-//       date: '2024-01-12', 
-//       amount: 6200, 
-//       status: 'overdue',
-//       paymentMethod: '-',
-//       services: ['Consultation', 'Medicines']
-//     },
-//     { 
-//       id: 'INV-2024-005', 
-//       patient: 'Vikram Singh', 
-//       date: '2024-01-13', 
-//       amount: 12800, 
-//       status: 'paid',
-//       paymentMethod: 'Cash',
-//       services: ['Emergency', 'CT Scan', 'Medicines']
-//     },
-//     { 
-//       id: 'INV-2024-006', 
-//       patient: 'Anita Gupta', 
-//       date: '2024-01-13', 
-//       amount: 9400, 
-//       status: 'pending',
-//       paymentMethod: '-',
-//       services: ['MRI', 'Consultation']
-//     },
-//     { 
-//       id: 'INV-2024-007', 
-//       patient: 'Rahul Mehta', 
-//       date: '2024-01-14', 
-//       amount: 18600, 
-//       status: 'paid',
-//       paymentMethod: 'Card',
-//       services: ['Surgery', 'Lab Tests', 'Hospital Stay']
-//     },
-//     { 
-//       id: 'INV-2024-008', 
-//       patient: 'Neha Singh', 
-//       date: '2024-01-14', 
-//       amount: 5300, 
-//       status: 'overdue',
-//       paymentMethod: '-',
-//       services: ['Consultation', 'Lab Tests']
-//     },
-//   ];
-
-//   const filteredInvoices = invoices.filter(invoice => {
-//     const matchesSearch = 
-//       invoice.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//       invoice.patient.toLowerCase().includes(searchTerm.toLowerCase());
-    
-//     const matchesFilter = filterStatus === 'all' || invoice.status === filterStatus;
-    
-//     return matchesSearch && matchesFilter;
-//   });
-
-//   const stats = {
-//     total: invoices.reduce((sum, inv) => sum + inv.amount, 0),
-//     paid: invoices.filter(i => i.status === 'paid').reduce((sum, inv) => sum + inv.amount, 0),
-//     pending: invoices.filter(i => i.status === 'pending').reduce((sum, inv) => sum + inv.amount, 0),
-//     overdue: invoices.filter(i => i.status === 'overdue').reduce((sum, inv) => sum + inv.amount, 0),
-//     count: {
-//       paid: invoices.filter(i => i.status === 'paid').length,
-//       pending: invoices.filter(i => i.status === 'pending').length,
-//       overdue: invoices.filter(i => i.status === 'overdue').length,
-//     }
-//   };
-
-//   const getStatusColor = (status) => {
-//     switch(status) {
-//       case 'paid': return 'bg-green-100 text-green-700';
-//       case 'pending': return 'bg-amber-100 text-amber-700';
-//       case 'overdue': return 'bg-red-100 text-red-700';
-//       default: return 'bg-slate-100 text-slate-700';
-//     }
-//   };
-
-//   const getStatusIcon = (status) => {
-//     switch(status) {
-//       case 'paid': return <CheckCircle className="w-4 h-4" />;
-//       case 'pending': return <Clock className="w-4 h-4" />;
-//       case 'overdue': return <XCircle className="w-4 h-4" />;
-//       default: return <Clock className="w-4 h-4" />;
-//     }
-//   };
-
-//   return (
-//     <div className="p-8">
-//       {/* Header */}
-//       <div className="mb-8">
-//         <div className="flex items-center justify-between mb-4">
-//           <div>
-//             <h1 className="text-4xl font-bold text-slate-800 mb-2">Billing</h1>
-//             <p className="text-slate-600">Manage invoices and payments</p>
-//           </div>
-//           <div className="flex gap-3">
-//             <div className="relative">
-//               <button 
-//                 onClick={() => setShowExportMenu(!showExportMenu)}
-//                 className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-300 flex items-center gap-2 text-slate-700 font-medium shadow-sm hover:shadow-md"
-//               >
-//                 <Download className="w-4 h-4" />
-//                 Export
-//               </button>
-              
-//               {showExportMenu && (
-//                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 z-10">
-//                   <button className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors text-slate-700 rounded-t-xl">
-//                     Export to Excel
-//                   </button>
-//                   <button className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors text-slate-700 border-t rounded-b-xl">
-//                     Export to PDF
-//                   </button>
-//                 </div>
-//               )}
-//             </div>
-
-//             <button className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 flex items-center gap-2 font-semibold shadow-lg hover:shadow-xl">
-//               <Plus className="w-5 h-5" />
-//               New Invoice
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* Stats */}
-//         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-//           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-//             <p className="text-sm text-slate-600 mb-1">Total Revenue</p>
-//             <p className="text-2xl font-bold text-slate-800">₹{stats.total.toLocaleString()}</p>
-//           </div>
-//           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-//             <p className="text-sm text-slate-600 mb-1">Paid ({stats.count.paid})</p>
-//             <p className="text-2xl font-bold text-green-600">₹{stats.paid.toLocaleString()}</p>
-//           </div>
-//           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-//             <p className="text-sm text-slate-600 mb-1">Pending ({stats.count.pending})</p>
-//             <p className="text-2xl font-bold text-amber-600">₹{stats.pending.toLocaleString()}</p>
-//           </div>
-//           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-//             <p className="text-sm text-slate-600 mb-1">Overdue ({stats.count.overdue})</p>
-//             <p className="text-2xl font-bold text-red-600">₹{stats.overdue.toLocaleString()}</p>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Search and Filter Bar */}
-//       <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 mb-6">
-//         <div className="flex flex-col lg:flex-row gap-4">
-//           <div className="flex-1 relative">
-//             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-//             <input
-//               type="text"
-//               placeholder="Search by invoice ID or patient name..."
-//               value={searchTerm}
-//               onChange={(e) => setSearchTerm(e.target.value)}
-//               className="w-full pl-12 pr-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700"
-//             />
-//           </div>
-          
-//           <div className="flex items-center gap-3">
-//             <select
-//               value={filterStatus}
-//               onChange={(e) => setFilterStatus(e.target.value)}
-//               className="px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700 font-medium cursor-pointer"
-//             >
-//               <option value="all">All Status</option>
-//               <option value="paid">Paid</option>
-//               <option value="pending">Pending</option>
-//               <option value="overdue">Overdue</option>
-//             </select>
-            
-//             <button className="px-6 py-3 rounded-xl font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all duration-300 flex items-center gap-2">
-//               <Filter className="w-5 h-5" />
-//               More Filters
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Invoices Table */}
-//       <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-//         <div className="overflow-x-auto">
-//           <table className="w-full">
-//             <thead className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-200">
-//               <tr>
-//                 <th className="px-6 py-4 text-left font-semibold text-slate-700">Invoice ID</th>
-//                 <th className="px-6 py-4 text-left font-semibold text-slate-700">Patient</th>
-//                 <th className="px-6 py-4 text-left font-semibold text-slate-700">Date</th>
-//                 <th className="px-6 py-4 text-left font-semibold text-slate-700">Services</th>
-//                 <th className="px-6 py-4 text-left font-semibold text-slate-700">Amount</th>
-//                 <th className="px-6 py-4 text-left font-semibold text-slate-700">Payment</th>
-//                 <th className="px-6 py-4 text-left font-semibold text-slate-700">Status</th>
-//                 <th className="px-6 py-4 text-center font-semibold text-slate-700">Actions</th>
-//               </tr>
-//             </thead>
-//             <tbody className="divide-y divide-slate-100">
-//               {filteredInvoices.map((invoice) => (
-//                 <tr key={invoice.id} className="hover:bg-emerald-50/50 transition-colors">
-//                   <td className="px-6 py-4">
-//                     <div className="flex items-center gap-2">
-//                       <DollarSign className="w-4 h-4 text-emerald-600" />
-//                       <span className="font-semibold text-slate-800">{invoice.id}</span>
-//                     </div>
-//                   </td>
-//                   <td className="px-6 py-4">
-//                     <div className="flex items-center gap-3">
-//                       <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold">
-//                         {invoice.patient.charAt(0)}
-//                       </div>
-//                       <span className="font-semibold text-slate-800">{invoice.patient}</span>
-//                     </div>
-//                   </td>
-//                   <td className="px-6 py-4 text-slate-600">
-//                     {invoice.date}
-//                   </td>
-//                   <td className="px-6 py-4">
-//                     <div className="flex flex-wrap gap-1">
-//                       {invoice.services.slice(0, 2).map((service, idx) => (
-//                         <span key={idx} className="px-2 py-1 bg-slate-100 text-slate-700 rounded text-xs">
-//                           {service}
-//                         </span>
-//                       ))}
-//                       {invoice.services.length > 2 && (
-//                         <span className="px-2 py-1 bg-slate-200 text-slate-600 rounded text-xs font-medium">
-//                           +{invoice.services.length - 2}
-//                         </span>
-//                       )}
-//                     </div>
-//                   </td>
-//                   <td className="px-6 py-4">
-//                     <span className="font-bold text-lg text-slate-800">
-//                       ₹{invoice.amount.toLocaleString()}
-//                     </span>
-//                   </td>
-//                   <td className="px-6 py-4">
-//                     <span className={`px-3 py-1 rounded-lg text-sm font-medium ${
-//                       invoice.paymentMethod !== '-' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-400'
-//                     }`}>
-//                       {invoice.paymentMethod}
-//                     </span>
-//                   </td>
-//                   <td className="px-6 py-4">
-//                     <span className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1.5 w-fit ${getStatusColor(invoice.status)}`}>
-//                       {getStatusIcon(invoice.status)}
-//                       <span className="capitalize">{invoice.status}</span>
-//                     </span>
-//                   </td>
-//                   <td className="px-6 py-4">
-//                     <div className="flex items-center justify-center gap-2">
-//                       <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="View">
-//                         <Eye className="w-4 h-4" />
-//                       </button>
-//                       <button className="p-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors" title="Print">
-//                         <Printer className="w-4 h-4" />
-//                       </button>
-//                       <button className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Send">
-//                         <Send className="w-4 h-4" />
-//                       </button>
-//                     </div>
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </div>
-//       </div>
-
-//       {/* No Results */}
-//       {filteredInvoices.length === 0 && (
-//         <div className="text-center py-12 bg-white rounded-2xl shadow-lg border border-slate-100 mt-6">
-//           <DollarSign className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-//           <p className="text-slate-600 font-medium">No invoices found</p>
-//           <p className="text-sm text-slate-400 mt-1">Try adjusting your search or filters</p>
-//         </div>
-//       )}
-
-//       {/* Click outside to close export menu */}
-//       {showExportMenu && (
-//         <div 
-//           className="fixed inset-0 z-0" 
-//           onClick={() => setShowExportMenu(false)}
-//         />
-//       )}
-//     </div>
-//   );
-// }
-
-
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Plus, Search, Download, Eye, Send, X, ChevronDown,
   FileText, Sheet, Pill, User, Stethoscope, Trash2,
-  Copy, Check, Printer, CheckCircle, Clock, ChevronLeft, ChevronRight
+  Copy, Check, Printer, CheckCircle, Clock, ChevronLeft, ChevronRight, Loader2, AlertCircle
 } from 'lucide-react';
-  import { createInvoiceApi } from '../../lib/commonApis';
+import { createInvoiceApi, getInvoiceApi, updateInvoiceApi, deleteInvoiceApi } from '../../lib/commonApis';
 
-// ── Mock API (replace with your real import) ──────────────────────────────────
-async function createPrescriptionApi(data) {
-  console.log('API payload:', data);
-  return new Promise(res => setTimeout(() => res({ success: true }), 800));
-}
+// ── Medicine Options ──────────────────────────────────────────────────────────
+const MEDICINE_OPTIONS = [
+  { id: 1, name: 'Paracetamol' },
+  { id: 2, name: 'Amoxicillin' },
+  { id: 3, name: 'Ibuprofen' },
+  { id: 4, name: 'Cetirizine' },
+  { id: 5, name: 'Azithromycin' },
+  { id: 6, name: 'Omeprazole' },
+  { id: 7, name: 'Metformin' },
+  { id: 8, name: 'Atorvastatin' },
+];
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
+const MEDICINE_TYPES = ['tablet', 'capsule', 'syrup', 'injection', 'drops', 'cream'];
+const EMPTY_MEDICINE = { medicineId: '', quantity: '', strength: '', type: 'tablet', price: '' };
+
+// ── Modal Component ───────────────────────────────────────────────────────────
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   if (!isOpen) return null;
   const sizeMap = { sm: 'max-w-md', md: 'max-w-2xl', lg: 'max-w-4xl' };
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
       <div
@@ -363,73 +46,80 @@ function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   );
 }
 
-// ── Sample Data ───────────────────────────────────────────────────────────────
-const SAMPLE = Array.from({ length: 48 }, (_, i) => ({
-  id: i + 1,
-  rxId: `RX-2024-${String(i + 1).padStart(3, '0')}`,
-  patientId: (i % 10) + 1,
-  patientName: ['Rajesh Kumar', 'Priya Sharma', 'Amit Patel', 'Sneha Verma',
-    'Vikram Singh', 'Anita Gupta', 'Rahul Mehta', 'Neha Singh',
-    'Suresh Yadav', 'Kavita Joshi'][i % 10],
-  doctorId: (i % 5) + 1,
-  doctorName: ['Dr. Anil Sharma', 'Dr. Meena Patel', 'Dr. Ravi Kumar',
-    'Dr. Sunita Singh', 'Dr. Arjun Das'][i % 5],
-  date: `2024-01-${String((i % 28) + 1).padStart(2, '0')}`,
-  status: ['active', 'completed', 'active', 'completed', 'active'][i % 5],
-  medicines: [
-    { medicineId: 1, name: 'Paracetamol', quantity: 2, strength: '500mg', type: 'tablet', price: 50 },
-    { medicineId: 2, name: 'Amoxicillin', quantity: 1, strength: '250mg', type: 'capsule', price: 120 },
-  ].slice(0, (i % 2) + 1),
-  totalAmount: [170, 50, 120, 290, 170][i % 5],
-  notes: i % 3 === 0 ? 'Take after meals. Avoid alcohol.' : '',
-}));
-
-const MEDICINE_OPTIONS = [
-  { id: 1, name: 'Paracetamol' },
-  { id: 2, name: 'Amoxicillin' },
-  { id: 3, name: 'Ibuprofen' },
-  { id: 4, name: 'Cetirizine' },
-  { id: 5, name: 'Azithromycin' },
-  { id: 6, name: 'Omeprazole' },
-  { id: 7, name: 'Metformin' },
-  { id: 8, name: 'Atorvastatin' },
-];
-
-const MEDICINE_TYPES = ['tablet', 'capsule', 'syrup', 'injection', 'drops', 'cream'];
-
-const EMPTY_MEDICINE = { medicineId: '', quantity: '', strength: '', type: 'tablet', price: '' };
-
-// ── Main Page ─────────────────────────────────────────────────────────────────
-export default function PrescriptionPage() {
-  const [prescriptions, setPrescriptions] = useState(SAMPLE);
+// ── Main Component ────────────────────────────────────────────────────────────
+export default function BillingPage() {
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const ITEMS_PER_PAGE = 20;
 
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [selectedRx, setSelectedRx] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [toast, setToast] = useState('');
 
-  // ── Form state ──────────────────────────────────────────────────────────────
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
+
+  // ── Form State ────────────────────────────────────────────────────────────
   const [form, setForm] = useState({
     patientId: '',
-    patientName: '',
     doctorId: '',
-    doctorName: '',
-    date: new Date().toISOString().split('T')[0],
-    notes: '',
     medicines: [{ ...EMPTY_MEDICINE }],
   });
 
-  const formTotal = form.medicines.reduce((s, m) => s + ((parseFloat(m.price) || 0) * (parseInt(m.quantity) || 0)), 0);
+  const formTotal = form.medicines.reduce((s, m) => 
+    s + ((parseFloat(m.price) || 0) * (parseInt(m.quantity) || 0)), 0
+  );
 
-  // ── Form handlers ───────────────────────────────────────────────────────────
-  const handleFormChange = e => {
+  // ── Load Invoices ─────────────────────────────────────────────────────────
+  const loadInvoices = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await getInvoiceApi(100, currentPage);
+      console.log('Invoice API Response:', res);
+      
+      // ✅ FIX: Handle nested response structure
+      const dataArray = res?.data?.invoices || res?.data || res || [];
+      const list = Array.isArray(dataArray) ? dataArray.map(item => ({
+        id: item.id,
+        invoiceId: item.invoiceId || `INV-${item.id}`,
+        patientId: item.patientId,
+        patientName: item.patient?.name || `Patient #${item.patientId}`,
+        doctorId: item.doctorId,
+        doctorName: item.doctor?.name || `Doctor #${item.doctorId}`,
+        date: item.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+        status: item.status?.toLowerCase() || 'active',
+        medicines: item.medicines || [],
+        totalAmount: parseFloat(item.totalPrice) || item.medicines?.reduce((s, m) => 
+          s + (parseFloat(m.subtotal) || (parseFloat(m.price) || 0) * (parseInt(m.quantity) || 0)), 0) || 0,
+        notes: item.notes || '',
+      })) : [];
+
+      setInvoices(list);
+      setTotalPages(res?.data?.totalPages || 1);
+    } catch (err) {
+      console.error('Failed to load invoices:', err);
+      showToast('❌ Failed to load invoices');
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage]);
+
+  useEffect(() => {
+    loadInvoices();
+  }, [loadInvoices]);
+
+  // ── Form Handlers ─────────────────────────────────────────────────────────
+  const handleFormChange = (e) => {
     const { name, value } = e.target;
     setForm(p => ({ ...p, [name]: value }));
   };
@@ -440,21 +130,23 @@ export default function PrescriptionPage() {
   };
 
   const addMedRow = () => setForm(p => ({ ...p, medicines: [...p.medicines, { ...EMPTY_MEDICINE }] }));
-  const removeMedRow = idx => {
+  
+  const removeMedRow = (idx) => {
     if (form.medicines.length === 1) return;
     setForm(p => ({ ...p, medicines: p.medicines.filter((_, i) => i !== idx) }));
   };
 
   const resetForm = () => setForm({
-    patientId: '', patientName: '', doctorId: '', doctorName: '',
-    date: new Date().toISOString().split('T')[0], notes: '',
+    patientId: '',
+    doctorId: '',
     medicines: [{ ...EMPTY_MEDICINE }],
   });
 
-  // ── Submit ──────────────────────────────────────────────────────────────────
-  const handleSubmit = async e => {
+  // ── Create Invoice ────────────────────────────────────────────────────────
+  const handleCreate = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    
     try {
       const payload = {
         patientId: parseInt(form.patientId),
@@ -467,80 +159,130 @@ export default function PrescriptionPage() {
           price: parseFloat(m.price),
         })),
       };
-      await createPrescriptionApi(payload);
 
-      const newRx = {
-        id: prescriptions.length + 1,
-        rxId: `RX-${new Date().getFullYear()}-${String(prescriptions.length + 1).padStart(3, '0')}`,
-        patientId: parseInt(form.patientId),
-        patientName: form.patientName,
-        doctorId: parseInt(form.doctorId),
-        doctorName: form.doctorName,
-        date: form.date,
-        status: 'active',
-        medicines: form.medicines.map(m => ({
-          medicineId: parseInt(m.medicineId),
-          name: MEDICINE_OPTIONS.find(o => o.id === parseInt(m.medicineId))?.name || `Med #${m.medicineId}`,
-          quantity: parseInt(m.quantity),
-          strength: m.strength,
-          type: m.type,
-          price: parseFloat(m.price),
-        })),
-        totalAmount: formTotal,
-        notes: form.notes,
-      };
-      setPrescriptions(p => [newRx, ...p]);
+      await createInvoiceApi(payload);
+      await loadInvoices();
       setShowAddModal(false);
       resetForm();
       setCurrentPage(1);
+      showToast('✅ Invoice created successfully!');
     } catch (err) {
-      console.error(err);
-      alert('Failed to create prescription.');
+      console.error('Create error:', err);
+      showToast('❌ Failed to create invoice');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // ── Filter + Paginate ───────────────────────────────────────────────────────
-  const filtered = useMemo(() => prescriptions.filter(rx => {
-    const s = searchTerm.toLowerCase();
-    const matchSearch = rx.rxId.toLowerCase().includes(s) ||
-      rx.patientName.toLowerCase().includes(s) ||
-      rx.doctorName.toLowerCase().includes(s);
-    const matchStatus = filterStatus === 'all' || rx.status === filterStatus;
-    return matchSearch && matchStatus;
-  }), [prescriptions, searchTerm, filterStatus]);
+  // ── Update Invoice ────────────────────────────────────────────────────────
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!selectedInvoice) return;
+    setIsSubmitting(true);
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+    try {
+      const payload = {
+        patientId: parseInt(form.patientId),
+        doctorId: parseInt(form.doctorId),
+        medicines: form.medicines.map(m => ({
+          medicineId: parseInt(m.medicineId),
+          quantity: parseInt(m.quantity),
+          strength: m.strength,
+          type: m.type,
+          price: parseFloat(m.price),
+        })),
+      };
+
+      await updateInvoiceApi(selectedInvoice.id, payload);
+      await loadInvoices();
+      setShowEditModal(false);
+      setSelectedInvoice(null);
+      resetForm();
+      showToast('✅ Invoice updated successfully!');
+    } catch (err) {
+      console.error('Update error:', err);
+      showToast('❌ Failed to update invoice');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // ── Delete Invoice ────────────────────────────────────────────────────────
+  const handleDelete = async () => {
+    if (!selectedInvoice) return;
+    setIsSubmitting(true);
+
+    try {
+      await deleteInvoiceApi(selectedInvoice.id);
+      await loadInvoices();
+      setShowDeleteModal(false);
+      setSelectedInvoice(null);
+      showToast('🗑️ Invoice deleted');
+    } catch (err) {
+      console.error('Delete error:', err);
+      showToast('❌ Failed to delete invoice');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // ── Edit Click ────────────────────────────────────────────────────────────
+  const handleEditClick = (invoice) => {
+    setSelectedInvoice(invoice);
+    setForm({
+      patientId: invoice.patientId.toString(),
+      doctorId: invoice.doctorId.toString(),
+      medicines: invoice.medicines.map(m => ({
+        medicineId: m.medicineId?.toString() || '',
+        quantity: m.quantity?.toString() || '',
+        strength: m.strength || '',
+        type: m.type || 'tablet',
+        price: m.price?.toString() || '',
+      })),
+    });
+    setShowEditModal(true);
+  };
+
+  // ── Filter + Paginate ─────────────────────────────────────────────────────
+  const filtered = useMemo(() => invoices.filter(inv => {
+    const s = searchTerm.toLowerCase();
+    const matchSearch = (inv.invoiceId || '').toLowerCase().includes(s) ||
+      (inv.patientName || '').toLowerCase().includes(s) ||
+      (inv.doctorName || '').toLowerCase().includes(s);
+    const matchStatus = filterStatus === 'all' || inv.status === filterStatus;
+    return matchSearch && matchStatus;
+  }), [invoices, searchTerm, filterStatus]);
+
+  const totalPagesFiltered = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   const getPageNumbers = () => {
     const pages = [];
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    if (totalPagesFiltered <= 7) {
+      for (let i = 1; i <= totalPagesFiltered; i++) pages.push(i);
     } else if (currentPage <= 4) {
-      pages.push(1, 2, 3, 4, 5, '...', totalPages);
-    } else if (currentPage >= totalPages - 3) {
-      pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      pages.push(1, 2, 3, 4, 5, '...', totalPagesFiltered);
+    } else if (currentPage >= totalPagesFiltered - 3) {
+      pages.push(1, '...', totalPagesFiltered - 4, totalPagesFiltered - 3, totalPagesFiltered - 2, totalPagesFiltered - 1, totalPagesFiltered);
     } else {
-      pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+      pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPagesFiltered);
     }
     return pages;
   };
 
-  // ── Stats ───────────────────────────────────────────────────────────────────
+  // ── Stats ─────────────────────────────────────────────────────────────────
   const stats = {
-    total: prescriptions.length,
-    active: prescriptions.filter(r => r.status === 'active').length,
-    completed: prescriptions.filter(r => r.status === 'completed').length,
-    totalMeds: prescriptions.reduce((s, r) => s + r.medicines.length, 0),
+    total: invoices.length,
+    paid: invoices.filter(i => i.status === 'paid').length,
+    pending: invoices.filter(i => i.status === 'pending').length,
+    totalMeds: invoices.reduce((s, i) => s + i.medicines.length, 0),
   };
 
-  // ── Print Invoice ───────────────────────────────────────────────────────────
-  const handlePrint = rx => {
-    const medRows = rx.medicines.map(m =>
+  // ── Print Invoice ─────────────────────────────────────────────────────────
+  const handlePrint = (inv) => {
+    const medRows = inv.medicines.map(m =>
       `<tr>
-        <td>${m.name || 'Medicine'}</td>
+        <td>${MEDICINE_OPTIONS.find(o => o.id === m.medicineId)?.name || `Medicine #${m.medicineId}`}</td>
         <td style="text-align:center">${m.type}</td>
         <td style="text-align:center">${m.strength}</td>
         <td style="text-align:center">${m.quantity}</td>
@@ -549,53 +291,30 @@ export default function PrescriptionPage() {
       </tr>`
     ).join('');
 
-    const html = `<!DOCTYPE html><html><head><title>Prescription ${rx.rxId}</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b}
-  .page{max-width:740px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.10)}
-  .header{background:linear-gradient(135deg,#059669,#0d9488);color:#fff;padding:36px 40px}
-  .header h1{font-size:26px;font-weight:800}
-  .header p{margin-top:4px;opacity:.85;font-size:13px}
-  .rx-id{margin-top:14px;font-size:20px;font-weight:700;background:rgba(255,255,255,.15);display:inline-block;padding:5px 16px;border-radius:8px}
-  .body{padding:36px 40px}
-  .meta{display:flex;justify-content:space-between;margin-bottom:28px;gap:20px}
-  .meta-block h3{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:5px}
-  .meta-block p{font-size:15px;font-weight:600}
-  .meta-block .sub{font-size:13px;font-weight:400;color:#64748b}
-  .badge{display:inline-block;padding:3px 12px;border-radius:99px;font-size:12px;font-weight:700;text-transform:capitalize}
-  .active{background:#dcfce7;color:#16a34a}.completed{background:#dbeafe;color:#1d4ed8}
-  table{width:100%;border-collapse:collapse;margin-bottom:20px}
-  thead tr{background:#f1f5f9}
-  thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b}
-  tbody td{padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:14px}
-  .total-row td{padding:14px 12px;font-size:16px;font-weight:800;color:#059669;border-top:2px solid #e2e8f0}
-  .notes{background:#f0fdf4;border-left:4px solid #059669;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#374151;margin-bottom:20px}
-  .footer{text-align:center;color:#94a3b8;font-size:12px;padding:18px 40px;border-top:1px solid #f1f5f9}
-  @media print{body{background:#fff}.page{box-shadow:none;margin:0;border-radius:0}}
-</style></head><body>
+    const html = `<!DOCTYPE html><html><head><title>Invoice ${inv.invoiceId}</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b}.page{max-width:740px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.10)}.header{background:linear-gradient(135deg,#059669,#0d9488);color:#fff;padding:36px 40px}.header h1{font-size:26px;font-weight:800}.header p{margin-top:4px;opacity:.85;font-size:13px}.invoice-id{margin-top:14px;font-size:20px;font-weight:700;background:rgba(255,255,255,.15);display:inline-block;padding:5px 16px;border-radius:8px}.body{padding:36px 40px}.meta{display:flex;justify-content:space-between;margin-bottom:28px;gap:20px}.meta-block h3{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:5px}.meta-block p{font-size:15px;font-weight:600}.meta-block .sub{font-size:13px;font-weight:400;color:#64748b}.badge{display:inline-block;padding:3px 12px;border-radius:99px;font-size:12px;font-weight:700;text-transform:capitalize}.active{background:#dcfce7;color:#16a34a}.completed{background:#dbeafe;color:#1d4ed8}table{width:100%;border-collapse:collapse;margin-bottom:20px}thead tr{background:#f1f5f9}thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b}tbody td{padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:14px}.total-row td{padding:14px 12px;font-size:16px;font-weight:800;color:#059669;border-top:2px solid #e2e8f0}.footer{text-align:center;color:#94a3b8;font-size:12px;padding:18px 40px;border-top:1px solid #f1f5f9}@media print{body{background:#fff}.page{box-shadow:none;margin:0;border-radius:0}}</style></head><body>
 <div class="page">
   <div class="header">
     <h1>MediCare Hospital</h1>
-    <p>123 Health Avenue, New Delhi – 110001 &nbsp;|&nbsp; pharmacy@medicare.in &nbsp;|&nbsp; +91 11 2345 6789</p>
-    <div class="rx-id">${rx.rxId}</div>
+    <p>123 Health Avenue, New Delhi – 110001 &nbsp;|&nbsp; billing@medicare.in &nbsp;|&nbsp; +91 11 2345 6789</p>
+    <div class="invoice-id">${inv.invoiceId}</div>
   </div>
   <div class="body">
     <div class="meta">
       <div class="meta-block">
         <h3>Patient</h3>
-        <p>${rx.patientName}</p>
-        <p class="sub">Patient ID: ${rx.patientId}</p>
+        <p>${inv.patientName}</p>
+        <p class="sub">Patient ID: ${inv.patientId}</p>
       </div>
       <div class="meta-block">
         <h3>Prescribed By</h3>
-        <p>${rx.doctorName}</p>
-        <p class="sub">Doctor ID: ${rx.doctorId}</p>
+        <p>${inv.doctorName}</p>
+        <p class="sub">Doctor ID: ${inv.doctorId}</p>
       </div>
       <div class="meta-block" style="text-align:right">
         <h3>Date</h3>
-        <p>${rx.date}</p>
-        <div style="margin-top:8px"><span class="badge ${rx.status}">${rx.status}</span></div>
+        <p>${inv.date}</p>
+        <div style="margin-top:8px"><span class="badge ${inv.status}">${inv.status}</span></div>
       </div>
     </div>
     <table>
@@ -608,12 +327,11 @@ export default function PrescriptionPage() {
         ${medRows}
         <tr class="total-row">
           <td colspan="5">Total Amount</td>
-          <td style="text-align:right">₹${rx.totalAmount.toLocaleString()}</td>
+          <td style="text-align:right">₹${inv.totalAmount.toLocaleString()}</td>
         </tr>
       </tbody>
     </table>
-    ${rx.notes ? `<div class="notes"><strong>Instructions:</strong> ${rx.notes}</div>` : ''}
-    <p style="font-size:12px;color:#64748b;margin-top:8px">This prescription is valid for 30 days from the date of issue.</p>
+    <p style="font-size:12px;color:#64748b;margin-top:8px">This invoice is valid for 30 days from the date of issue.</p>
   </div>
   <div class="footer">Thank you for choosing MediCare Hospital &nbsp;•&nbsp; Get well soon!</div>
 </div>
@@ -626,26 +344,23 @@ export default function PrescriptionPage() {
     setTimeout(() => win.print(), 300);
   };
 
-  // ── Export ──────────────────────────────────────────────────────────────────
+  // ── Export Functions ──────────────────────────────────────────────────────
   const exportToExcel = () => {
-    const headers = ['Rx ID', 'Patient', 'Patient ID', 'Doctor', 'Doctor ID', 'Date', 'Status', 'Medicines', 'Total Amount', 'Notes'];
-    const rows = filtered.map(rx => [
-      rx.rxId,
-      `"${rx.patientName}"`,
-      rx.patientId,
-      `"${rx.doctorName}"`,
-      rx.doctorId,
-      rx.date,
-      rx.status,
-      `"${rx.medicines.map(m => m.name).join(', ')}"`,
-      rx.totalAmount,
-      `"${rx.notes || ''}"`,
+    const headers = ['Invoice ID', 'Patient', 'Doctor', 'Date', 'Medicines', 'Total', 'Status'];
+    const rows = filtered.map(inv => [
+      inv.invoiceId,
+      `"${inv.patientName}"`,
+      `"${inv.doctorName}"`,
+      inv.date,
+      `"${inv.medicines.map(m => MEDICINE_OPTIONS.find(o => o.id === m.medicineId)?.name || `Med #${m.medicineId}`).join(', ')}"`,
+      inv.totalAmount,
+      inv.status,
     ].join(','));
     const csv = [headers.join(','), ...rows].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `prescriptions_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `invoices_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -653,15 +368,15 @@ export default function PrescriptionPage() {
   };
 
   const exportToPDF = () => {
-    const rows = filtered.map(rx =>
-      `<tr><td>${rx.rxId}</td><td>${rx.patientName}</td><td>${rx.doctorName}</td><td>${rx.date}</td><td>${rx.medicines.length} med(s)</td><td>₹${rx.totalAmount.toLocaleString()}</td><td>${rx.status}</td></tr>`
+    const rows = filtered.map(inv =>
+      `<tr><td>${inv.invoiceId}</td><td>${inv.patientName}</td><td>${inv.doctorName}</td><td>${inv.date}</td><td>${inv.medicines.length} med(s)</td><td>₹${inv.totalAmount.toLocaleString()}</td><td>${inv.status}</td></tr>`
     ).join('');
-    const html = `<!DOCTYPE html><html><head><title>Prescriptions Report</title>
-<style>body{font-family:Arial,sans-serif;margin:30px}h1{color:#059669;text-align:center}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#059669;color:#fff;padding:10px;text-align:left;font-size:13px}td{padding:9px 10px;border-bottom:1px solid #ddd;font-size:13px}tr:hover{background:#f5f5f5}</style>
+    const html = `<!DOCTYPE html><html><head><title>Invoices Report</title>
+<style>body{font-family:Arial,sans-serif;margin:30px}h1{color:#059669;text-align:center}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#059669;color:#fff;padding:10px;text-align:left}td{padding:9px 10px;border-bottom:1px solid #ddd}tr:hover{background:#f5f5f5}</style>
 </head><body>
-<h1>MediCare – Prescriptions Report</h1>
+<h1>MediCare – Invoices Report</h1>
 <p style="text-align:center;color:#64748b">Generated: ${new Date().toLocaleDateString('en-IN')} | Total: ${filtered.length} records</p>
-<table><thead><tr><th>Rx ID</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Medicines</th><th>Amount</th><th>Status</th></tr></thead>
+<table><thead><tr><th>Invoice ID</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Medicines</th><th>Amount</th><th>Status</th></tr></thead>
 <tbody>${rows}</tbody></table></body></html>`;
     const win = window.open('', '', 'height=600,width=1000');
     win.document.write(html);
@@ -670,37 +385,58 @@ export default function PrescriptionPage() {
     setTimeout(() => { win.print(); setShowExportMenu(false); }, 250);
   };
 
-  // ── Share ───────────────────────────────────────────────────────────────────
-  const handleCopy = rx => {
-    const text = `Prescription ${rx.rxId}\nPatient: ${rx.patientName}\nDoctor: ${rx.doctorName}\nDate: ${rx.date}\nMedicines: ${rx.medicines.map(m => `${m.name} (${m.strength}, ${m.quantity} ${m.type})`).join(', ')}\nTotal: ₹${rx.totalAmount.toLocaleString()}`;
+  // ── Share Functions ───────────────────────────────────────────────────────
+  const handleCopy = (inv) => {
+    const text = `Invoice ${inv.invoiceId}\nPatient: ${inv.patientName}\nDoctor: ${inv.doctorName}\nDate: ${inv.date}\nTotal: ₹${inv.totalAmount.toLocaleString()}`;
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
   };
 
-  // ── Status badge ─────────────────────────────────────────────────────────────
-  const statusBadge = status => status === 'active'
-    ? 'bg-green-100 text-green-700'
-    : 'bg-blue-100 text-blue-700';
+  // ── Status Badge ──────────────────────────────────────────────────────────
+  const statusBadge = (status) => {
+    const statusLower = (status || '').toLowerCase();
+    switch(statusLower) {
+      case 'paid':
+      case 'active':
+        return 'bg-green-100 text-green-700';
+      case 'pending':
+        return 'bg-amber-100 text-amber-700';
+      case 'cancelled':
+        return 'bg-red-100 text-red-700';
+      case 'completed':
+        return 'bg-blue-100 text-blue-700';
+      default:
+        return 'bg-slate-100 text-slate-700';
+    }
+  };
 
-  // ── Render ──────────────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // RENDER
+  // ══════════════════════════════════════════════════════════════════════════
   return (
     <div className="p-8">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-[100] bg-slate-800 text-white px-5 py-3 rounded-xl shadow-xl text-sm font-medium">
+          {toast}
+        </div>
+      )}
 
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-4xl font-bold text-slate-800 mb-2">Prescriptions</h1>
-            <p className="text-slate-600">Manage and track patient prescriptions</p>
+            <h1 className="text-4xl font-bold text-slate-800 mb-2">Billing & Invoices</h1>
+            <p className="text-slate-600">Manage patient invoices and prescriptions</p>
           </div>
           <div className="flex gap-3">
             {/* Export */}
             <div className="relative">
               <button
                 onClick={() => setShowExportMenu(v => !v)}
-                className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 text-slate-700 font-medium shadow-sm hover:shadow-md"
+                className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 text-slate-700 font-medium shadow-sm"
               >
                 <Download className="w-4 h-4" /> Export <ChevronDown className="w-4 h-4" />
               </button>
@@ -720,7 +456,7 @@ export default function PrescriptionPage() {
               onClick={() => setShowAddModal(true)}
               className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all flex items-center gap-2 font-semibold shadow-lg"
             >
-              <Plus className="w-5 h-5" /> New Prescription
+              <Plus className="w-5 h-5" /> New Invoice
             </button>
           </div>
         </div>
@@ -728,9 +464,9 @@ export default function PrescriptionPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total Prescriptions', value: stats.total, color: 'text-slate-800' },
-            { label: 'Active', value: stats.active, color: 'text-green-600' },
-            { label: 'Completed', value: stats.completed, color: 'text-blue-600' },
+            { label: 'Total Invoices', value: stats.total, color: 'text-slate-800' },
+            { label: 'Paid', value: stats.paid, color: 'text-green-600' },
+            { label: 'Pending', value: stats.pending, color: 'text-amber-600' },
             { label: 'Total Medicines', value: stats.totalMeds, color: 'text-emerald-600' },
           ].map(s => (
             <div key={s.label} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
@@ -741,155 +477,169 @@ export default function PrescriptionPage() {
         </div>
       </div>
 
-      {/* ── Search / Filter ─────────────────────────────────────────────────── */}
+      {/* Search / Filter */}
       <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 mb-6">
         <div className="flex gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search by Rx ID, patient, or doctor..."
+              placeholder="Search by invoice ID, patient, or doctor..."
               value={searchTerm}
-              onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
               className="w-full pl-12 pr-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700"
             />
           </div>
           <select
             value={filterStatus}
-            onChange={e => { setFilterStatus(e.target.value); setCurrentPage(1); }}
-            className="px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 font-medium cursor-pointer"
+            onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }}
+            className="px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 text-slate-700 font-medium cursor-pointer"
           >
             <option value="all">All Status</option>
-            <option value="active">Active</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
             <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
           </select>
         </div>
       </div>
 
-      {/* ── Table ───────────────────────────────────────────────────────────── */}
+      {/* Table */}
       <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden mb-6">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-200">
-              <tr>
-                {['Rx ID', 'Patient', 'Doctor', 'Date', 'Medicines', 'Total', 'Status', 'Actions'].map(h => (
-                  <th key={h} className={`px-6 py-4 text-left font-semibold text-slate-700 ${h === 'Actions' ? 'text-center' : ''}`}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {paginated.length > 0 ? paginated.map(rx => (
-                <tr key={rx.id} className="hover:bg-emerald-50/40 transition-colors">
-                  {/* Rx ID */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                      <span className="font-semibold text-slate-800">{rx.rxId}</span>
-                    </div>
-                  </td>
-                  {/* Patient */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                        {rx.patientName.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-slate-800 text-sm">{rx.patientName}</p>
-                        <p className="text-xs text-slate-500">ID: {rx.patientId}</p>
-                      </div>
-                    </div>
-                  </td>
-                  {/* Doctor */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <Stethoscope className="w-4 h-4 text-teal-500 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-slate-700 text-sm">{rx.doctorName}</p>
-                        <p className="text-xs text-slate-500">ID: {rx.doctorId}</p>
-                      </div>
-                    </div>
-                  </td>
-                  {/* Date */}
-                  <td className="px-6 py-4 text-slate-600 text-sm">{rx.date}</td>
-                  {/* Medicines */}
-                  <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-1">
-                      {rx.medicines.slice(0, 2).map((m, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded text-xs font-medium border border-emerald-100">
-                          {m.name || `Med #${m.medicineId}`}
-                        </span>
-                      ))}
-                      {rx.medicines.length > 2 && (
-                        <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs font-medium">+{rx.medicines.length - 2}</span>
-                      )}
-                    </div>
-                  </td>
-                  {/* Total */}
-                  <td className="px-6 py-4">
-                    <span className="font-bold text-slate-800">₹{rx.totalAmount.toLocaleString()}</span>
-                  </td>
-                  {/* Status */}
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize flex items-center gap-1.5 w-fit ${statusBadge(rx.status)}`}>
-                      {rx.status === 'active' ? <CheckCircle className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
-                      {rx.status}
-                    </span>
-                  </td>
-                  {/* Actions */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-center gap-1">
-                      <button
-                        onClick={() => { setSelectedRx(rx); setShowViewModal(true); }}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="View Details"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handlePrint(rx)}
-                        className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-                        title="Print / Download"
-                      >
-                        <Printer className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => { setSelectedRx(rx); setShowShareModal(true); }}
-                        className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                        title="Share"
-                      >
-                        <Send className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )) : (
+        {loading ? (
+          <div className="py-16 text-center">
+            <Loader2 className="w-8 h-8 animate-spin text-emerald-500 mx-auto mb-2" />
+            <p className="text-slate-400 text-sm">Loading invoices...</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-200">
                 <tr>
-                  <td colSpan={8} className="py-16 text-center">
-                    <Pill className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                    <p className="text-slate-500 font-medium">No prescriptions found</p>
-                    <p className="text-slate-400 text-sm mt-1">Try adjusting your search or filters</p>
-                  </td>
+                  {['Invoice ID', 'Patient', 'Doctor', 'Date', 'Medicines', 'Total', 'Status', 'Actions'].map(h => (
+                    <th key={h} className={`px-6 py-4 text-left font-semibold text-slate-700 ${h === 'Actions' ? 'text-center' : ''}`}>{h}</th>
+                  ))}
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {paginated.length > 0 ? paginated.map(inv => (
+                  <tr key={inv.id} className="hover:bg-emerald-50/40 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                        <span className="font-semibold text-slate-800">{inv.invoiceId}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                          {inv.patientName.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-800 text-sm">{inv.patientName}</p>
+                          <p className="text-xs text-slate-500">ID: {inv.patientId}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <Stethoscope className="w-4 h-4 text-teal-500 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-slate-700 text-sm">{inv.doctorName}</p>
+                          <p className="text-xs text-slate-500">ID: {inv.doctorId}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-slate-600 text-sm">{inv.date}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1">
+                        {inv.medicines.slice(0, 2).map((m, i) => (
+                          <span key={i} className="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded text-xs font-medium border border-emerald-100">
+                            {MEDICINE_OPTIONS.find(o => o.id === m.medicineId)?.name || `Med #${m.medicineId}`}
+                          </span>
+                        ))}
+                        {inv.medicines.length > 2 && (
+                          <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs font-medium">+{inv.medicines.length - 2}</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="font-bold text-slate-800">₹{inv.totalAmount.toLocaleString()}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize flex items-center gap-1.5 w-fit ${statusBadge(inv.status)}`}>
+                        {inv.status === 'active' ? <CheckCircle className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
+                        {inv.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center gap-1">
+                        <button
+                          onClick={() => { setSelectedInvoice(inv); setShowViewModal(true); }}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="View"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handlePrint(inv)}
+                          className="p-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+                          title="Print"
+                        >
+                          <Printer className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => { setSelectedInvoice(inv); setShowShareModal(true); }}
+                          className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                          title="Share"
+                        >
+                          <Send className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleEditClick(inv)}
+                          className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                          title="Edit"
+                        >
+                          <FileText className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => { setSelectedInvoice(inv); setShowDeleteModal(true); }}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={8} className="py-16 text-center">
+                      <Pill className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                      <p className="text-slate-500 font-medium">No invoices found</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
-      {/* ── Pagination ──────────────────────────────────────────────────────── */}
-      {totalPages > 1 && (
+      {/* Pagination */}
+      {totalPagesFiltered > 1 && (
         <div className="bg-white rounded-2xl shadow-lg border border-slate-100 px-6 py-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-slate-600">
-              Showing <span className="font-semibold text-slate-800">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> –{' '}
-              <span className="font-semibold text-slate-800">{Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)}</span> of{' '}
-              <span className="font-semibold text-slate-800">{filtered.length}</span> results
+              Showing <span className="font-semibold">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> –{' '}
+              <span className="font-semibold">{Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)}</span> of{' '}
+              <span className="font-semibold">{filtered.length}</span>
             </p>
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className={`p-2 rounded-lg transition-all ${currentPage === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200'}`}
+                className={`p-2 rounded-lg transition-all ${currentPage === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 border border-slate-200'}`}
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -900,16 +650,16 @@ export default function PrescriptionPage() {
                   <button
                     key={p}
                     onClick={() => setCurrentPage(p)}
-                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${currentPage === p ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200'}`}
+                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${currentPage === p ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md' : 'text-slate-600 hover:bg-emerald-50 border border-slate-200'}`}
                   >
                     {p}
                   </button>
                 )
               )}
               <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className={`p-2 rounded-lg transition-all ${currentPage === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200'}`}
+                onClick={() => setCurrentPage(p => Math.min(totalPagesFiltered, p + 1))}
+                disabled={currentPage === totalPagesFiltered}
+                className={`p-2 rounded-lg transition-all ${currentPage === totalPagesFiltered ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 border border-slate-200'}`}
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -918,61 +668,18 @@ export default function PrescriptionPage() {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════════════════════════════
-          MODAL: Add Prescription
-      ══════════════════════════════════════════════════════════════════════ */}
-      <Modal isOpen={showAddModal} onClose={() => { setShowAddModal(false); resetForm(); }} title="New Prescription" size="lg">
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Patient + Doctor */}
+      {/* MODALS - Add, Edit, View, Delete, Share */}
+      {/* Add Modal */}
+      <Modal isOpen={showAddModal} onClose={() => { setShowAddModal(false); resetForm(); }} title="New Invoice" size="lg">
+        <form onSubmit={handleCreate} className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient ID *</label>
-              <input
-                type="number" name="patientId" value={form.patientId} onChange={handleFormChange} required
-                className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
-                placeholder="e.g. 3"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient Name *</label>
-              <input
-                type="text" name="patientName" value={form.patientName} onChange={handleFormChange} required
-                className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
-                placeholder="Patient full name"
-              />
+              <input type="number" name="patientId" value={form.patientId} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="e.g. 3" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Doctor ID *</label>
-              <input
-                type="number" name="doctorId" value={form.doctorId} onChange={handleFormChange} required
-                className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
-                placeholder="e.g. 1"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Doctor Name *</label>
-              <input
-                type="text" name="doctorName" value={form.doctorName} onChange={handleFormChange} required
-                className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
-                placeholder="Doctor full name"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Date *</label>
-              <input
-                type="date" name="date" value={form.date} onChange={handleFormChange} required
-                className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Status</label>
-              <select
-                name="status" value={form.status} onChange={handleFormChange}
-                className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
-              >
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
-              </select>
+              <input type="number" name="doctorId" value={form.doctorId} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="e.g. 1" />
             </div>
           </div>
 
@@ -985,7 +692,6 @@ export default function PrescriptionPage() {
               </button>
             </div>
             <div className="space-y-2">
-              {/* Header */}
               <div className="grid grid-cols-12 gap-2 px-1">
                 {['Medicine ID', 'Type', 'Strength', 'Qty', 'Price (₹)', ''].map((h, i) => (
                   <div key={h} className={`text-xs font-semibold text-slate-400 uppercase tracking-wider ${i === 0 ? 'col-span-2' : i === 5 ? 'col-span-1' : 'col-span-2'}`}>{h}</div>
@@ -993,42 +699,19 @@ export default function PrescriptionPage() {
               </div>
               {form.medicines.map((med, idx) => (
                 <div key={idx} className="grid grid-cols-12 gap-2 items-center bg-slate-50 rounded-xl p-2">
-                  <input
-                    type="number" placeholder="Med ID" value={med.medicineId}
-                    onChange={e => handleMedChange(idx, 'medicineId', e.target.value)}
-                    className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full"
-                  />
-                  <select
-                    value={med.type} onChange={e => handleMedChange(idx, 'type', e.target.value)}
-                    className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full"
-                  >
+                  <input type="number" placeholder="Med ID" value={med.medicineId} onChange={e => handleMedChange(idx, 'medicineId', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full" />
+                  <select value={med.type} onChange={e => handleMedChange(idx, 'type', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full">
                     {MEDICINE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
-                  <input
-                    type="text" placeholder="e.g. 500mg" value={med.strength}
-                    onChange={e => handleMedChange(idx, 'strength', e.target.value)}
-                    className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full"
-                  />
-                  <input
-                    type="number" placeholder="Qty" value={med.quantity} min="1"
-                    onChange={e => handleMedChange(idx, 'quantity', e.target.value)}
-                    className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full"
-                  />
-                  <input
-                    type="number" placeholder="Price" value={med.price} min="0"
-                    onChange={e => handleMedChange(idx, 'price', e.target.value)}
-                    className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full"
-                  />
-                  <button
-                    type="button" onClick={() => removeMedRow(idx)}
-                    className="col-span-1 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center"
-                  >
+                  <input type="text" placeholder="e.g. 500mg" value={med.strength} onChange={e => handleMedChange(idx, 'strength', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full" />
+                  <input type="number" placeholder="Qty" value={med.quantity} min="1" onChange={e => handleMedChange(idx, 'quantity', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full" />
+                  <input type="number" placeholder="Price" value={med.price} min="0" onChange={e => handleMedChange(idx, 'price', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full" />
+                  <button type="button" onClick={() => removeMedRow(idx)} className="col-span-1 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ))}
             </div>
-            {/* Total */}
             <div className="flex justify-end mt-3">
               <div className="bg-emerald-50 rounded-xl px-5 py-2.5 border border-emerald-200">
                 <span className="text-sm text-emerald-700 font-medium">Total: </span>
@@ -1037,47 +720,105 @@ export default function PrescriptionPage() {
             </div>
           </div>
 
-          {/* Notes */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Instructions / Notes</label>
-            <textarea
-              name="notes" value={form.notes} onChange={handleFormChange} rows={2}
-              placeholder="e.g. Take after meals. Avoid alcohol."
-              className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm resize-none"
-            />
-          </div>
-
-          {/* Buttons */}
           <div className="flex gap-3 pt-2">
-            <button
-              type="button" onClick={() => { setShowAddModal(false); resetForm(); }}
-              className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit" disabled={isSubmitting}
-              className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg disabled:opacity-60"
-            >
-              {isSubmitting ? 'Creating...' : 'Create Prescription'}
+            <button type="button" onClick={() => { setShowAddModal(false); resetForm(); }} className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">Cancel</button>
+            <button type="submit" disabled={isSubmitting} className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg disabled:opacity-60">
+              {isSubmitting ? 'Creating...' : 'Create Invoice'}
             </button>
           </div>
         </form>
       </Modal>
 
-      {/* ══════════════════════════════════════════════════════════════════════
-          MODAL: View Prescription
-      ══════════════════════════════════════════════════════════════════════ */}
-      <Modal isOpen={showViewModal} onClose={() => setShowViewModal(false)} title="Prescription Details" size="md">
-        {selectedRx && (
+      {/* Edit Modal */}
+      <Modal isOpen={showEditModal} onClose={() => { setShowEditModal(false); resetForm(); }} title="Edit Invoice" size="lg">
+        <form onSubmit={handleUpdate} className="space-y-5">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient ID *</label>
+              <input type="number" name="patientId" value={form.patientId} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Doctor ID *</label>
+              <input type="number" name="doctorId" value={form.doctorId} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" />
+            </div>
+          </div>
+
+          {/* Medicines */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Medicines *</label>
+              <button type="button" onClick={addMedRow} className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                <Plus className="w-3.5 h-3.5" /> Add Medicine
+              </button>
+            </div>
+            <div className="space-y-2">
+              <div className="grid grid-cols-12 gap-2 px-1">
+                {['Medicine ID', 'Type', 'Strength', 'Qty', 'Price (₹)', ''].map((h, i) => (
+                  <div key={h} className={`text-xs font-semibold text-slate-400 uppercase tracking-wider ${i === 0 ? 'col-span-2' : i === 5 ? 'col-span-1' : 'col-span-2'}`}>{h}</div>
+                ))}
+              </div>
+              {form.medicines.map((med, idx) => (
+                <div key={idx} className="grid grid-cols-12 gap-2 items-center bg-slate-50 rounded-xl p-2">
+                  <input type="number" placeholder="Med ID" value={med.medicineId} onChange={e => handleMedChange(idx, 'medicineId', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full" />
+                  <select value={med.type} onChange={e => handleMedChange(idx, 'type', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full">
+                    {MEDICINE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                  <input type="text" placeholder="e.g. 500mg" value={med.strength} onChange={e => handleMedChange(idx, 'strength', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full" />
+                  <input type="number" placeholder="Qty" value={med.quantity} min="1" onChange={e => handleMedChange(idx, 'quantity', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full" />
+                  <input type="number" placeholder="Price" value={med.price} min="0" onChange={e => handleMedChange(idx, 'price', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full" />
+                  <button type="button" onClick={() => removeMedRow(idx)} className="col-span-1 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end mt-3">
+              <div className="bg-emerald-50 rounded-xl px-5 py-2.5 border border-emerald-200">
+                <span className="text-sm text-emerald-700 font-medium">Total: </span>
+                <span className="text-lg font-bold text-emerald-700">₹{formTotal.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={() => { setShowEditModal(false); resetForm(); }} className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">Cancel</button>
+            <button type="submit" disabled={isSubmitting} className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg disabled:opacity-60">
+              {isSubmitting ? 'Updating...' : 'Update Invoice'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} title="Delete Invoice" size="sm">
+        <div className="text-center space-y-4">
+          <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+            <Trash2 className="w-6 h-6 text-red-500" />
+          </div>
+          <div>
+            <p className="text-slate-700 font-semibold">Delete Invoice #{selectedInvoice?.invoiceId}?</p>
+            <p className="text-slate-500 text-sm mt-1">This action cannot be undone.</p>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">Cancel</button>
+            <button onClick={handleDelete} disabled={isSubmitting} className="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
+              {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+              Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* View Modal */}
+      <Modal isOpen={showViewModal} onClose={() => setShowViewModal(false)} title="Invoice Details" size="md">
+        {selectedInvoice && (
           <div className="space-y-4">
-            {/* Top info */}
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label: 'Rx ID', value: selectedRx.rxId },
-                { label: 'Date', value: selectedRx.date },
-                { label: 'Patient', value: `${selectedRx.patientName} (ID: ${selectedRx.patientId})` },
-                { label: 'Doctor', value: `${selectedRx.doctorName} (ID: ${selectedRx.doctorId})` },
+                { label: 'Invoice ID', value: selectedInvoice.invoiceId },
+                { label: 'Date', value: selectedInvoice.date },
+                { label: 'Patient', value: `${selectedInvoice.patientName} (ID: ${selectedInvoice.patientId})` },
+                { label: 'Doctor', value: `${selectedInvoice.doctorName} (ID: ${selectedInvoice.doctorId})` },
               ].map(row => (
                 <div key={row.label} className="bg-slate-50 rounded-xl px-4 py-3">
                   <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{row.label}</p>
@@ -1086,15 +827,13 @@ export default function PrescriptionPage() {
               ))}
             </div>
 
-            {/* Status */}
             <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</p>
-              <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${statusBadge(selectedRx.status)}`}>
-                {selectedRx.status}
+              <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${statusBadge(selectedInvoice.status)}`}>
+                {selectedInvoice.status}
               </span>
             </div>
 
-            {/* Medicines table */}
             <div>
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Medicines</p>
               <div className="rounded-xl overflow-hidden border border-slate-200">
@@ -1107,9 +846,9 @@ export default function PrescriptionPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {selectedRx.medicines.map((m, i) => (
+                    {selectedInvoice.medicines.map((m, i) => (
                       <tr key={i} className="hover:bg-slate-50">
-                        <td className="px-3 py-2.5 font-medium text-slate-800">{m.name || `Med #${m.medicineId}`}</td>
+                        <td className="px-3 py-2.5 font-medium text-slate-800">{MEDICINE_OPTIONS.find(o => o.id === m.medicineId)?.name || `Med #${m.medicineId}`}</td>
                         <td className="px-3 py-2.5 text-slate-600 capitalize">{m.type}</td>
                         <td className="px-3 py-2.5 text-slate-600">{m.strength}</td>
                         <td className="px-3 py-2.5 text-slate-600">{m.quantity}</td>
@@ -1121,33 +860,18 @@ export default function PrescriptionPage() {
                   <tfoot>
                     <tr className="bg-emerald-50">
                       <td colSpan={5} className="px-3 py-2.5 font-bold text-slate-700">Total Amount</td>
-                      <td className="px-3 py-2.5 font-bold text-emerald-700">₹{selectedRx.totalAmount.toLocaleString()}</td>
+                      <td className="px-3 py-2.5 font-bold text-emerald-700">₹{selectedInvoice.totalAmount.toLocaleString()}</td>
                     </tr>
                   </tfoot>
                 </table>
               </div>
             </div>
 
-            {/* Notes */}
-            {selectedRx.notes && (
-              <div className="bg-emerald-50 border-l-4 border-emerald-400 rounded-r-xl px-4 py-3">
-                <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">Instructions</p>
-                <p className="text-sm text-slate-700">{selectedRx.notes}</p>
-              </div>
-            )}
-
-            {/* Action buttons */}
             <div className="flex gap-3 pt-1">
-              <button
-                onClick={() => handlePrint(selectedRx)}
-                className="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
-              >
+              <button onClick={() => handlePrint(selectedInvoice)} className="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors flex items-center justify-center gap-2">
                 <Printer className="w-4 h-4" /> Print
               </button>
-              <button
-                onClick={() => { setShowViewModal(false); setShowShareModal(true); }}
-                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg flex items-center justify-center gap-2"
-              >
+              <button onClick={() => { setShowViewModal(false); setShowShareModal(true); }} className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg flex items-center justify-center gap-2">
                 <Send className="w-4 h-4" /> Share
               </button>
             </div>
@@ -1155,101 +879,53 @@ export default function PrescriptionPage() {
         )}
       </Modal>
 
-      {/* ══════════════════════════════════════════════════════════════════════
-          MODAL: Share Prescription
-      ══════════════════════════════════════════════════════════════════════ */}
-      <Modal isOpen={showShareModal} onClose={() => setShowShareModal(false)} title="Share Prescription" size="sm">
-        {selectedRx && (
+      {/* Share Modal */}
+      <Modal isOpen={showShareModal} onClose={() => setShowShareModal(false)} title="Share Invoice" size="sm">
+        {selectedInvoice && (
           <div className="space-y-4">
-            {/* Preview card */}
             <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {selectedRx.patientName.charAt(0)}
+                  {selectedInvoice.patientName.charAt(0)}
                 </div>
                 <div>
-                  <p className="font-bold text-slate-800">{selectedRx.rxId}</p>
-                  <p className="text-xs text-slate-500">{selectedRx.patientName} · {selectedRx.date}</p>
+                  <p className="font-bold text-slate-800">{selectedInvoice.invoiceId}</p>
+                  <p className="text-xs text-slate-500">{selectedInvoice.patientName} · {selectedInvoice.date}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">{selectedRx.medicines.length} medicine(s)</span>
-                <span className="font-bold text-emerald-700">₹{selectedRx.totalAmount.toLocaleString()}</span>
+                <span className="text-slate-600">{selectedInvoice.medicines.length} medicine(s)</span>
+                <span className="font-bold text-emerald-700">₹{selectedInvoice.totalAmount.toLocaleString()}</span>
               </div>
             </div>
 
-            {/* Share options */}
             <div className="space-y-2">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Share via</p>
-
-              {/* Copy */}
-              <button
-                onClick={() => handleCopy(selectedRx)}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition-colors border border-slate-200 hover:border-emerald-200"
-              >
+              
+              <button onClick={() => handleCopy(selectedInvoice)} className="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition-colors border border-slate-200">
                 <div className="w-9 h-9 bg-slate-200 rounded-lg flex items-center justify-center">
                   {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-slate-600" />}
                 </div>
                 <div className="text-left">
                   <p className="font-semibold text-slate-700 text-sm">{copied ? 'Copied!' : 'Copy Details'}</p>
-                  <p className="text-xs text-slate-400">Copy prescription summary to clipboard</p>
+                  <p className="text-xs text-slate-400">Copy invoice summary</p>
                 </div>
               </button>
 
-              {/* Print */}
-              <button
-                onClick={() => handlePrint(selectedRx)}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition-colors border border-slate-200 hover:border-emerald-200"
-              >
+              <button onClick={() => handlePrint(selectedInvoice)} className="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition-colors border border-slate-200">
                 <div className="w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center">
                   <Printer className="w-4 h-4 text-blue-600" />
                 </div>
                 <div className="text-left">
                   <p className="font-semibold text-slate-700 text-sm">Print / Download PDF</p>
-                  <p className="text-xs text-slate-400">Open print dialog to save as PDF</p>
+                  <p className="text-xs text-slate-400">Open print dialog</p>
                 </div>
               </button>
-
-              {/* WhatsApp */}
-              <a
-                href={`https://wa.me/?text=${encodeURIComponent(`Prescription ${selectedRx.rxId}\nPatient: ${selectedRx.patientName}\nDoctor: ${selectedRx.doctorName}\nDate: ${selectedRx.date}\nMedicines: ${selectedRx.medicines.map(m => `${m.name || 'Medicine'} (${m.strength}, ${m.quantity} ${m.type})`).join(', ')}\nTotal: ₹${selectedRx.totalAmount.toLocaleString()}\n\nFor more details, contact MediCare Hospital.`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-green-50 rounded-xl transition-colors border border-slate-200 hover:border-green-200"
-              >
-                <div className="w-9 h-9 bg-green-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.122 1.526 5.854L0 24l6.293-1.497A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.497-5.195-1.367L2.7 21.7l1.09-4.008A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-                  </svg>
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold text-slate-700 text-sm">Share on WhatsApp</p>
-                  <p className="text-xs text-slate-400">Send prescription details via WhatsApp</p>
-                </div>
-              </a>
-
-              {/* Email */}
-              <a
-                href={`mailto:?subject=Prescription ${selectedRx.rxId} – MediCare Hospital&body=${encodeURIComponent(`Dear Patient,\n\nPlease find your prescription details below:\n\nRx ID: ${selectedRx.rxId}\nPatient: ${selectedRx.patientName}\nDoctor: ${selectedRx.doctorName}\nDate: ${selectedRx.date}\n\nMedicines:\n${selectedRx.medicines.map(m => `- ${m.name || 'Medicine'} | ${m.type} | ${m.strength} | Qty: ${m.quantity} | ₹${m.price}`).join('\n')}\n\nTotal Amount: ₹${selectedRx.totalAmount.toLocaleString()}\n${selectedRx.notes ? `\nInstructions: ${selectedRx.notes}` : ''}\n\nThis prescription is valid for 30 days.\n\nRegards,\nMediCare Hospital`)}`}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-blue-50 rounded-xl transition-colors border border-slate-200 hover:border-blue-200"
-              >
-                <div className="w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold text-slate-700 text-sm">Send via Email</p>
-                  <p className="text-xs text-slate-400">Open email client with prescription details</p>
-                </div>
-              </a>
             </div>
           </div>
         )}
       </Modal>
 
-      {/* Click outside to close export menu */}
       {showExportMenu && <div className="fixed inset-0 z-0" onClick={() => setShowExportMenu(false)} />}
     </div>
   );
