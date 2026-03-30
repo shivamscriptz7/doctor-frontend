@@ -267,14 +267,7 @@ export async function deleteBedApi(id: number) {
 }
 
 
-// for invoice
 
-export async function createInvoiceApi(data: any) {
-  return apiFetch('/invoice', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-}
 
 
 // for Department management
@@ -303,3 +296,79 @@ export async function deleteDepartmentApi(id: number) {
     method: 'DELETE',
   });
 }
+
+
+// for invoice
+
+export async function createInvoiceApi(data: any) {
+  return apiFetch('/invoice', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+
+
+export async function getInvoiceApi(limit = 10, page = 1) {
+  return apiFetch(`/invoice?limit=${limit}&page=${page}`);
+}
+
+
+export async function updateInvoiceApi(id: number, data: any) {
+  return apiFetch(`/invoice/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteInvoiceApi(id: number) {
+  return apiFetch(`/invoice/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+
+// dashboard
+
+export async function getCountApi(limit = 10, page = 1) {
+  return apiFetch(`/dashboard/count?limit=${limit}&page=${page}`);
+}
+export async function getRecentPatientApi(limit = 10, page = 1) {
+  return apiFetch(`/dashboard/recent-patient?limit=${limit}&page=${page}`);
+}
+export async function getRecentAppointmentApi(limit = 10, page = 1) {
+  return apiFetch(`/dashboard/recent-appointment?limit=${limit}&page=${page}`);
+}
+
+
+
+// doctor
+ 
+// ══════════════════════════════════════════════════════════════════════════════
+// DOCTOR APIs
+// ══════════════════════════════════════════════════════════════════════════════
+ 
+export async function getDoctorApi(limit = 10, page = 1) {
+  return apiFetch(`/doctor?limit=${limit}&page=${page}`);
+}
+ 
+export async function createDoctorApi(data: any) {
+  return apiFetch('/doctor', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+ 
+export async function updateDoctorApi(id: number, data: any) {
+  return apiFetch(`/doctor/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+ 
+export async function deleteDoctorApi(id: number) {
+  return apiFetch(`/doctor/${id}`, {
+    method: 'DELETE',
+  });
+}
+ 
