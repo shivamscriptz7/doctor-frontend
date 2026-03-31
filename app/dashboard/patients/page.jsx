@@ -36,7 +36,7 @@
 //     const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
 //     const city = cities[Math.floor(Math.random() * cities.length)];
 //     const area = areas[Math.floor(Math.random() * areas.length)];
-    
+
 //     const createdDate = new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
 //     const updatedDate = new Date(createdDate.getTime() + Math.random() * 90 * 24 * 60 * 60 * 1000);
 
@@ -69,7 +69,7 @@
 //       sortablePatients.sort((a, b) => {
 //         const aValue = a[sortConfig.key];
 //         const bValue = b[sortConfig.key];
-        
+
 //         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
 //         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
 //         return 0;
@@ -180,7 +180,7 @@
 //     printWindow.document.write(htmlContent);
 //     printWindow.document.close();
 //     printWindow.focus();
-    
+
 //     setTimeout(() => {
 //       printWindow.print();
 //       setShowExportMenu(false);
@@ -207,7 +207,7 @@
 //   const getPageNumbers = () => {
 //     const pageNumbers = [];
 //     const maxVisible = 5;
-    
+
 //     if (totalPages <= maxVisible) {
 //       for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
 //     } else {
@@ -252,7 +252,7 @@
 //                 Export
 //                 <ChevronDown className="w-4 h-4" />
 //               </button>
-              
+
 //               {showExportMenu && (
 //                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 z-10 overflow-hidden">
 //                   <button
@@ -528,13 +528,13 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { 
+import {
   Search, Filter, Download, ChevronDown, ChevronUp, ChevronsUpDown,
   User, Phone, Mail, MapPin, Calendar, Edit, Trash2, Eye, Plus, X, FileText, Sheet
 } from 'lucide-react';
 
-import {getPatients,createPatientApi,updatePatientApi,deletePatientApi} from '../../lib/commonApis';
- 
+import { getPatients, createPatientApi, updatePatientApi, deletePatientApi } from '../../lib/commonApis';
+
 // Modal Component
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   if (!isOpen) return null;
@@ -569,48 +569,52 @@ export default function PatientsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(15);
-  const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
   const [showFilters, setShowFilters] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
-  
+
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
-  
+
   // Form state
   const [formData, setFormData] = useState({
-  name: '',
-  phone: '',
-  address: '',
-  city: '',
-  state: '',
-  country: '',
-  pincode: '',
-});
+    name: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    country: '',
+    pincode: '',
+  });
 
 
-   useEffect(() => {
-  getPatients(10, 1)
-    .then(res => {
-      const apiPatients = res.data.data.map((item) => ({
-        id: item.id,
-        name: item.name,
-        phone: item.phone,
-        email: item.user?.email || '-',   // API me email nahi hai
-        address: `${item.address}, ${item.city}, ${item.state}, ${item.country} - ${item.pincode}`,
-        created_date: item.createdAt.split('T')[0],
-        updated_date: item.updatedAt.split('T')[0],
-      }));
+  useEffect(() => {
+    getPatients(10, 1)
+      .then(res => {
+        console.log(res, 'resssssssssss');
 
-      setPatients(apiPatients);
-    })
-    .catch(err => {
-      console.error(err.message);
-    });
-}, []);
+        const apiPatients = res.data.data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          phone: item.phone,
+          email: item.email || '-',   // API me email nahi hai
+          address: item.address,
+          created_date: item.createdAt.split('T')[0],
+          updated_date: item.updatedAt.split('T')[0],
+        }));
+
+        console.log(apiPatients, 'api patient data');
+
+        setPatients(apiPatients);
+      })
+      .catch(err => {
+        console.error(err.message);
+      });
+  }, []);
 
 
   // Handle form change
@@ -620,59 +624,55 @@ export default function PatientsPage() {
 
   // Add Patient
   const handleAddPatient = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    await createPatientApi(formData);
+    try {
+      await createPatientApi(formData);
 
-    // list refresh
-    const res = await getPatients(10, 1);
-    const apiPatients = res.data.data.map(mapPatient);
-    setPatients(apiPatients);
+      // list refresh
+      const res = await getPatients(10, 1);
+      const apiPatients = res.data.data.map(mapPatient);
+      setPatients(apiPatients);
 
-    setShowAddModal(false);
-    resetForm();
-  } catch (error) {
-    console.error(error);
-  }
-};
+      setShowAddModal(false);
+      resetForm();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
 
   // Edit Patient
   const handleEditClick = (patient) => {
-  setSelectedPatient(patient);
+    setSelectedPatient(patient);
 
-  setFormData({
-    name: patient.name,
-    phone: patient.phone,
-    address: patient.address.split(',')[0],
-    city: '',
-    state: '',
-    country: '',
-    pincode: '',
-  });
+    setFormData({
+      name: patient.name,
+      phone: patient.phone,
+      address: patient.address.split(',')[0]
+    });
 
-  setShowEditModal(true);
-};
+    setShowEditModal(true);
+  };
 
 
- const handleUpdatePatient = async (e) => {
-  e.preventDefault();
+  const handleUpdatePatient = async (e) => {
+    e.preventDefault();
 
-  try {
-    await updatePatientApi(selectedPatient.id, formData);
+    try {
+      await updatePatientApi(selectedPatient.id, formData);
 
-    const res = await getPatients(10, 1);
-    const apiPatients = res.data.data.map(mapPatient);
-    setPatients(apiPatients);
+      const res = await getPatients(10, 1);
+      const apiPatients = res.data.data.map(mapPatient);
+      setPatients(apiPatients);
 
-    setShowEditModal(false);
-    setSelectedPatient(null);
-    resetForm();
-  } catch (error) {
-    console.error(error);
-  }
-};
+      setShowEditModal(false);
+      setSelectedPatient(null);
+      resetForm();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
 
   // Delete Patient
@@ -688,21 +688,21 @@ export default function PatientsPage() {
   // };
 
   const handleDeletePatient = async () => {
-  if (!selectedPatient) return;
+    if (!selectedPatient) return;
 
-  try {
-    await deletePatientApi(selectedPatient.id);
+    try {
+      await deletePatientApi(selectedPatient.id);
 
-    setPatients(prev =>
-      prev.filter(p => p.id !== selectedPatient.id)
-    );
+      setPatients(prev =>
+        prev.filter(p => p.id !== selectedPatient.id)
+      );
 
-    setShowDeleteModal(false);
-    setSelectedPatient(null);
-  } catch (error) {
-    alert(error.message || 'Failed to delete patient');
-  }
-};
+      setShowDeleteModal(false);
+      setSelectedPatient(null);
+    } catch (error) {
+      alert(error.message || 'Failed to delete patient');
+    }
+  };
 
 
   // View Patient
@@ -712,26 +712,26 @@ export default function PatientsPage() {
   };
 
   const mapPatient = (item) => ({
-  id: item.id,
-  name: item.name,
-  phone: item.phone,
-  email: item.user?.email || '-',
-  address: item.address,
-  created_date: item.createdAt.split('T')[0],
-  updated_date: item.updatedAt.split('T')[0],
-});
-
-const resetForm = () => {
-  setFormData({
-    name: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    country: '',
-    pincode: '',
+    id: item.id,
+    name: item.name,
+    phone: item.phone,
+    email: item.user?.email || '-',
+    address: item.address,
+    created_date: item.createdAt.split('T')[0],
+    updated_date: item.updatedAt.split('T')[0],
   });
-};
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      phone: '',
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      pincode: '',
+    });
+  };
 
 
   // Rest of your existing code for sorting, filtering, pagination, export...

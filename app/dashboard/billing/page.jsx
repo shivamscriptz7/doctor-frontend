@@ -6,7 +6,7 @@ import {
   FileText, Sheet, Pill, User, Stethoscope, Trash2,
   Copy, Check, Printer, CheckCircle, Clock, ChevronLeft, ChevronRight, Loader2, AlertCircle
 } from 'lucide-react';
-import { createInvoiceApi, getInvoiceApi, updateInvoiceApi, deleteInvoiceApi } from '../../lib/commonApis';
+import { createInvoiceApi, getInvoiceApi, updateInvoiceApi, deleteInvoiceApi,getPatients,getDoctorApi,getMedicines } from '../../lib/commonApis';
 
 // ── Medicine Options ──────────────────────────────────────────────────────────
 const MEDICINE_OPTIONS = [
@@ -48,6 +48,10 @@ function Modal({ isOpen, onClose, title, children, size = 'md' }) {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function BillingPage() {
+ const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [medicines, setMedicines] = useState([]);
+
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -114,8 +118,74 @@ export default function BillingPage() {
     }
   }, [currentPage]);
 
+
+  // Load patients
+    const loadPatients = useCallback(async () => {
+      try {
+        const res = await getPatients(100, 1);
+        const dataArray = res?.data?.data || res?.data || [];
+  
+        const apiPatients = dataArray.map((item) => ({
+          id: item.id,
+          name: item.name,
+          phone: item.phone,
+          email: item.user?.email || '-',
+        }));
+  
+        setPatients(apiPatients);
+      } catch (err) {
+        console.error('Failed to load patients:', err);
+        setPatients([]);
+      }
+    }, []);
+  
+  // load doctor
+      const loadDoctors = useCallback(async () => {
+      try {
+        const res = await getDoctorApi(100, 1);
+        const dataArray = res?.data?.data || res?.data || [];
+  console.log(dataArray.doctors,'doctors');
+  
+  
+        const apiDoctors = dataArray.doctors.map((item) => ({
+         
+          
+          id: item.id,
+          name: item.name,
+        }));
+  
+        setDoctors(apiDoctors);
+      } catch (err) {
+        console.error('Failed to load patients:', err);
+        setDoctors([]);
+      }
+    }, []);
+
+     // Load patients
+    const loadMedicines = useCallback(async () => {
+      try {
+        const res = await getMedicines(100, 1);
+        console.log(res.data.medicines,'data medicine');
+        
+        const dataArray = res?.data?.medicines || res?.data || [];
+  
+        const apiMedicines = dataArray.map((item) => ({
+          medicineId: item.id,
+          name: item.name
+        }));
+  
+        setMedicines(apiMedicines);
+      } catch (err) {
+        console.error('Failed to load patients:', err);
+        setMedicines([]);
+      }
+    }, []);
+
   useEffect(() => {
     loadInvoices();
+    loadPatients();
+    loadDoctors();
+    loadMedicines();
   }, [loadInvoices]);
 
   // ── Form Handlers ─────────────────────────────────────────────────────────
@@ -670,16 +740,40 @@ export default function BillingPage() {
 
       {/* MODALS - Add, Edit, View, Delete, Share */}
       {/* Add Modal */}
-      <Modal isOpen={showAddModal} onClose={() => { setShowAddModal(false); resetForm(); }} title="New Invoice" size="lg">
+      <Modal isOpen={showAddModal} onClose={() => { setShowAddModal(false); resetForm(); }} title="New Invoice:::" size="lg">
         <form onSubmit={handleCreate} className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient ID *</label>
-              <input type="number" name="patientId" value={form.patientId} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="e.g. 3" />
+              <select 
+  name="patientId" 
+  value={form.patientId} 
+  onChange={handleFormChange} 
+  required 
+  className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
+>
+  <option value="">Select Patient</option>
+  {patients.map(p => (
+    <option key={p.id} value={p.id}>{p.name}</option>
+  ))}
+</select>
+              {/* <input type="number" name="patientId" value={form.patientId} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="e.g. 3" /> */}
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Doctor ID *</label>
-              <input type="number" name="doctorId" value={form.doctorId} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="e.g. 1" />
+              <select 
+  name="doctorId" 
+  value={form.doctorId} 
+  onChange={handleFormChange} 
+  required 
+  className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
+>
+  <option value="">Select Doctor</option>
+  {doctors.map(d => (
+    <option key={d.id} value={d.id}>{d.name}</option>
+  ))}
+</select>
+              {/* <input type="number" name="doctorId" value={form.doctorId} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="e.g. 1" /> */}
             </div>
           </div>
 
@@ -699,7 +793,33 @@ export default function BillingPage() {
               </div>
               {form.medicines.map((med, idx) => (
                 <div key={idx} className="grid grid-cols-12 gap-2 items-center bg-slate-50 rounded-xl p-2">
-                  <input type="number" placeholder="Med ID" value={med.medicineId} onChange={e => handleMedChange(idx, 'medicineId', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full" />
+                  {/* <input type="number" placeholder="Med ID" value={med.medicineId} onChange={e => handleMedChange(idx, 'medicineId', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full" /> */}
+                  {/* <select 
+  name="medicineId" 
+  value={med.medicineId} 
+  onChange={handleFormChange} 
+  required 
+  className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
+>
+  <option value="">Select Medicine</option>
+  {medicines.map(d => (
+    <option key={d.id} value={d.id}>{d.name}</option>
+  ))}
+</select> */}
+<select 
+  value={med.medicineId} 
+  onChange={e => handleMedChange(idx, 'medicineId', e.target.value)}
+  required
+  className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full"
+>
+  <option value="">Select Medicine</option>
+  {medicines.map(m => (
+    <option key={m.medicineId} value={m.medicineId}>
+      {m.name}
+    </option>
+  ))}
+</select>
+
                   <select value={med.type} onChange={e => handleMedChange(idx, 'type', e.target.value)} className="col-span-2 px-3 py-2 bg-white border-2 border-transparent rounded-lg focus:outline-none focus:border-emerald-400 text-slate-700 text-sm w-full">
                     {MEDICINE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>

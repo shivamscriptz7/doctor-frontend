@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Stethoscope, Plus, Search, Download, X, Edit, Trash2, Eye, FileText, Sheet, ChevronDown, Filter, Loader2 } from 'lucide-react';
-import { getDoctorApi, createDoctorApi, updateDoctorApi, deleteDoctorApi } from '../../lib/commonApis';
+import { getDoctorApi, createDoctorApi, updateDoctorApi, deleteDoctorApi,getDepartmentApi } from '../../lib/commonApis';
 
 // ── Modal Component ───────────────────────────────────────────────────────────
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
@@ -35,6 +35,7 @@ function Modal({ isOpen, onClose, title, children, size = 'md' }) {
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -108,8 +109,32 @@ export default function DoctorsPage() {
     }
   }, [currentPage]);
 
+   const loadDepartments = useCallback(async () => {
+    try {
+      const res = await getDepartmentApi(100, 1);
+      console.log(res,'resssssssss');
+      
+      const dataArray = res?.departments || res?.data || [];
+console.log(dataArray,'Departments');
+
+
+      const apiDepartments = dataArray.map((item) => ({
+       
+        
+        id: item.id,
+        name: item.departmentName,
+      }));
+
+      setDepartments(apiDepartments);
+    } catch (err) {
+      console.error('Failed to load patients:', err);
+      setDepartments([]);
+    }
+  }, []);
+
   useEffect(() => {
     loadDoctors();
+    loadDepartments();
   }, [loadDoctors]);
 
   // ── Form Handlers ─────────────────────────────────────────────────────────
@@ -504,8 +529,17 @@ export default function DoctorsPage() {
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Department ID</label>
-              <input type="number" name="departmentId" value={formData.departmentId} onChange={handleFormChange} className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="e.g., 2" />
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Department Name</label>
+              {/* <input type="number" name="departmentId" value={formData.departmentId} onChange={handleFormChange} className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="e.g., 2" /> */}
+
+            
+<select name="departmentId" value={formData.departmentId} onChange={handleFormChange}
+  className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
+  <option value="">Select Department</option>
+  {departments.map((dept) => (
+    <option key={dept.id} value={dept.id}>{dept.name}</option>
+  ))}
+</select>
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number *</label>
@@ -572,8 +606,16 @@ export default function DoctorsPage() {
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Department ID</label>
-              <input type="number" name="departmentId" value={formData.departmentId} onChange={handleFormChange} className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" />
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Department Name</label>
+             
+<select name="departmentId" value={formData.departmentId} onChange={handleFormChange}
+  className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
+  <option value="">Select Department</option>
+  {departments.map((dept) => (
+    <option key={dept.id} value={dept.id}>{dept.name}</option>
+  ))}
+</select>
+              {/* <input type="number" name="departmentId" value={formData.departmentId} onChange={handleFormChange} className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" /> */}
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number *</label>
@@ -665,7 +707,7 @@ export default function DoctorsPage() {
                 <p className="font-semibold text-slate-800">{selectedDoctor.hospitalName}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-600 mb-1">Department ID</p>
+                <p className="text-sm text-slate-600 mb-1">Department Name</p>
                 <p className="font-semibold text-slate-800">{selectedDoctor.departmentId || 'N/A'}</p>
               </div>
               <div>

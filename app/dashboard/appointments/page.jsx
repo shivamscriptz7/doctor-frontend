@@ -1161,7 +1161,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, Clock, Plus, Search, Filter, X, Edit2, Trash2, Eye, ChevronLeft, ChevronRight, Loader2, AlertCircle, ChevronDown } from 'lucide-react';
-import { getAppointment, createAppointmentApi, udateAppointmentApi, deleteAppointmentApi, getPatients } from '../../lib/commonApis';
+import { getAppointment, createAppointmentApi, udateAppointmentApi, deleteAppointmentApi, getPatients,getDoctorApi } from '../../lib/commonApis';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const EMPTY_FORM = {
@@ -1356,16 +1356,14 @@ function AppointmentForm({ initial, onSubmit, loading, patients, doctors }) {
           <label className={labelCls}>Type</label>
           <select className={fieldCls} value={form.type} onChange={e => set('type', e.target.value)}>
             <option value="consultation">Consultation</option>
-            <option value="follow-up">Follow-up</option>
+            <option value="follow_up">Follow up</option>
             <option value="emergency">Emergency</option>
-            <option value="check-up">Check-up</option>
           </select>
         </div>
         <div>
           <label className={labelCls}>Status</label>
           <select className={fieldCls} value={form.status} onChange={e => set('status', e.target.value)}>
             <option value="scheduled">Scheduled</option>
-            <option value="confirmed">Confirmed</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
           </select>
@@ -1420,7 +1418,7 @@ function ViewModal({ apt, onClose, patients, doctors }) {
 export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
   const [patients, setPatients] = useState([]);
-  const [doctors, setDoctors] = useState(STATIC_DOCTORS);
+  const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
@@ -1489,9 +1487,32 @@ export default function AppointmentsPage() {
     }
   }, []);
 
+
+    const loadDoctors = useCallback(async () => {
+    try {
+      const res = await getDoctorApi(100, 1);
+      const dataArray = res?.data?.data || res?.data || [];
+console.log(dataArray.doctors,'doctors');
+
+
+      const apiDoctors = dataArray.doctors.map((item) => ({
+       
+        
+        id: item.id,
+        name: item.name,
+      }));
+
+      setDoctors(apiDoctors);
+    } catch (err) {
+      console.error('Failed to load patients:', err);
+      setDoctors([]);
+    }
+  }, []);
+
   useEffect(() => {
     load();
     loadPatients();
+    loadDoctors();
   }, [load, loadPatients]);
 
   const filtered = appointments.filter(a => {
@@ -1527,6 +1548,8 @@ export default function AppointmentsPage() {
         notes: form.notes,
         type: form.type,
       };
+      console.log(newApt,'abvc');
+      
       await createAppointmentApi(newApt);
       await load();
       showToast('✅ Appointment created!');
