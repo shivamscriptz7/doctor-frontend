@@ -150,7 +150,7 @@ export async function signupApi(data: any) {
 
 
 export async function getPatients(limit = 10, page = 1) {
-  return apiFetch(`/patient?limit=${limit}&page=${page}`);
+  return apiFetch(`/patient?limit=${limit}&page=${page}&sortBy=createdAt&sortOrder=DESC`);
 }
 
 
