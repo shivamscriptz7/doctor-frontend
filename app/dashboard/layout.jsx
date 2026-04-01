@@ -332,7 +332,7 @@ export default function DashboardLayout({ children }) {
 
           {/* Bottom Section */}
           <div className="p-3 border-t border-emerald-500/30 space-y-2">
-            <button className="w-full group flex items-center gap-3 px-4 py-3 rounded-xl text-emerald-50 hover:bg-emerald-500/30 hover:text-white transition-all duration-300">
+            {/* <button className="w-full group flex items-center gap-3 px-4 py-3 rounded-xl text-emerald-50 hover:bg-emerald-500/30 hover:text-white transition-all duration-300">
               <Bell className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" strokeWidth={2} />
               {!isCollapsed && <span className="flex-1 text-left font-medium">Notifications</span>}
             </button>
@@ -340,7 +340,7 @@ export default function DashboardLayout({ children }) {
             <button className="w-full group flex items-center gap-3 px-4 py-3 rounded-xl text-emerald-50 hover:bg-emerald-500/30 hover:text-white transition-all duration-300">
               <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" strokeWidth={2} />
               {!isCollapsed && <span className="flex-1 text-left font-medium">Settings</span>}
-            </button>
+            </button> */}
 
             <button onClick={handleLogout} className="w-full group flex items-center gap-3 px-4 py-3 rounded-xl text-red-100 hover:bg-red-500/30 hover:text-white transition-all duration-300">
               <LogOut className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" strokeWidth={2} />

@@ -268,6 +268,8 @@ console.log(dataArray,'Departments');
 
   // ── View Doctor ───────────────────────────────────────────────────────────
   const handleViewClick = (doctor) => {
+    console.log(doctor,'view');
+    
     setSelectedDoctor(doctor);
     setShowViewModal(true);
   };
@@ -543,7 +545,7 @@ console.log(dataArray,'Departments');
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number *</label>
-              <input type="tel" name="phone" value={formData.phone} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="9876543210" />
+              <input type="tel" name="phone" value={formData.phone} onChange={handleFormChange} onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '').slice(0,10)} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="9876543210" />
             </div>
           </div>
 
@@ -619,7 +621,7 @@ console.log(dataArray,'Departments');
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number *</label>
-              <input type="tel" name="phone" value={formData.phone} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" />
+              <input type="tel" name="phone" value={formData.phone} onChange={handleFormChange} onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '').slice(0,10)} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" />
             </div>
           </div>
 
@@ -708,7 +710,7 @@ console.log(dataArray,'Departments');
               </div>
               <div>
                 <p className="text-sm text-slate-600 mb-1">Department Name</p>
-                <p className="font-semibold text-slate-800">{selectedDoctor.departmentId || 'N/A'}</p>
+                <p className="font-semibold text-slate-800">{selectedDoctor.department || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-sm text-slate-600 mb-1">Phone Number</p>

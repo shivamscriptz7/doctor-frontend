@@ -622,6 +622,18 @@ export default function PatientsPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // close form  
+  const handleCloseAddModal = () => {
+  setShowAddModal(false);
+  resetForm();
+};
+
+const handleCloseEditModal = () => {
+  setShowEditModal(false);
+  setSelectedPatient(null);
+  resetForm(); // 🔥 MOST IMPORTANT
+};
+
   // Add Patient
   const handleAddPatient = async (e) => {
     e.preventDefault();
@@ -649,6 +661,7 @@ export default function PatientsPage() {
     setFormData({
       name: patient.name,
       phone: patient.phone,
+      email:patient.email,
       address: patient.address.split(',')[0]
     });
 
@@ -1046,7 +1059,7 @@ export default function PatientsPage() {
       </div>
 
       {/* Add Patient Modal */}
-      <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Add New Patient" size="md">
+      <Modal isOpen={showAddModal} onClose={handleCloseAddModal} title="Add New Patient" size="md">
         <form onSubmit={handleAddPatient} className="space-y-4">
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Patient Name *</label>
@@ -1054,7 +1067,7 @@ export default function PatientsPage() {
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Phone Number *</label>
-            <input type="tel" name="phone" value={formData.phone} onChange={handleFormChange} required className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700" placeholder="+91 XXXXXXXXXX" />
+            <input type="tel" name="phone" value={formData.phone} onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '').slice(0,10)} onChange={handleFormChange} required className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700" placeholder="+91 XXXXXXXXXX" />
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address *</label>
@@ -1065,7 +1078,7 @@ export default function PatientsPage() {
             <textarea name="address" value={formData.address} onChange={handleFormChange} required rows="3" className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700" placeholder="Enter full address"></textarea>
           </div>
           <div className="flex gap-3 pt-4">
-            <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 px-6 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors font-semibold">
+            <button type="button" onClick={handleCloseAddModal} className="flex-1 px-6 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors font-semibold">
               Cancel
             </button>
             <button type="submit" className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 font-semibold shadow-lg">
@@ -1076,7 +1089,7 @@ export default function PatientsPage() {
       </Modal>
 
       {/* Edit Patient Modal */}
-      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Patient" size="md">
+      <Modal isOpen={showEditModal} onClose={handleCloseEditModal} title="Edit Patient" size="md">
         <form onSubmit={handleUpdatePatient} className="space-y-4">
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Patient Name *</label>
@@ -1084,18 +1097,18 @@ export default function PatientsPage() {
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Phone Number *</label>
-            <input type="tel" name="phone" value={formData.phone} onChange={handleFormChange} required className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700" />
+            <input type="tel" name="phone" value={formData.phone} onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '').slice(0,10)} onChange={handleFormChange} required className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700" />
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address *</label>
-            {/* <input type="email" name="email" value={formData.email} onChange={handleFormChange} required className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700" /> */}
+            <input type="email" name="email" value={formData.email} onChange={handleFormChange} required className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700" />
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Address *</label>
             <textarea name="address" value={formData.address} onChange={handleFormChange} required rows="3" className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700"></textarea>
           </div>
           <div className="flex gap-3 pt-4">
-            <button type="button" onClick={() => setShowEditModal(false)} className="flex-1 px-6 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors font-semibold">
+            <button type="button" onClick={handleCloseEditModal} className="flex-1 px-6 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors font-semibold">
               Cancel
             </button>
             <button type="submit" className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 font-semibold shadow-lg">
@@ -1165,7 +1178,7 @@ export default function PatientsPage() {
               <button onClick={() => { setShowViewModal(false); handleEditClick(selectedPatient); }} className="flex-1 px-6 py-3 bg-emerald-50 text-emerald-700 rounded-xl hover:bg-emerald-100 transition-colors font-semibold">
                 Edit Patient
               </button>
-              <button onClick={() => setShowViewModal(false)} className="flex-1 px-6 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors font-semibold">
+              <button onClick={handleCloseAddModal} className="flex-1 px-6 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors font-semibold">
                 Close
               </button>
             </div>
