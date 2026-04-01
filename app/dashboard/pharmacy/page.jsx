@@ -1806,6 +1806,8 @@ export default function PharmacyPage() {
       type: '',
       strength: '',
       manufacturer: '',
+      quantity: '',
+      price: '',
       isActive: true,
     });
   };
@@ -1822,6 +1824,8 @@ export default function PharmacyPage() {
         strength: formData.strength,
         manufacturer: formData.manufacturer,
         isActive: formData.isActive,
+        quantity:formData.quantity,
+        price:formData.price
       };
 
       await createPharmacyApi(payload);
@@ -1840,13 +1844,17 @@ export default function PharmacyPage() {
 
   // ── Edit Medicine ─────────────────────────────────────────────────────────
   const handleEditClick = (medicine) => {
+    console.log(medicine,'medicine');
+    
     setSelectedMedicine(medicine);
     setFormData({
       name: medicine.name,
       type: medicine.category,
       strength: medicine.strength,
       manufacturer: medicine.manufacturer,
-      isActive: medicine.isActive,
+      quantity:medicine.stock,
+      price:medicine.price,
+      isActive: medicine.isActive
     });
     setShowEditModal(true);
   };
@@ -1862,6 +1870,8 @@ export default function PharmacyPage() {
         type: formData.type,
         strength: formData.strength,
         manufacturer: formData.manufacturer,
+        quantity:formData.quantity,
+        price:formData.price,
         isActive: formData.isActive,
       };
 
@@ -2282,9 +2292,10 @@ export default function PharmacyPage() {
                 placeholder="e.g., 500mg" 
               />
             </div>
-          </div>
-          
-          <div>
+
+
+
+            <div>
             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Manufacturer *</label>
             <input 
               type="text" 
@@ -2297,6 +2308,33 @@ export default function PharmacyPage() {
             />
           </div>
 
+           <div>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Quantity *</label>
+            <input 
+              type="number" 
+              name="quantity" 
+              value={formData.quantity} 
+              onChange={handleFormChange} 
+              required 
+              className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" 
+              placeholder="e.g., 100" 
+            />
+          </div>
+
+            <div>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Price *</label>
+            <input 
+              type="number" 
+              name="price" 
+              value={formData.price} 
+              onChange={handleFormChange} 
+              required 
+              className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" 
+              placeholder="e.g., 100" 
+            />
+          </div>
+
+
           <div className="flex items-center gap-2">
             <input 
               type="checkbox" 
@@ -2307,6 +2345,9 @@ export default function PharmacyPage() {
             />
             <label className="text-sm font-medium text-slate-700">Is Active</label>
           </div>
+          </div>
+          
+          
 
           <div className="flex gap-3 pt-4">
             <button 
@@ -2369,9 +2410,9 @@ export default function PharmacyPage() {
                 className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" 
               />
             </div>
-          </div>
-          
-          <div>
+
+
+             <div>
             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Manufacturer *</label>
             <input 
               type="text" 
@@ -2383,7 +2424,21 @@ export default function PharmacyPage() {
             />
           </div>
 
-          <div className="flex items-center gap-2">
+           <div>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Quantity *</label>
+            <input 
+              type="number" 
+              name="quantity" 
+              value={formData.quantity} 
+              onChange={handleFormChange} 
+              required 
+              className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" 
+              placeholder="e.g., 100" 
+            />
+          </div>
+
+                    
+<div className="flex items-center gap-2">
             <input 
               type="checkbox" 
               name="isActive" 
@@ -2393,6 +2448,26 @@ export default function PharmacyPage() {
             />
             <label className="text-sm font-medium text-slate-700">Is Active</label>
           </div>
+ <div>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Price *</label>
+            <input 
+              type="number" 
+              name="price" 
+              value={formData.price} 
+              onChange={handleFormChange} 
+              required 
+              className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" 
+              placeholder="e.g., 100" 
+            />
+          </div>
+
+          </div>
+          
+         
+
+
+
+          
 
           <div className="flex gap-3 pt-4">
             <button 
