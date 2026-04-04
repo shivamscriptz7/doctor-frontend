@@ -142,7 +142,9 @@ export async function loginApi(email: string, password: string) {
 
 
 export async function signupApi(data: any) {
-  return apiFetch('/auth/register', {
+  console.log(data,'data');
+  
+  return apiFetch('/auth/signup', {
     method: 'POST',
     body: JSON.stringify(data),
   });
@@ -176,6 +178,13 @@ export async function deletePatientApi(id: number) {
   });
 }
 
+export async function countPatientApi() {
+  return apiFetch('/patient/count', {
+    method: 'GET',
+  });
+}
+
+
 
 
 
@@ -205,6 +214,13 @@ export async function deletePharmacyApi(id: number) {
   });
 }
 
+export async function countPharmacyApi() {
+  return apiFetch('/medicines/count', {
+    method: 'GET',
+  });
+}
+
+
 
 
 
@@ -229,9 +245,15 @@ export async function udateAppointmentApi(id: number, data: any) {
 }
 
 
-export async function deleteAppointmentApi(id: number) {
+export async function countAppointmentApi(id: number) {
   return apiFetch(`/appointments/${id}`, {
     method: 'DELETE',
+  });
+}
+
+export async function deleteAppointmentApi() {
+  return apiFetch('/appointments/count', {
+    method: 'GET',
   });
 }
 
@@ -266,6 +288,13 @@ export async function deleteBedApi(id: number) {
   });
 }
 
+export async function countBedApi() {
+  return apiFetch('/bed-management/count', {
+    method: 'GET',
+  });
+}
+
+
 
 
 
@@ -297,6 +326,12 @@ export async function deleteDepartmentApi(id: number) {
   });
 }
 
+
+export async function countDepartmentApi() {
+  return apiFetch('/departments/count', {
+    method: 'GET',
+  });
+}
 
 // for invoice
 
@@ -369,6 +404,12 @@ export async function updateDoctorApi(id: number, data: any) {
 export async function deleteDoctorApi(id: number) {
   return apiFetch(`/doctor/${id}`, {
     method: 'DELETE',
+  });
+}
+
+export async function countDoctorApi() {
+  return apiFetch(`/doctor/count`, {
+    method: 'GET',
   });
 }
  
