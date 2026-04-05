@@ -1534,7 +1534,9 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Bed, Plus, Search, X, Edit, Trash2, Eye, Download, FileText, Sheet, ChevronDown } from 'lucide-react';
-import { getBedApi, createBedApi, updateBedApi, deleteBedApi } from '../../lib/commonApis';
+import { getBedApi, createBedApi, updateBedApi, deleteBedApi ,countBedApi} from '../../lib/commonApis';
+import { showToast } from '../../lib/notification';
+
 
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   if (!isOpen) return null;
@@ -1618,9 +1620,30 @@ export default function BedsPage() {
   };
 
   // Reload whenever page changes
-  useEffect(() => {
-    loadBeds(currentPage);
-  }, [currentPage]);
+
+  const [stats, setStats] = useState({
+  total: 0,
+  occupied: 0,
+  available: 0,
+  maintenance: 0,
+});
+useEffect(() => {
+  loadBeds(currentPage);
+  countBedApi()
+    .then(res => {
+      const data = res.data;
+
+      setStats({
+        total: data.totalBeds,
+        occupied: data.occupied,
+        available: data.available,
+        maintenance: data.maintenance,
+      });
+    })
+    .catch(err => console.error(err));
+}, [currentPage]);
+
+const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.total) * 100) : 0;
 
   // Handle form change
   const handleFormChange = (e) => {
@@ -1640,12 +1663,13 @@ export default function BedsPage() {
         patientId: formData.patientId ? parseInt(formData.patientId) : null,
       };
       await createBedApi(payload);
+      showToast('success','Created','Medicine created successfully!');
       await loadBeds(currentPage);
       setShowAddModal(false);
       resetForm();
     } catch (error) {
       console.error('Failed to create bed:', error);
-      alert('Failed to create bed');
+      showToast('error','Failed','Failed to create bed!');
     }
   };
 
@@ -1673,13 +1697,14 @@ export default function BedsPage() {
         patientId: formData.patientId ? parseInt(formData.patientId) : null,
       };
       await updateBedApi(selectedBed.id, payload);
+      showToast('success','Updated','Medicine updated successfully!');
       await loadBeds(currentPage);
       setShowEditModal(false);
       setSelectedBed(null);
       resetForm();
     } catch (error) {
       console.error('Failed to update bed:', error);
-      alert('Failed to update bed');
+      showToast('error','Failed','Medicine deleted successfully!');
     }
   };
 
@@ -1692,11 +1717,14 @@ export default function BedsPage() {
   const handleDeleteBed = async () => {
     try {
       await deleteBedApi(selectedBed.id);
+      showToast('success','Deleted','Medicine deleted successfully!');
       await loadBeds(currentPage);
       setShowDeleteModal(false);
       setSelectedBed(null);
     } catch (error) {
       console.error('Failed to delete bed:', error);
+      showToast('error','Failed','Failed to delete bed!');
+
       alert('Failed to delete bed');
     }
   };
@@ -1734,16 +1762,7 @@ export default function BedsPage() {
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalRecords);
 
-  // Stats - from current loaded data (approximate for visible page)
-  const stats = {
-    total: totalRecords,
-    occupied: beds.filter(b => b.status === 'occupied').length,
-    available: beds.filter(b => b.status === 'available').length,
-    maintenance: beds.filter(b => b.status === 'maintenance').length,
-  };
-
-  const occupancyRate = stats.total > 0 ? ((stats.occupied / beds.length) * 100).toFixed(0) : 0;
-
+  
   // Export functions
   const exportToExcel = () => {
     const headers = ['ID', 'Bed Number', 'Ward', 'Type', 'Status', 'Patient', 'Floor'];
@@ -1862,22 +1881,25 @@ export default function BedsPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-            <p className="text-sm text-slate-600 mb-1">Total Beds</p>
-            <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-            <p className="text-sm text-slate-600 mb-1">Occupied</p>
-            <p className="text-2xl font-bold text-blue-600">{stats.occupied}</p>
-            <p className="text-xs text-slate-500 mt-1">{occupancyRate}% occupancy</p>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-            <p className="text-sm text-slate-600 mb-1">Available</p>
-            <p className="text-2xl font-bold text-green-600">{stats.available}</p>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-            <p className="text-sm text-slate-600 mb-1">Maintenance</p>
-            <p className="text-2xl font-bold text-amber-600">{stats.maintenance}</p>
-          </div>
+  <p className="text-sm text-slate-600 mb-1">Total Beds</p>
+  <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
+</div>
+
+<div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+  <p className="text-sm text-slate-600 mb-1">Occupied</p>
+  <p className="text-2xl font-bold text-blue-600">{stats.occupied}</p>
+  <p className="text-xs text-slate-500 mt-1">{occupancyRate}% occupancy</p>
+</div>
+
+<div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+  <p className="text-sm text-slate-600 mb-1">Available</p>
+  <p className="text-2xl font-bold text-green-600">{stats.available}</p>
+</div>
+
+<div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+  <p className="text-sm text-slate-600 mb-1">Maintenance</p>
+  <p className="text-2xl font-bold text-amber-600">{stats.maintenance}</p>
+</div>
         </div>
       </div>
 

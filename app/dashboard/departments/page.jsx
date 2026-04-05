@@ -148,7 +148,7 @@
 //   const getPageNumbers = () => {
 //     const pageNumbers = [];
 //     const maxVisible = 5;
-    
+
 //     if (totalPages <= maxVisible) {
 //       for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
 //     } else {
@@ -191,7 +191,7 @@
 //                 <Download className="w-4 h-4" />
 //                 Export
 //               </button>
-              
+
 //               {showExportMenu && (
 //                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 z-10 overflow-hidden">
 //                   <button
@@ -511,7 +511,7 @@
 //         floor: formData.floor,
 //         status: formData.status,
 //       };
-      
+
 //       await createDepartmentApi(payload);
 //       await loadDepartments();
 //       setShowAddModal(false);
@@ -551,7 +551,7 @@
 //         floor: formData.floor,
 //         status: formData.status,
 //       };
-      
+
 //       await updateDepartmentApi(selectedDept.id, payload);
 //       await loadDepartments();
 //       setShowEditModal(false);
@@ -1048,11 +1048,14 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { 
-  Plus, Search, Download, Building2, Users, Phone, Mail, Edit, Trash2, Eye, 
+import {
+  Plus, Search, Download, Building2, Users, Phone, Mail, Edit, Trash2, Eye,
   Filter, FileText, Sheet, ChevronDown, X
 } from 'lucide-react';
-import { getDepartmentApi, createDepartmentApi, updateDepartmentApi, deleteDepartmentApi } from '../../lib/commonApis';
+import { getDepartmentApi, createDepartmentApi, updateDepartmentApi, deleteDepartmentApi, countDepartmentApi } from '../../lib/commonApis';
+
+
+import { showToast } from '../../lib/notification';
 
 // Modal Component
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
@@ -1103,17 +1106,37 @@ export default function DepartmentsPage() {
     isActive: true,
   });
 
+
+  const [totalDepartments, setTotalDepartments] = useState(0);
+  const [totalStaff, setTotalStaff] = useState(0);
+  const [activePatients, setActivePatients] = useState(0);
+  const [inactivePatients, setInactivePatients] = useState(0);
+
+
   // Load departments from API
+
   useEffect(() => {
     loadDepartments();
+    countDepartmentApi()
+      .then(res => {
+        const data = res.data;
+
+        setTotalDepartments(data.totalDepartments);
+        setTotalStaff(data.totalStaff);
+        setActivePatients(data.activePatients);
+        setInactivePatients(data.inactivePatients);
+      })
+      .catch(err => console.error(err));
   }, []);
+
+
 
   const loadDepartments = async () => {
     try {
-     // ✅ Fix
-const res = await getDepartmentApi(50, 1);
-const raw = res.departments || res.data?.departments || res.data || [];
-const apiDepartments = raw.map(item => ({
+      // ✅ Fix
+      const res = await getDepartmentApi(50, 1);
+      const raw = res.departments || res.data?.departments || res.data || [];
+      const apiDepartments = raw.map(item => ({
         id: item.id,
         departmentName: item.departmentName || '-',
         description: item.description || '-',
@@ -1128,7 +1151,7 @@ const apiDepartments = raw.map(item => ({
       }));
       setDepartments(apiDepartments);
     } catch (err) {
-      console.error('Failed to load departments:', err);
+      console.error('Failed to load departments!', err);
     }
   };
 
@@ -1147,14 +1170,20 @@ const apiDepartments = raw.map(item => ({
         description: formData.description,
         isActive: formData.isActive,
       };
-      
+
       await createDepartmentApi(payload);
+      showToast('success', 'Created', 'Department created successfully');
+
       await loadDepartments();
       setShowAddModal(false);
       resetForm();
     } catch (error) {
-      console.error('Failed to create department:', error);
-      alert('Failed to create department');
+      console.error('Failed to create department!', error.message);
+      showToast(
+        'error',
+        'Failed',
+        error.message || 'Failed to create department:'
+      );
     }
   };
 
@@ -1177,15 +1206,19 @@ const apiDepartments = raw.map(item => ({
         description: formData.description,
         isActive: formData.isActive,
       };
-      
+
       await updateDepartmentApi(selectedDept.id, payload);
+      showToast('success', 'Updated', 'Department updated successfully');
+
       await loadDepartments();
       setShowEditModal(false);
       setSelectedDept(null);
       resetForm();
     } catch (error) {
       console.error('Failed to update department:', error);
-      alert('Failed to update department');
+
+      showToast('error',  'Failed', 'Failed to update department',    error.message || 'Something went wrong');
+
     }
   };
 
@@ -1198,12 +1231,14 @@ const apiDepartments = raw.map(item => ({
   const handleDeleteDepartment = async () => {
     try {
       await deleteDepartmentApi(selectedDept.id);
+      showToast('success', 'Deleted', 'Department deleted successfully');
       setDepartments(prev => prev.filter(d => d.id !== selectedDept.id));
       setShowDeleteModal(false);
       setSelectedDept(null);
     } catch (error) {
       console.error('Failed to delete department:', error);
-      alert('Failed to delete department');
+
+      showToast('error',  'Failed', 'Failed to delete department',    error.message || 'Something went wrong');
     }
   };
 
@@ -1241,7 +1276,7 @@ const apiDepartments = raw.map(item => ({
     const headers = ['ID', 'Department Name', 'Description', 'Status'];
     const csvData = [
       headers.join(','),
-      ...filteredDepartments.map(d => 
+      ...filteredDepartments.map(d =>
         `${d.id},"${d.departmentName}","${d.description}","${d.isActive ? 'Active' : 'Inactive'}"`
       )
     ].join('\n');
@@ -1334,23 +1369,22 @@ const apiDepartments = raw.map(item => ({
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <p className="text-sm text-slate-600 mb-1">Total Departments</p>
-            <p className="text-2xl font-bold text-slate-800">{departments.length}</p>
+            <p className="text-2xl font-bold text-slate-800">{totalDepartments}</p>
           </div>
+
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <p className="text-sm text-slate-600 mb-1">Total Staff</p>
-            <p className="text-2xl font-bold text-emerald-600">
-              {departments.reduce((sum, d) => sum + d.staff, 0)}
-            </p>
+            <p className="text-2xl font-bold text-emerald-600">{totalStaff}</p>
           </div>
+
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <p className="text-sm text-slate-600 mb-1">Active Patients</p>
-            <p className="text-2xl font-bold text-teal-600">
-              {departments.reduce((sum, d) => sum + d.patients, 0)}
-            </p>
+            <p className="text-2xl font-bold text-teal-600">{activePatients}</p>
           </div>
+
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-            <p className="text-sm text-slate-600 mb-1">Showing</p>
-            <p className="text-2xl font-bold text-cyan-600">{currentDepartments.length}</p>
+            <p className="text-sm text-slate-600 mb-1">Inactive Patients</p>
+            <p className="text-2xl font-bold text-red-500">{inactivePatients}</p>
           </div>
         </div>
       </div>
@@ -1496,7 +1530,7 @@ const apiDepartments = raw.map(item => ({
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Status *</label>
-            <select name="isActive" value={formData.isActive} onChange={(e) => setFormData({...formData, isActive: e.target.value === 'true'})} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
+            <select name="isActive" value={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.value === 'true' })} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
               <option value="true">Active</option>
               <option value="false">Inactive</option>
             </select>
@@ -1525,7 +1559,7 @@ const apiDepartments = raw.map(item => ({
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Status *</label>
-            <select name="isActive" value={formData.isActive} onChange={(e) => setFormData({...formData, isActive: e.target.value === 'true'})} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
+            <select name="isActive" value={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.value === 'true' })} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
               <option value="true">Active</option>
               <option value="false">Inactive</option>
             </select>

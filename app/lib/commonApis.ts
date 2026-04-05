@@ -245,13 +245,13 @@ export async function udateAppointmentApi(id: number, data: any) {
 }
 
 
-export async function countAppointmentApi(id: number) {
+export async function deleteAppointmentApi(id: number) {
   return apiFetch(`/appointments/${id}`, {
     method: 'DELETE',
   });
 }
 
-export async function deleteAppointmentApi() {
+export async function countAppointmentApi() {
   return apiFetch('/appointments/count', {
     method: 'GET',
   });
@@ -361,6 +361,14 @@ export async function deleteInvoiceApi(id: number) {
     method: 'DELETE',
   });
 }
+
+
+export async function countInvoiceApi() {
+  return apiFetch('/invoice/count', {
+    method: 'GET',
+  });
+}
+
 
 
 // dashboard

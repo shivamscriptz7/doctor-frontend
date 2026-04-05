@@ -1061,8 +1061,9 @@ import {
   FileText, Sheet, Pill, User, Stethoscope, Trash2,
   Copy, Check, Printer, CheckCircle, Clock, ChevronLeft, ChevronRight, Loader2, AlertCircle
 } from 'lucide-react';
-import { createInvoiceApi, getInvoiceApi, updateInvoiceApi, deleteInvoiceApi, getPatients, getDoctorApi, getMedicines } from '../../lib/commonApis';
+import { createInvoiceApi, getInvoiceApi, updateInvoiceApi, deleteInvoiceApi, getPatients, getDoctorApi, getMedicines,countInvoiceApi } from '../../lib/commonApis';
 
+import{showToast} from '../../lib/notification';
 // ── Medicine Types ────────────────────────────────────────────────────────────
 const MEDICINE_TYPES = ['tablet', 'capsule', 'syrup', 'injection', 'drops', 'cream'];
 const EMPTY_MEDICINE = { medicineId: '', quantity: '', strength: '', type: 'tablet', price: '' };
@@ -1113,9 +1114,17 @@ export default function BillingPage() {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [todayInvoices, setTodayInvoices] = useState(0);
+  const [totalInvoices, setTotalInvoices] = useState(0);
+  const [todayRevenue, setTodayRevenue] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+
+
   const [toast, setToast] = useState('');
 
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
+
+
+
 
   // ── Form State ────────────────────────────────────────────────────────────
   const [form, setForm] = useState({
@@ -1161,7 +1170,8 @@ export default function BillingPage() {
       setInvoices(list);
     } catch (err) {
       console.error('Failed to load invoices:', err);
-      showToast('❌ Failed to load invoices');
+            showToast('error','Failed','Failed to load invoices!');
+      
     } finally {
       setLoading(false);
     }
@@ -1217,11 +1227,22 @@ export default function BillingPage() {
   }, []);
 
   useEffect(() => {
+    handleCountData();
     loadInvoices();
     loadPatients();
     loadDoctors();
     loadMedicines();
   }, [loadInvoices]);
+
+  const handleCountData = async() =>{
+ const res = await countInvoiceApi();
+ console.log(res,'count',res.data.todayInvoices);
+ setTodayInvoices(res.data.todayInvoices)
+ setTodayRevenue(res.data.todayRevenue)
+ setTotalRevenue(res.data.totalRevenue)
+ setTotalInvoices(res.data.totalInvoices)
+ 
+  }
 
   // ── Form Handlers ─────────────────────────────────────────────────────────
   const handleFormChange = (e) => {
@@ -1268,10 +1289,13 @@ export default function BillingPage() {
       setShowAddModal(false);
       resetForm();
       setCurrentPage(1);
-      showToast('✅ Invoice created successfully!');
+            showToast('success','Created','Invoice created successfully!');
+
     } catch (err) {
       console.error('Create error:', err);
-      showToast('❌ Failed to create invoice');
+
+            showToast('error','Failed','Failed to create invoices!');
+
     } finally {
       setIsSubmitting(false);
     }
@@ -1294,15 +1318,22 @@ export default function BillingPage() {
           price: parseFloat(m.price),
         })),
       };
+      console.log(payload,'payload');
+      
+      
+      
       await updateInvoiceApi(selectedInvoice.id, payload);
       await loadInvoices();
       setShowEditModal(false);
       setSelectedInvoice(null);
       resetForm();
-      showToast('✅ Invoice updated successfully!');
+            showToast('success','Updated','Invoice updated successfully!');
+
     } catch (err) {
       console.error('Update error:', err);
-      showToast('❌ Failed to update invoice');
+            showToast('error','Failed',err.message||'Failed to update invoices!');
+
+    
     } finally {
       setIsSubmitting(false);
     }
@@ -1317,10 +1348,11 @@ export default function BillingPage() {
       await loadInvoices();
       setShowDeleteModal(false);
       setSelectedInvoice(null);
-      showToast('🗑️ Invoice deleted');
+      showToast('success','Deleted','Invoice deleted successfully!');
     } catch (err) {
       console.error('Delete error:', err);
-      showToast('❌ Failed to delete invoice');
+      showToast('error','Failed','Failed to delete invoice');
+      
     } finally {
       setIsSubmitting(false);
     }
@@ -1572,10 +1604,10 @@ export default function BillingPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total Invoices', value: stats.total, color: 'text-slate-800' },
-            { label: 'Paid', value: stats.paid, color: 'text-green-600' },
-            { label: 'Pending', value: stats.pending, color: 'text-amber-600' },
-            { label: 'Total Medicines', value: stats.totalMeds, color: 'text-emerald-600' },
+            { label: 'Today Invoices', value: todayInvoices, color: 'text-slate-800' },
+            { label: 'Total Invoices', value: totalInvoices, color: 'text-green-600' },
+            { label: 'Today Revenue', value: todayRevenue, color: 'text-amber-600' },
+            { label: 'Total Revenue', value: totalRevenue, color: 'text-emerald-600' },
           ].map(s => (
             <div key={s.label} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
               <p className="text-sm text-slate-600 mb-1">{s.label}</p>

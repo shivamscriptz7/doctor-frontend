@@ -2595,6 +2595,9 @@ import {
 
 import { getMedicines, createPharmacyApi, updatePharmacyApi, deletePharmacyApi } from '../../lib/commonApis';
 
+
+import { showToast } from '../../lib/notification';
+
 // ── Modal ─────────────────────────────────────────────────────────────────────
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   if (!isOpen) return null;
@@ -2740,7 +2743,6 @@ export default function PharmacyPage() {
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [formData, setFormData] = useState(EMPTY_FORM);
 
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
 
   const openModal = (type, medicine = null) => {
     setSelectedMedicine(medicine);
@@ -2773,7 +2775,7 @@ export default function PharmacyPage() {
       });
     } catch (err) {
       console.error('Failed to load medicines:', err);
-      showToast('❌ Failed to load medicines');
+      showToast('error','Failed','Failed to load medicines');      
       setMedicines([]);
     } finally {
       setLoading(false);
@@ -2800,17 +2802,19 @@ export default function PharmacyPage() {
     try {
       if (modal.type === 'edit') {
         await updatePharmacyApi(selectedMedicine.id, payload);
-        showToast('✅ Medicine updated successfully!');
+      showToast('success','Updated','Medicine updated successfully!');
+
       } else {
         await createPharmacyApi(payload);
         setCurrentPage(1);
-        showToast('✅ Medicine added successfully!');
+        showToast('success','Created','Medicine created successfully!');
+
       }
       await loadMedicines(modal.type === 'edit' ? currentPage : 1);
       closeModal();
     } catch (err) {
       console.error(err);
-      showToast(`❌ Failed to ${modal.type === 'edit' ? 'update' : 'add'} medicine`);
+      showToast('error','Failed',`❌ Failed to ${modal.type === 'edit' ? 'update' : 'add'} medicine`);
     } finally {
       setIsSubmitting(false);
     }
@@ -2823,11 +2827,13 @@ export default function PharmacyPage() {
     try {
       await deletePharmacyApi(selectedMedicine.id);
       await loadMedicines(currentPage);
-      showToast('🗑️ Medicine deleted');
+        showToast('success','Deleted','Medicine deleted successfully!');
+
       closeModal();
     } catch (err) {
       console.error(err);
-      showToast('❌ Failed to delete medicine');
+        showToast('error','Failed','Failed to delete medicine!');
+
     } finally {
       setIsSubmitting(false);
     }
