@@ -215,7 +215,7 @@
 //     })
 
 
-  
+
 
 
 
@@ -1068,7 +1068,7 @@
 //               ) : filtered.map(apt => {
 //                 const patient = patients.find(p => p.id === apt.patientId);
 //                 const doctor = doctors.find(d => d.id === apt.doctorId);
-                
+
 //                 return (
 //                   <tr key={apt.id} className="hover:bg-emerald-50/40 transition-colors">
 //                     <td className="px-5 py-4 text-sm font-mono text-slate-500">#{apt.id}</td>
@@ -1189,7 +1189,7 @@
 //   // Close dropdown when clicking outside
 //   useEffect(() => {
 //     if (!isOpen) return;
-    
+
 //     const handleClickOutside = (e) => {
 //       if (!e.target.closest('.dropdown-container')) {
 //         setIsOpen(false);
@@ -1477,8 +1477,8 @@
 
 
 //       const apiDoctors = dataArray.doctors.map((item) => ({
-       
-        
+
+
 //         id: item.id,
 //         name: item.name,
 //       }));
@@ -1530,7 +1530,7 @@
 //         type: form.type,
 //       };
 //       console.log(newApt,'abvc');
-      
+
 //       await createAppointmentApi(newApt);
 //       await load();
 //       showToast('✅ Appointment created!');
@@ -1739,7 +1739,7 @@
 //               ) : filtered.map(apt => {
 //                 const patient = patients.find(p => p.id === apt.patientId);
 //                 const doctor = doctors.find(d => d.id === apt.doctorId);
-                
+
 //                 return (
 //                   <tr key={apt.id} className="hover:bg-emerald-50/40 transition-colors">
 //                     <td className="px-5 py-4 text-sm font-mono text-slate-500">#{apt.id}</td>
@@ -3515,7 +3515,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, Plus, Search, Filter, X, Edit2, Trash2, Eye, ChevronLeft, ChevronRight, Loader2, AlertCircle, ChevronDown, Download, FileText, Sheet } from 'lucide-react';
-import { getAppointment, createAppointmentApi, udateAppointmentApi, deleteAppointmentApi, getPatients, getDoctorApi } from '../../lib/commonApis';
+import { getAppointment, createAppointmentApi, udateAppointmentApi, deleteAppointmentApi, getPatients, getDoctorApi, countAppointmentApi } from '../../lib/commonApis';
+import { showToast } from '../../lib/notification';
+
+
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const EMPTY_FORM = {
@@ -3565,6 +3568,8 @@ function SearchableDropdown({ label, value, onChange, options, placeholder, requ
   const selected = options.find(opt => opt.id === Number(value));
 
   useEffect(() => {
+
+
     if (!isOpen) return;
     const handler = (e) => {
       if (!e.target.closest('.sd-container')) { setIsOpen(false); setSearchTerm(''); }
@@ -3793,8 +3798,10 @@ export default function AppointmentsPage() {
   const [modal, setModal] = useState(null);
   const [selected, setSelected] = useState(null);
 
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
   const closeModal = () => { setModal(null); setSelected(null); };
+
+
+
 
   // ── Data loaders ─────────────────────────────────────────────────────────
   const load = useCallback(async () => {
@@ -3836,7 +3843,22 @@ export default function AppointmentsPage() {
     } catch { setDoctors([]); }
   }, []);
 
-  useEffect(() => { load(); loadPatients(); loadDoctors(); }, [load, loadPatients]);
+
+
+
+  const [total, setTotal] = useState(0);
+  const [scheduled, setScheduled] = useState(0);
+  const [completed, setCompleted] = useState(0);
+  const [cancelled, setCancelled] = useState(0);
+
+  useEffect(() => {
+    load(); loadPatients(); loadDoctors();
+   handleCountData();
+  }, [load, loadPatients]);
+
+
+
+
 
   // ── Filtered list ─────────────────────────────────────────────────────────
   const filtered = appointments.filter(a => {
@@ -3874,19 +3896,35 @@ export default function AppointmentsPage() {
     try {
       if (selected) {
         await udateAppointmentApi(selected.id, payload);
-        showToast('✅ Appointment updated!');
+        // showToast('success','Appointment updated!','');
+        showToast('success','Updated','Appointment updated!');
+        handleCountData();
+
+        
       } else {
         await createAppointmentApi(payload);
-        showToast('✅ Appointment created!');
+        showToast('success','Created','Appointment created!');
+        handleCountData();
       }
       await load();
       closeModal();
     } catch {
-      showToast(`❌ Failed to ${selected ? 'update' : 'create'} appointment.`);
+      showToast('error',`Failed to ${selected ? 'update' : 'create'} appointment.`,'');
     } finally {
       setFormLoading(false);
     }
   };
+
+  const handleCountData= async()=>{
+ countAppointmentApi().then(res => {
+      const data = res.data;
+
+      setTotal(data.totalAppointments);
+      setScheduled(data.scheduled);
+      setCompleted(data.completed);
+      setCancelled(data.cancelled);
+    });
+  }
 
   const handleDelete = async () => {
     if (!selected) return;
@@ -3894,10 +3932,11 @@ export default function AppointmentsPage() {
     try {
       await deleteAppointmentApi(selected.id);
       await load();
-      showToast('🗑️ Appointment deleted.');
+      showToast('success', 'Deleted', 'Appointment deleted successfully'); 
+      handleCountData();
       closeModal();
     } catch {
-      showToast('❌ Failed to delete appointment.');
+      showToast('error','Failed to delete appointment.','');
     } finally {
       setFormLoading(false);
     }
@@ -3905,13 +3944,12 @@ export default function AppointmentsPage() {
 
   // ── Export functions ──────────────────────────────────────────────────────
   const exportToExcel = () => {
-    const headers = ['Sr. No.', 'Appointment ID', 'Patient', 'Doctor', 'Date & Time', 'Type', 'Status', 'Notes'];
+    const headers = ['Sr. No.', 'Patient', 'Doctor', 'Date & Time', 'Type', 'Status', 'Notes'];
     const rows = filtered.map((apt, idx) => {
       const patient = patients.find(p => p.id === apt.patientId);
       const doctor = doctors.find(d => d.id === apt.doctorId);
       return [
         idx + 1,
-        `#${apt.id}`,
         `"${patient?.name || `Patient #${apt.patientId}`}"`,
         `"${doctor?.name || `Dr. #${apt.doctorId}`}"`,
         apt.appointmentDate ? new Date(apt.appointmentDate).toLocaleString() : '—',
@@ -3960,7 +3998,7 @@ export default function AppointmentsPage() {
 <h1>Appointments Report</h1>
 <p style="text-align:center;color:#64748b">Generated: ${new Date().toLocaleDateString('en-IN')} | Total: ${filtered.length} records</p>
 <table>
-  <thead><tr><th>Sr. No.</th><th>ID</th><th>Patient</th><th>Doctor</th><th>Date & Time</th><th>Type</th><th>Status</th><th>Notes</th></tr></thead>
+  <thead><tr><th>Sr. No.</th><th>Patient</th><th>Doctor</th><th>Date & Time</th><th>Type</th><th>Status</th><th>Notes</th></tr></thead>
   <tbody>${rows}</tbody>
 </table>
 </body></html>`;
@@ -4086,10 +4124,10 @@ export default function AppointmentsPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: 'Total', value: appointments.length, color: 'text-slate-800' },
-            { label: 'Confirmed', value: count('confirmed'), color: 'text-emerald-600' },
-            { label: 'Completed', value: count('completed'), color: 'text-blue-600' },
-            { label: 'Cancelled', value: count('cancelled'), color: 'text-red-500' },
+            { label: 'Total Appointments', value: total, color: 'text-slate-800' },
+            { label: 'Scheduled', value: scheduled, color: 'text-emerald-600' },
+            { label: 'Completed', value: completed, color: 'text-blue-600' },
+            { label: 'Cancelled', value: cancelled, color: 'text-red-500' },
           ].map(s => (
             <div key={s.label} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
               <p className="text-xs text-slate-500 mb-1 font-medium">{s.label}</p>
@@ -4148,7 +4186,7 @@ export default function AppointmentsPage() {
           <table className="w-full">
             <thead className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-100">
               <tr>
-                {['Sr. No.', 'ID', 'Patient', 'Doctor', 'Date & Time', 'Type', 'Status', 'Notes', 'Actions'].map(h => (
+                {['Sr. No.', 'Patient', 'Doctor', 'Date & Time', 'Type', 'Status', 'Notes', 'Actions'].map(h => (
                   <th key={h} className="px-5 py-3.5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -4174,7 +4212,6 @@ export default function AppointmentsPage() {
                     <td className="px-5 py-4 text-sm font-semibold text-slate-500">
                       {srOffset + idx + 1}
                     </td>
-                    <td className="px-5 py-4 text-sm font-mono text-slate-500">#{apt.id}</td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">

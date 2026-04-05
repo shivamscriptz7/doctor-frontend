@@ -2185,7 +2185,15 @@ import {
   User, Phone, Mail, MapPin, Calendar, Edit, Trash2, Eye, Plus, X, FileText, Sheet
 } from 'lucide-react';
 
-import { getPatients, createPatientApi, updatePatientApi, deletePatientApi } from '../../lib/commonApis';
+import { getPatients, createPatientApi, updatePatientApi, deletePatientApi,countPatientApi } from '../../lib/commonApis';
+
+
+import { showToast } from '../../lib/notification';
+
+
+
+
+
 
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   if (!isOpen) return null;
@@ -2453,9 +2461,29 @@ export default function PatientsPage() {
     }
   };
 
+
+  const [total, setTotal] = useState(0);
+  const [today, setToday] = useState(0);
+  const [visited, setVisited] = useState(0);
+  const [unvisited, setUnvisited] = useState(0);
+
   useEffect(() => {
+handleCountData();
     fetchPatients(currentPage, itemsPerPage);
   }, [currentPage, itemsPerPage]);
+
+  const handleCountData = async()=>{
+     countPatientApi()
+      .then(res => {
+        const data = res.data;
+
+        setTotal(data.totalPatients);
+        setToday(data.todayPatients);
+        setVisited(data.visitedPatients);
+        setUnvisited(data.unvisitedPatients);
+      })
+      .catch(err => console.error(err));
+  }
 
   const refreshPatients = () => fetchPatients(currentPage, itemsPerPage);
 
@@ -2472,8 +2500,13 @@ export default function PatientsPage() {
       };
       if (modal.type === 'edit') {
         await updatePatientApi(selectedPatient.id, payload);
+        showToast('success','Updated','Patient updated successfully.');
+        handleCountData();
+
       } else {
         await createPatientApi(payload);
+        showToast('success','Created','Patient created successfully.');
+        handleCountData();
       }
       await refreshPatients();
       closeModal();
@@ -2486,6 +2519,8 @@ export default function PatientsPage() {
     if (!selectedPatient) return;
     try {
       await deletePatientApi(selectedPatient.id);
+        showToast('success','Deleted','Patient deleted successfully.');
+        handleCountData();
       await refreshPatients();
       closeModal();
     } catch (error) {
@@ -2635,10 +2670,10 @@ export default function PatientsPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total Patients', value: totalMeta.total, color: 'text-slate-800' },
-            { label: 'Showing', value: filteredPatients.length, color: 'text-emerald-600' },
-            { label: 'Current Page', value: `${currentPage} / ${totalPages}`, color: 'text-teal-600' },
-            { label: 'Filtered Results', value: filteredPatients.length, color: 'text-cyan-600' },
+             { label: 'Total Patients', value: total, color: 'text-slate-800' },
+    { label: 'Today Patients', value: today, color: 'text-emerald-600' },
+    { label: 'Visited Patients', value: visited, color: 'text-blue-600' },
+    { label: 'Unvisited Patients', value: unvisited, color: 'text-red-500' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
               <p className="text-sm text-slate-600 mb-1">{label}</p>

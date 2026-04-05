@@ -183,7 +183,7 @@
 //           role:         formData.role,
 //           hospitalName: formData.hospitalName, // ✅ hospitalId → hospitalName
 //           phone: formData.phone
-          
+
 //         });
 //         if (res.success) {
 //           showToast('success', 'Account Created', 'Signup successful! Please sign in.');
@@ -489,76 +489,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Heart, Activity, Users, Shield, ArrowRight, Zap, Eye, EyeOff } from 'lucide-react';
 import { loginApi, signupApi } from '../lib/commonApis';
-
-// ─── Toast Utility ────────────────────────────────────────────
-type ToastType = 'success' | 'error' | 'warning';
-
-function showToast(type: ToastType, title: string, message: string) {
-  const containerId = 'toast-root';
-  let container = document.getElementById(containerId);
-  if (!container) {
-    container = document.createElement('div');
-    container.id = containerId;
-    container.style.cssText =
-      'position:fixed;top:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;';
-    document.body.appendChild(container);
-  }
-
-  const colors = {
-    success: { bg: '#f0fdf4', border: '#bbf7d0', icon: '#16a34a', bar: '#22c55e' },
-    error:   { bg: '#fef2f2', border: '#fecaca', icon: '#dc2626', bar: '#ef4444' },
-    warning: { bg: '#fffbeb', border: '#fde68a', icon: '#d97706', bar: '#f59e0b' },
-  };
-  const c = colors[type];
-
-  const el = document.createElement('div');
-  el.style.cssText = `
-    pointer-events:all;
-    display:flex;align-items:flex-start;gap:12px;
-    padding:14px 16px;border-radius:14px;
-    background:${c.bg};border:1px solid ${c.border};
-    min-width:290px;max-width:350px;
-    position:relative;overflow:hidden;
-    opacity:0;transform:translateX(70px);
-    transition:opacity .3s ease,transform .3s ease;
-    box-shadow:0 4px 20px rgba(0,0,0,0.08);
-  `;
-
-  const iconMap = {
-    success: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${c.icon}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
-    error:   `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${c.icon}" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
-    warning: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${c.icon}" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
-  };
-
-  el.innerHTML = `
-    <div style="margin-top:1px;flex-shrink:0">${iconMap[type]}</div>
-    <div style="flex:1;min-width:0">
-      <div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:2px;font-family:'Plus Jakarta Sans',sans-serif">${title}</div>
-      <div style="font-size:12px;color:#6b7280;line-height:1.5;font-family:'Plus Jakarta Sans',sans-serif">${message}</div>
-    </div>
-    <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:18px;color:#9ca3af;padding:0;line-height:1;flex-shrink:0">&times;</button>
-    <div style="position:absolute;bottom:0;left:0;height:3px;width:100%;background:${c.bar};transform-origin:left;animation:toastBar 3.5s linear forwards;border-radius:0 0 14px 14px"></div>
-  `;
-
-  if (!document.getElementById('toast-style')) {
-    const s = document.createElement('style');
-    s.id = 'toast-style';
-    s.textContent = `@keyframes toastBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}`;
-    document.head.appendChild(s);
-  }
-
-  container.appendChild(el);
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    el.style.opacity = '1';
-    el.style.transform = 'translateX(0)';
-  }));
-  setTimeout(() => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateX(70px)';
-    setTimeout(() => el.remove(), 350);
-  }, 3500);
-}
-// ──────────────────────────────────────────────────────────────
+// doctors/page.jsx, appointments/page.jsx, departments/page.jsx — सब में
+import { showToast } from '../lib/notification';
 
 // ─── Reusable Input ───────────────────────────────────────────
 function AuthInput({
@@ -626,9 +558,8 @@ function PhoneInput({
         />
         {/* character count */}
         {value.length > 0 && (
-          <span className={`absolute right-3 text-xs font-medium ${
-            value.length === 10 ? 'text-emerald-500' : 'text-slate-400'
-          }`}>
+          <span className={`absolute right-3 text-xs font-medium ${value.length === 10 ? 'text-emerald-500' : 'text-slate-400'
+            }`}>
             {value.length}/10
           </span>
         )}
@@ -694,11 +625,7 @@ export default function HospitalAuth() {
   const [isRoleOpen, setIsRoleOpen] = useState(false);
 
   const roles = [
-    { label: 'Doctor',        value: 'doctor'       },
-    { label: 'Nurse',         value: 'nurse'        },
-    { label: 'Administrator', value: 'admin'        },
-    { label: 'Receptionist',  value: 'receptionist' },
-    { label: 'Pharmacist',    value: 'pharmacist'   },
+    { label: 'Doctor', value: 'doctor' }
   ];
 
   const switchTab = (toLogin: boolean) => {
@@ -712,49 +639,132 @@ export default function HospitalAuth() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+
+
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // ✅ Phone validation before submit
-    if (!isLogin && formData.phone.length !== 10) {
-      showToast('warning', 'Invalid Phone', '10 digit phone number daalo.');
-      return;
-    }
+  console.log('🚀 Form Submit Triggered');
+  console.log('📦 Form Data:', formData);
+  console.log('🔐 isLogin:', isLogin);
 
-    try {
-      if (isLogin) {
-        const res = await loginApi(formData.email, formData.password);
-        if (res.access_token) {
-          localStorage.setItem('access_token', res.access_token);
-          localStorage.setItem('user', JSON.stringify(res.user));
-          showToast('success', 'Login Successful', 'Welcome back! Redirecting to dashboard...');
-          setTimeout(() => router.push('/dashboard'), 1000);
-        } else {
-          showToast('error', 'Login Failed', res.message || 'Invalid credentials. Please try again.');
-        }
+  // ✅ Phone validation
+  if (!isLogin && formData.phone.length !== 10) {
+    console.log('❌ Invalid phone number');
+    showToast('warning', 'Invalid Phone', '10 digit phone number daalo.');
+    return;
+  }
+
+  try {
+    if (isLogin) {
+      console.log('👉 Login API calling...');
+
+      const res = await loginApi(formData.email, formData.password);
+
+      console.log('✅ Login API Response:', res);
+
+      // ✅ Success flow
+      localStorage.setItem('access_token', res.access_token);
+      localStorage.setItem('user', JSON.stringify(res.user));
+
+      console.log('💾 Token & User saved in localStorage');
+
+      showToast('success', 'Login Successful', 'Welcome back!');
+      console.log('➡️ Redirecting to dashboard...');
+
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
+
+    } else {
+      console.log('👉 Signup API calling...');
+
+      const res = await signupApi({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        hospitalName: formData.hospitalName,
+        phone: formData.phone,
+      });
+
+      console.log('✅ Signup API Response:', res);
+
+      if (res.statusCode==200) {
+        console.log('🎉 Signup success');
+        showToast('success', 'Account Created', 'Signup successful! Please sign in.');
+        switchTab(true);
       } else {
-        const res = await signupApi({
-          name:     formData.name,
-          email:        formData.email,
-          password:     formData.password,
-          role:         formData.role,
-          hospitalName: formData.hospitalName,
-          phone:        formData.phone,
-        });
-        console.log(res,'response');
-        
-        if (res.id) {
-          showToast('success', 'Account Created', 'Signup successful! Please sign in.');
-          switchTab(true);
-        } else {
-          showToast('error', 'Signup Failed', res.message || 'Something went wrong.');
-        }
+        console.log('❌ Signup failed');
+        showToast('error', 'Signup Failed', res.message || 'Something went wrong.');
       }
-    } catch (error) {
-      console.error('Authentication error:', error);
-      showToast('error', 'Server Error', 'Unable to connect. Please try again later.');
     }
-  };
+
+  } catch (error: any) {
+    console.error('❌ Authentication Error:', error);
+
+    // 👇 Important: backend ka actual message show karega
+    showToast(
+      'error',
+      'Login Failed',
+      error.message || 'Invalid email or password'
+    );
+  }
+
+  console.log('🏁 handleSubmit finished');
+};
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   // ✅ Phone validation before submit
+  //   if (!isLogin && formData.phone.length !== 10) {
+  //     showToast('warning', 'Invalid Phone', '10 digit phone number daalo.');
+  //     return;
+  //   }
+
+  //   try {
+  //     if (isLogin) {
+  //       console.log('before');
+        
+  //       const res = await loginApi(formData.email, formData.password);
+  //       console.log(res,'error');
+  //       return;
+        
+  //       if (res.access_token) {
+  //         localStorage.setItem('access_token', res.access_token);
+  //         localStorage.setItem('user', JSON.stringify(res.user));
+  //         showToast('success', 'Login Successful', 'Welcome back! Redirecting to dashboard...');
+  //         setTimeout(() => router.push('/dashboard'), 1000);
+  //       } else {
+  //         showToast('error', 'Login Failed', res.message || 'Invalid credentials. Please try again.');
+  //       }
+  //     } else {
+  //       const res = await signupApi({
+  //         name: formData.name,
+  //         email: formData.email,
+  //         password: formData.password,
+  //         role: formData.role,
+  //         hospitalName: formData.hospitalName,
+  //         phone: formData.phone,
+  //       });
+  //       console.log(res, 'response');
+
+  //       if (res.id) {
+  //         showToast('success', 'Account Created', 'Signup successful! Please sign in.');
+  //         switchTab(true);
+  //       } else {
+  //         showToast('error', 'Signup Failed', res.message || 'Something went wrong.');
+  //       }
+  //     }
+  //   } catch (error) {
+
+  //     console.error('Authentication error:', error);
+  //     return;
+  //     showToast('error', 'Server Error', 'Unable to connect. Please try again later.');
+  //   }
+  // };
 
   const currentYear = new Date().getFullYear();
 
@@ -805,9 +815,9 @@ export default function HospitalAuth() {
             </div>
             <div className="space-y-4 mt-8 lg:mt-12">
               {[
-                { icon: Shield, title: 'Secure & Compliant',  desc: 'HIPAA compliant with end-to-end encryption' },
-                { icon: Heart,  title: 'Patient-Centered',    desc: 'Designed to improve patient outcomes'       },
-                { icon: Users,  title: 'Team Collaboration',  desc: 'Real-time updates across departments'       },
+                { icon: Shield, title: 'Secure & Compliant', desc: 'HIPAA compliant with end-to-end encryption' },
+                { icon: Heart, title: 'Patient-Centered', desc: 'Designed to improve patient outcomes' },
+                { icon: Users, title: 'Team Collaboration', desc: 'Real-time updates across departments' },
               ].map(({ icon: Icon, title, desc }) => (
                 <div key={title} className="flex items-start space-x-3 group">
                   <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-colors">
@@ -836,15 +846,13 @@ export default function HospitalAuth() {
             {/* Toggle */}
             <div className="flex bg-slate-100 rounded-2xl p-1.5 mb-8">
               <button type="button" onClick={() => switchTab(true)}
-                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
-                  isLogin ? 'bg-white text-emerald-600 shadow-md' : 'text-slate-600 hover:text-slate-900'
-                }`}>
+                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${isLogin ? 'bg-white text-emerald-600 shadow-md' : 'text-slate-600 hover:text-slate-900'
+                  }`}>
                 Sign In
               </button>
               <button type="button" onClick={() => switchTab(false)}
-                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
-                  !isLogin ? 'bg-white text-emerald-600 shadow-md' : 'text-slate-600 hover:text-slate-900'
-                }`}>
+                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${!isLogin ? 'bg-white text-emerald-600 shadow-md' : 'text-slate-600 hover:text-slate-900'
+                  }`}>
                 Sign Up
               </button>
             </div>
@@ -899,11 +907,10 @@ export default function HospitalAuth() {
                               setFormData(prev => ({ ...prev, role: role.value }));
                               setIsRoleOpen(false);
                             }}
-                            className={`px-4 py-3 cursor-pointer transition-all ${
-                              formData.role === role.value
+                            className={`px-4 py-3 cursor-pointer transition-all ${formData.role === role.value
                                 ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold'
                                 : 'text-slate-700 hover:bg-gradient-to-r hover:from-emerald-600 hover:to-teal-600 hover:text-white'
-                            }`}>
+                              }`}>
                             {role.label}
                           </div>
                         ))}
