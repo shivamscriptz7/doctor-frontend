@@ -2511,6 +2511,8 @@ handleCountData();
       await refreshPatients();
       closeModal();
     } catch (error) {
+        showToast('error','Failed','Failed to created Patient.');
+
       console.error(error);
     }
   };
