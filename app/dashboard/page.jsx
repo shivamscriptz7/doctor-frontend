@@ -496,7 +496,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-slate-800 mb-2">Welcome back, Dr. Keshav</h1>
+          <h1 className="text-4xl font-bold text-slate-800 mb-2">Welcome back, Dr.Jai</h1>
           <p className="text-slate-600">Here's what's happening in your hospital today</p>
         </div>
         <div className="flex gap-3">
