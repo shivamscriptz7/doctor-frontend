@@ -410,6 +410,7 @@ export default function DashboardLayout({ children }) {
     { id: 'appointments', label: 'Appointments',   icon: Calendar,    badge: '12', path: '/dashboard/appointments' },
     { id: 'patients',     label: 'Patients',       icon: Users,       badge: null, path: '/dashboard/patients' },
     { id: 'doctors',      label: 'Doctors',        icon: Stethoscope, badge: null, path: '/dashboard/doctors' },
+    { id: 'prescriptions', label: 'Prescriptions',   icon: FileText,    badge: null, path: '/dashboard/prescriptions' },
     { id: 'departments',  label: 'Departments',    icon: FileText,    badge: null, path: '/dashboard/departments' },
     { id: 'pharmacy',     label: 'Pharmacy',       icon: Pill,        badge: '3',  path: '/dashboard/pharmacy' },
     { id: 'beds',         label: 'Bed Management', icon: BedDouble,   badge: null, path: '/dashboard/beds' },

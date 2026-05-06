@@ -2299,13 +2299,12 @@ function PatientForm({ formData, onChange, onSubmit, onCancel, isEdit }) {
       {/* Row 2: Email + Age (numeric) */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address *</label>
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address 99</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={onChange}
-            required
             placeholder="email@example.com"
             className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700"
           />

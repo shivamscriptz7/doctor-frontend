@@ -1663,7 +1663,7 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
         patientId: formData.patientId ? parseInt(formData.patientId) : null,
       };
       await createBedApi(payload);
-      showToast('success','Created','Medicine created successfully!');
+      showToast('success','Created','Bed created successfully!');
       await loadBeds(currentPage);
       setShowAddModal(false);
       resetForm();
@@ -1697,14 +1697,14 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
         patientId: formData.patientId ? parseInt(formData.patientId) : null,
       };
       await updateBedApi(selectedBed.id, payload);
-      showToast('success','Updated','Medicine updated successfully!');
+      showToast('success','Updated','Bed updated successfully!');
       await loadBeds(currentPage);
       setShowEditModal(false);
       setSelectedBed(null);
       resetForm();
     } catch (error) {
       console.error('Failed to update bed:', error);
-      showToast('error','Failed','Medicine deleted successfully!');
+      showToast('error','Failed','Bed deleted successfully!');
     }
   };
 
@@ -1717,7 +1717,7 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
   const handleDeleteBed = async () => {
     try {
       await deleteBedApi(selectedBed.id);
-      showToast('success','Deleted','Medicine deleted successfully!');
+      showToast('success','Deleted','Bed deleted successfully!');
       await loadBeds(currentPage);
       setShowDeleteModal(false);
       setSelectedBed(null);
