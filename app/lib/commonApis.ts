@@ -420,4 +420,89 @@ export async function countDoctorApi() {
     method: 'GET',
   });
 }
+
+
+
+
+ 
+// ══════════════════════════════════════════════════════════════════════════════
+// Prescription APIs
+// ══════════════════════════════════════════════════════════════════════════════
+ 
+export async function getPrescriptionApi(limit = 10, page = 1) {
+  return apiFetch(`/prescription?limit=${limit}&page=${page}`);
+}
+ 
+export async function createPrescriptionApi(data: any) {
+  return apiFetch('/prescription', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+ 
+export async function updatePrescriptionApi(id: number, data: any) {
+  return apiFetch(`/prescription/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+ 
+export async function deletePrescriptionApi(id: number) {
+  return apiFetch(`/prescription/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function countPrescriptionApi() {
+  return apiFetch(`/prescription/count`, {
+    method: 'GET',
+  });
+}
+
+
+
+
+
+
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Hospital invoice APIs
+// ══════════════════════════════════════════════════════════════════════════════
+ 
+export async function getHospitalInvoiceApi(limit = 10, page = 1) {
+  return apiFetch(`/hospital_invoice?limit=${limit}&page=${page}`);
+}
+ 
+export async function createHospitalInvoiceApi(data: any) {
+  return apiFetch('/hospital_invoice', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+ 
+export async function updateHospitalInvoiceApi(id: number, data: any) {
+  return apiFetch(`/hospital_invoice/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+ 
+export async function deleteHospitalInvoiceApi(id: number) {
+  return apiFetch(`/hospital_invoice/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function countHospitalInvoiceApi() {
+  return apiFetch(`/hospital_invoice/count`, {
+    method: 'GET',
+  });
+}
+
+
+
+
+ 
+
  
