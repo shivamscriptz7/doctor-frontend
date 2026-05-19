@@ -102,6 +102,32 @@
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// async function apiFetch(
+//   endpoint: string,
+//   options: RequestInit = {}
+// ) {
+//   const token = typeof window !== 'undefined'
+//     ? localStorage.getItem('access_token')
+//     : null;
+
+//   const res = await fetch(`${API_URL}${endpoint}`, {
+//     headers: {
+//       'Content-Type': 'application/json',
+//       ...(token && { Authorization: `Bearer ${token}` }),
+//       ...options.headers,
+//     },
+//     ...options,
+//   });
+
+//   const data = await res.json();
+
+//   if (!res.ok) {
+//     throw new Error(data.message || 'Something went wrong');
+//   }
+
+//   return data;
+// }
+
 async function apiFetch(
   endpoint: string,
   options: RequestInit = {}
@@ -110,13 +136,16 @@ async function apiFetch(
     ? localStorage.getItem('access_token')
     : null;
 
+  // FormData hai toh Content-Type mat lagao — browser khud multipart/form-data lagayega
+  const isFormData = options.body instanceof FormData;
+
   const res = await fetch(`${API_URL}${endpoint}`, {
+    ...options,
     headers: {
-      'Content-Type': 'application/json',
+      ...(!isFormData && { 'Content-Type': 'application/json' }),
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
-    ...options,
   });
 
   const data = await res.json();
@@ -220,6 +249,13 @@ export async function countPharmacyApi() {
   });
 }
 
+
+export async function createBulkMedicineApi(data: FormData) {
+  return apiFetch('/medicines/upload', {
+    method: 'POST',
+    body: data,  // ← sirf yahi karo, JSON.stringify mat karo
+  });
+}
 
 
 
