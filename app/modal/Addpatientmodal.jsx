@@ -64,7 +64,8 @@ const inputCls =
   'w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700 placeholder:text-slate-400';
 
 const EMPTY = {
-  name: '', email: '', age: '', gender: '', phone: '',
+  name: '', email: '', age: '',  fatherName: "",   // <-- add this
+  disease: "", gender: '', phone: '',
   address: '', city: '', state: '', country: '', pincode: '',
 };
 
@@ -158,6 +159,33 @@ export default function AddPatientModal({ isOpen, onClose, onSuccess }) {
               />
             </Field>
           </div>
+
+                     {/* Row 6: Father Name + Disease */}
+<div className="grid grid-cols-2 gap-4">
+  <div>
+    <label className="block text-sm font-semibold text-slate-700 mb-2">Father Name</label>
+    <input
+      type="text"
+      name="fatherName"
+      value={form.fatherName}
+      onChange={handleChange}
+      placeholder="e.g. Ramesh Sharma"
+      className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700"
+    />
+  </div>
+  <div>
+    <label className="block text-sm font-semibold text-slate-700 mb-2">Disease</label>
+    <input
+      type="text"
+      name="disease"
+      value={form.disease}
+      onChange={handleChange}
+      placeholder="e.g. Diabetes, Hypertension"
+      className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700"
+    />
+  </div>
+
+</div>
 
           {/* Row 2: Email + Age */}
           <div className="grid grid-cols-2 gap-4">

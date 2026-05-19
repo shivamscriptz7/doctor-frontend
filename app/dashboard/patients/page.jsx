@@ -2195,14 +2195,20 @@ import { showToast } from '../../lib/notification';
 
 
 
+// Modal Component
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   if (!isOpen) return null;
-  const sizeClasses = { sm: 'max-w-md', md: 'max-w-2xl', lg: 'max-w-4xl' };
+
+  const sizeClasses = {
+    sm: 'max-w-md',
+    md: 'max-w-2xl',
+    lg: 'max-w-4xl',
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
       <div
-        className={`relative bg-white rounded-2xl shadow-2xl w-full ${sizeClasses[size]} border border-slate-100 flex flex-col max-h-[90vh]`}
+        className={`relative bg-white rounded-2xl shadow-2xl w-full ${sizeClasses[size]} border border-slate-100 flex flex-col max-h-[90vh] overflow-hidden`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-emerald-100 rounded-t-2xl flex-shrink-0">
@@ -2295,6 +2301,32 @@ function PatientForm({ formData, onChange, onSubmit, onCancel, isEdit }) {
           </div>
         ))}
       </div>
+           {/* Row 6: Father Name + Disease */}
+<div className="grid grid-cols-2 gap-4">
+  <div>
+    <label className="block text-sm font-semibold text-slate-700 mb-2">Father Name</label>
+    <input
+      type="text"
+      name="fatherName"
+      value={formData.fatherName}
+      onChange={onChange}
+      placeholder="e.g. Ramesh Sharma"
+      className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700"
+    />
+  </div>
+  <div>
+    <label className="block text-sm font-semibold text-slate-700 mb-2">Disease</label>
+    <input
+      type="text"
+      name="disease"
+      value={formData.disease}
+      onChange={onChange}
+      placeholder="e.g. Diabetes, Hypertension"
+      className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700"
+    />
+  </div>
+
+</div>
 
       {/* Row 2: Email + Age (numeric) */}
       <div className="grid grid-cols-2 gap-4">
@@ -2377,6 +2409,10 @@ function PatientForm({ formData, onChange, onSubmit, onCancel, isEdit }) {
         </div>
       </div>
 
+
+
+ 
+
       <div className="flex gap-3 pt-4">
         <button type="button" onClick={onCancel} className="flex-1 px-6 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors font-semibold">
           Cancel
@@ -2389,7 +2425,7 @@ function PatientForm({ formData, onChange, onSubmit, onCancel, isEdit }) {
   );
 }
 
-const EMPTY_FORM = { name: '', email: '', age: '', gender: '', phone: '', address: '', city: '', state: '', country: '', pincode: '' };
+const EMPTY_FORM = { name: '', email: '', age: '', gender: '', phone: '', address: '', city: '', state: '', country: '', pincode: '' , fatherName: '', disease: ''};
 
 const mapPatient = (item) => ({
   id: item.id,
@@ -2403,6 +2439,9 @@ const mapPatient = (item) => ({
   state: item.state || '-',
   country: item.country || '-',
   pincode: item.pincode || '-',
+  fatherName: item.fatherName || '-',
+  disease: item.disease || '-',
+  patientNumber: item.patientNumber || '-',
   created_date: item.createdAt.split('T')[0],
   updated_date: item.updatedAt.split('T')[0],
 });
@@ -2435,6 +2474,8 @@ export default function PatientsPage() {
             state:   patient.state   === '-' ? '' : (patient.state   || ''),
             country: patient.country === '-' ? '' : (patient.country || ''),
             pincode: patient.pincode === '-' ? '' : (patient.pincode || ''),
+            fatherName: patient.fatherName === '-' ? '' : (patient.fatherName || ''),
+            disease: patient.disease === '-' ? '' : (patient.disease || ''),
           }
         : EMPTY_FORM
     );
@@ -2719,6 +2760,7 @@ handleCountData();
             <thead className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-200">
               <tr>
                 {[
+                  { key: 'patientNumber', icon: <User className="w-4 h-4" />, label: 'Patient Id' },
                   { key: 'name', icon: <User className="w-4 h-4" />, label: 'Patient Name' },
                   { key: 'phone', icon: <Phone className="w-4 h-4" />, label: 'Phone' },
                   { key: 'email', icon: <Mail className="w-4 h-4" />, label: 'Email' },
@@ -2727,6 +2769,8 @@ handleCountData();
                   { key: 'address', icon: <MapPin className="w-4 h-4" />, label: 'Address' },
                   { key: 'created_date', icon: <Calendar className="w-4 h-4" />, label: 'Created' },
                   { key: 'updated_date', icon: <Calendar className="w-4 h-4" />, label: 'Updated' },
+                  { key: 'fatherName', icon: <User className="w-4 h-4" />, label: 'Father Name' },
+{ key: 'disease', icon: <FileText className="w-4 h-4" />, label: 'Disease' },
                 ].map(({ key, icon, label }) => (
                   <th key={key} className="px-6 py-4 text-left">
                     <button onClick={() => handleSort(key)} className="flex items-center gap-2 font-semibold text-slate-700 hover:text-emerald-600 transition-colors">
@@ -2740,6 +2784,9 @@ handleCountData();
             <tbody className="divide-y divide-slate-100">
               {filteredPatients.length > 0 ? filteredPatients.map((patient) => (
                 <tr key={patient.id} className="hover:bg-emerald-50/50 transition-colors duration-200">
+
+                  <td className="px-6 py-4 text-slate-600">{patient.patientNumber}</td>
+
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
@@ -2767,6 +2814,8 @@ handleCountData();
                   <td className="px-6 py-4 text-slate-600">{patient.address}</td>
                   <td className="px-6 py-4 text-slate-600">{patient.created_date}</td>
                   <td className="px-6 py-4 text-slate-600">{patient.updated_date}</td>
+                  <td className="px-6 py-4 text-slate-600">{patient.fatherName || '-'}</td>
+<td className="px-6 py-4 text-slate-600">{patient.disease || '-'}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-center gap-2">
                       <button onClick={() => openModal('view', patient)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="View"><Eye className="w-4 h-4" /></button>
@@ -2777,7 +2826,7 @@ handleCountData();
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={9} className="px-6 py-12 text-center">
+                  <td colSpan={12} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <Search className="w-12 h-12 text-slate-300" />
                       <p className="text-slate-600 font-medium">No patients found</p>
@@ -2884,6 +2933,8 @@ handleCountData();
                 { label: 'Country', value: selectedPatient.country || '-' },
                 { label: 'Created Date', value: selectedPatient.created_date },
                 { label: 'Updated Date', value: selectedPatient.updated_date },
+                { label: 'Father Name', value: selectedPatient.fatherName || '-' },
+{ label: 'Disease', value: selectedPatient.disease || '-' },
               ].map(({ label, value, full }) => (
                 <div key={label} className={full ? 'col-span-2' : ''}>
                   <p className="text-sm text-slate-600 mb-1">{label}</p>
