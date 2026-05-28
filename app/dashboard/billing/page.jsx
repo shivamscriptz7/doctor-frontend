@@ -4339,7 +4339,7 @@ import {
 } from 'lucide-react';
 import {
   createHospitalInvoiceApi, getHospitalInvoiceApi, updateHospitalInvoiceApi,
-  deleteHospitalInvoiceApi, getPatients, getDoctorApi, countInvoiceApi
+  deleteHospitalInvoiceApi, getPatients, getDoctorApi, countHospitalInvoiceApi
 } from '../../lib/commonApis';
 import { showToast } from '../../lib/notification';
 
@@ -4377,7 +4377,179 @@ function getQRUrl(invoiceId, amount) {
 }
 
 // ── Print Invoice ─────────────────────────────────────────────────────────────
-function printInvoice(inv) {
+// function printInvoice(inv) {
+//   const chargeRows = (inv.charges || []).map(c => `
+//     <tr>
+//       <td>${c.category}</td>
+//       <td>${c.chargeName}</td>
+//       <td style="text-align:center">${c.quantity}</td>
+//       <td style="text-align:right">₹${parseFloat(c.rate || 0).toLocaleString('en-IN')}</td>
+//       <td style="text-align:right">₹${parseFloat(c.amount || 0).toLocaleString('en-IN')}</td>
+//     </tr>`).join('');
+
+//   const oxygenRow = inv.oxygenCharges?.enabled ? `
+//     <tr class="oxy-row">
+//       <td><span style="display:flex;align-items:center;gap:5px">🌬️ Oxygen</span></td>
+//       <td>${inv.oxygenCharges.description || 'Oxygen Charges'}</td>
+//       <td style="text-align:center">${inv.oxygenCharges.quantity || 1}</td>
+//       <td style="text-align:right">₹${parseFloat(inv.oxygenCharges.rate || 0).toLocaleString('en-IN')}</td>
+//       <td style="text-align:right">₹${parseFloat(inv.oxygenCharges.amount || 0).toLocaleString('en-IN')}</td>
+//     </tr>` : '';
+
+//   const qrUrl = getQRUrl(inv.invoiceId, inv.totalAmount);
+
+//   const html = `<!DOCTYPE html>
+// <html><head><title>Invoice ${inv.invoiceId}</title>
+// <style>
+//   *{margin:0;padding:0;box-sizing:border-box}
+//   body{font-family:'Segoe UI',Arial,sans-serif;background:#fff;color:#1e293b}
+//   .page{max-width:800px;margin:30px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,.08)}
+//   .header{background:linear-gradient(135deg,#059669 0%,#0d9488 100%);color:#fff;padding:28px 36px;display:flex;justify-content:space-between;align-items:flex-start}
+//   .h-left h1{font-size:22px;font-weight:800;letter-spacing:-.3px}
+//   .h-left p{margin-top:5px;opacity:.82;font-size:11px;line-height:1.7}
+//   .h-right{text-align:right}
+//   .inv-label{font-size:9px;opacity:.7;text-transform:uppercase;letter-spacing:1.5px}
+//   .inv-num{font-size:19px;font-weight:800;background:rgba(255,255,255,.18);padding:4px 14px;border-radius:8px;display:inline-block;margin-top:3px}
+//   .inv-date{font-size:11px;opacity:.78;margin-top:4px}
+//   .body{padding:28px 36px}
+//   .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0}
+//   .m-block h3{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#94a3b8;margin-bottom:4px}
+//   .m-block p{font-size:14px;font-weight:600;color:#1e293b}
+//   .m-block .sub{font-size:11px;color:#64748b;margin-top:1px}
+//   .badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase}
+//   .opd{background:#dbeafe;color:#1d4ed8}.ipd{background:#ede9fe;color:#6d28d9}
+//   table{width:100%;border-collapse:collapse}
+//   thead tr{background:#f1f5f9}
+//   th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;border-bottom:2px solid #e2e8f0}
+//   td{padding:9px 12px;border-bottom:1px solid #f1f5f9;font-size:13px;color:#334155}
+//   .oxy-row td{background:#f0f9ff;color:#0369a1;font-weight:500}
+//   tfoot td{padding:11px 12px;background:#f0fdf4;font-weight:700;border-top:2px solid #d1fae5}
+//   .total-lbl{font-size:13px;color:#065f46}
+//   .total-val{font-size:16px;font-weight:800;color:#059669}
+//   .footer-area{display:flex;justify-content:space-between;align-items:flex-start;margin-top:22px;padding-top:22px;border-top:1px solid #e2e8f0;gap:24px}
+//   .pay-info h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:6px}
+//   .pay-info p{font-size:12px;color:#475569;line-height:1.6}
+//   .upi-id{color:#059669;font-weight:700}
+//   .qr-wrap{text-align:center;flex-shrink:0}
+//   .qr-wrap img{width:120px;height:120px;border:3px solid #d1fae5;border-radius:10px;padding:4px;background:#fff}
+//   .qr-wrap .qlabel{font-size:10px;color:#64748b;margin-top:5px;font-weight:600}
+//   .qr-wrap .qamt{font-size:12px;font-weight:800;color:#059669;margin-top:2px}
+//   .footer{text-align:center;color:#94a3b8;font-size:11px;padding:12px 36px;border-top:1px solid #f1f5f9;margin-top:6px}
+//   @media print{body{background:#fff}.page{margin:0;box-shadow:none;border-radius:0}}
+// </style>
+// </head><body>
+// <div class="page">
+//   <div class="header">
+//     <div class="h-left">
+//       <h1>🏥 ${HOSPITAL_NAME}</h1>
+//       <p>${HOSPITAL_ADDRESS}<br>${HOSPITAL_EMAIL} &nbsp;|&nbsp; ${HOSPITAL_PHONE}</p>
+//     </div>
+//     <div class="h-right">
+//       <div class="inv-label">Invoice</div>
+//       <div class="inv-num">${inv.invoiceId}</div>
+//       <div class="inv-date">${inv.date}</div>
+//     </div>
+//   </div>
+
+//   <div class="body">
+//     <div class="meta">
+//       <div class="m-block">
+//         <h3>Patient</h3>
+//         <p>${inv.patientName}</p>
+//         <p class="sub">ID: ${inv.patientId}</p>
+//       </div>
+//       <div class="m-block">
+//         <h3>Doctor</h3>
+//         <p>${inv.doctorName}</p>
+//         <p class="sub">ID: ${inv.doctorId}</p>
+//       </div>
+//       <div class="m-block">
+//         <h3>Visit Type</h3>
+//         <span class="badge ${(inv.ipdOpd || 'OPD').toLowerCase()}">${inv.ipdOpd || 'OPD'}</span>
+//         <p class="sub" style="margin-top:6px;text-transform:capitalize">Status: ${inv.status}</p>
+//       </div>
+//     </div>
+
+//     <table>
+//       <thead>
+//         <tr>
+//           <th>Category</th><th>Charge Name</th>
+//           <th style="text-align:center">Qty</th>
+//           <th style="text-align:right">Rate</th>
+//           <th style="text-align:right">Amount</th>
+//         </tr>
+//       </thead>
+//       <tbody>
+//         ${chargeRows}
+//         ${oxygenRow}
+//       </tbody>
+//       <tfoot>
+//         <tr>
+//           <td colspan="4" class="total-lbl">Grand Total</td>
+//           <td style="text-align:right" class="total-val">₹${inv.totalAmount.toLocaleString('en-IN')}</td>
+//         </tr>
+//       </tfoot>
+//     </table>
+
+//     <div class="footer-area">
+//       <div class="pay-info" style="flex:1">
+//         ${inv.notes ? `<h4>Remarks</h4><p style="margin-bottom:12px">${inv.notes}</p>` : ''}
+//         <h4>Payment</h4>
+//         <p>UPI ID: <span class="upi-id">${UPI_ID}</span><br>
+//         Scan the QR code to pay instantly via any UPI app<br>
+//         <span style="color:#94a3b8;font-size:11px">This invoice is valid for 30 days from the date of issue.</span></p>
+//       </div>
+//       <div class="qr-wrap">
+//         <img src="${qrUrl}" alt="UPI Payment QR" />
+//         <div class="qlabel">Scan & Pay</div>
+//         <div class="qamt">₹${inv.totalAmount.toLocaleString('en-IN')}</div>
+//       </div>
+//     </div>
+//   </div>
+
+//   <div class="footer">
+//     Thank you for choosing ${HOSPITAL_NAME} &nbsp;•&nbsp; Get well soon! &nbsp;•&nbsp; ${HOSPITAL_PHONE}
+//   </div>
+// </div>
+// </body></html>`;
+
+//   const win = window.open('', '_blank', 'height=800,width=920');
+//   win.document.write(html);
+//   win.document.close();
+//   win.focus();
+//   setTimeout(() => win.print(), 700);
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ── Print Invoice ─────────────────────────────────────────────────────────────
+async function printInvoice(inv) {
+  // ── CHANGED: fetch QR as base64 so it renders in print window ──
+  let qrSrc = '';
+  try {
+    const qrUrl = getQRUrl(inv.invoiceId, inv.totalAmount);
+    const response = await fetch(qrUrl);
+    const blob = await response.blob();
+    qrSrc = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    qrSrc = getQRUrl(inv.invoiceId, inv.totalAmount); // fallback to URL
+  }
+
   const chargeRows = (inv.charges || []).map(c => `
     <tr>
       <td>${c.category}</td>
@@ -4396,8 +4568,7 @@ function printInvoice(inv) {
       <td style="text-align:right">₹${parseFloat(inv.oxygenCharges.amount || 0).toLocaleString('en-IN')}</td>
     </tr>` : '';
 
-  const qrUrl = getQRUrl(inv.invoiceId, inv.totalAmount);
-
+  // ── CHANGED: use qrSrc (base64) instead of qrUrl ──
   const html = `<!DOCTYPE html>
 <html><head><title>Invoice ${inv.invoiceId}</title>
 <style>
@@ -4500,7 +4671,7 @@ function printInvoice(inv) {
         <span style="color:#94a3b8;font-size:11px">This invoice is valid for 30 days from the date of issue.</span></p>
       </div>
       <div class="qr-wrap">
-        <img src="${qrUrl}" alt="UPI Payment QR" />
+        <img src="${qrSrc}" alt="UPI Payment QR" />
         <div class="qlabel">Scan & Pay</div>
         <div class="qamt">₹${inv.totalAmount.toLocaleString('en-IN')}</div>
       </div>
@@ -4517,9 +4688,9 @@ function printInvoice(inv) {
   win.document.write(html);
   win.document.close();
   win.focus();
-  setTimeout(() => win.print(), 700);
+  // ── CHANGED: no setTimeout needed — image is already base64 inline ──
+  setTimeout(() => win.print(), 300);
 }
-
 // ── Modal ─────────────────────────────────────────────────────────────────────
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   if (!isOpen) return null;
@@ -4826,10 +4997,10 @@ export default function BillingPage() {
       console.log('response');
 
       const res = await getHospitalInvoiceApi(1000, 1);
-      console.log(res,'response');
+      console.log(res.data.data,'response');
       // return;
       
-      const arr = res?.data?.invoices || res?.data || res || [];
+      const arr = res?.data?.data.invoices || res?.data.data || res || [];
       setInvoices(Array.isArray(arr) ? arr.map(item => {
         // ── CHANGED: map API fields → internal shape ──────────────────────
         // oxygenCharges is boolean in API; find the oxygen item inside items[]
@@ -4895,7 +5066,9 @@ export default function BillingPage() {
     (async () => {
       try {
         // ── CHANGED: use countHospitalInvoiceApi ──────────────────────────
-        const res = await countInvoiceApi();
+        const res = await countHospitalInvoiceApi();
+
+       console.log(res.data,'count response');
         setTodayInvoices(res.data.todayInvoices);
         setTodayRevenue(res.data.todayRevenue);
         setTotalRevenue(res.data.totalRevenue);
