@@ -2425,7 +2425,7 @@ function PatientForm({ formData, onChange, onSubmit, onCancel, isEdit }) {
   );
 }
 
-const EMPTY_FORM = { name: '', email: '', age: '', gender: '', phone: '', address: '', city: '', state: '', country: '', pincode: '' , fatherName: '', disease: ''};
+const EMPTY_FORM = { name: '', email: '', age: '', gender: '', status: '', phone: '', address: '', city: '', state: '', country: '', pincode: '' , fatherName: '', disease: ''};
 
 const mapPatient = (item) => ({
   id: item.id,
@@ -2434,6 +2434,7 @@ const mapPatient = (item) => ({
   email: item.user?.email || item.email || '-',
   age: item.age,
   gender: item.gender,
+  status: item.status,
   address: item.address || '-',
   city: item.city || '-',
   state: item.state || '-',
@@ -2469,6 +2470,7 @@ export default function PatientsPage() {
             email: patient.email,
             age: patient.age != null ? String(patient.age) : '',
             gender: patient.gender || '',
+            status: patient.status || '', 
             address: patient.address === '-' ? '' : patient.address,
             city:    patient.city    === '-' ? '' : (patient.city    || ''),
             state:   patient.state   === '-' ? '' : (patient.state   || ''),
@@ -2537,6 +2539,7 @@ handleCountData();
         ...formData,
         age: formData.age !== '' ? Number(formData.age) : null,
         gender: formData.gender || null,
+        status: formData.status || null,
       };
       if (modal.type === 'edit') {
         await updatePatientApi(selectedPatient.id, payload);
@@ -2603,7 +2606,7 @@ handleCountData();
     const csvData = [
       headers.join(','),
       ...filteredPatients.map(p =>
-        `${p.id},"${p.name}","${p.phone}","${p.email}","${p.age || '-'}","${p.gender || '-'}","${p.address}","${p.city || '-'}","${p.state || '-'}","${p.country || '-'}","${p.pincode || '-'}",${p.created_date},${p.updated_date}`
+        `${p.id},"${p.name}","${p.phone}","${p.email}","${p.age || '-'}","${p.gender || '-'}","${p.status || '-'}","${p.address}","${p.city || '-'}","${p.state || '-'}","${p.country || '-'}","${p.pincode || '-'}",${p.created_date},${p.updated_date}`
       ),
     ].join('\n');
     const link = document.createElement('a');
@@ -2634,7 +2637,7 @@ handleCountData();
         <thead>
           <tr>
             <th>ID</th><th>Name</th><th>Phone</th><th>Email</th>
-            <th>Age</th><th>Gender</th><th>Address</th><th>City</th><th>State</th><th>Country</th><th>Pincode</th><th>Created</th><th>Updated</th>
+            <th>Age</th><th>Gender</th><th>Status</th><th>Address</th><th>City</th><th>State</th><th>Country</th><th>Pincode</th><th>Created</th><th>Updated</th>
           </tr>
         </thead>
         <tbody>
@@ -2646,6 +2649,7 @@ handleCountData();
               <td>${p.email}</td>
               <td>${p.age || '-'}</td>
               <td>${p.gender || '-'}</td>
+              <td>${p.status || '-'}</td>
               <td>${p.address}</td>
               <td>${p.city || '-'}</td>
               <td>${p.state || '-'}</td>
@@ -2766,11 +2770,12 @@ handleCountData();
                   { key: 'email', icon: <Mail className="w-4 h-4" />, label: 'Email' },
                   { key: 'age', icon: <User className="w-4 h-4" />, label: 'Age' },
                   { key: 'gender', icon: <User className="w-4 h-4" />, label: 'Gender' },
+                  { key: 'status', icon: <User className="w-4 h-4" />, label: 'Status' },
                   { key: 'address', icon: <MapPin className="w-4 h-4" />, label: 'Address' },
                   { key: 'created_date', icon: <Calendar className="w-4 h-4" />, label: 'Created' },
                   { key: 'updated_date', icon: <Calendar className="w-4 h-4" />, label: 'Updated' },
                   { key: 'fatherName', icon: <User className="w-4 h-4" />, label: 'Father Name' },
-{ key: 'disease', icon: <FileText className="w-4 h-4" />, label: 'Disease' },
+                  { key: 'disease', icon: <FileText className="w-4 h-4" />, label: 'Disease' },
                 ].map(({ key, icon, label }) => (
                   <th key={key} className="px-6 py-4 text-left">
                     <button onClick={() => handleSort(key)} className="flex items-center gap-2 font-semibold text-slate-700 hover:text-emerald-600 transition-colors">
@@ -2811,6 +2816,7 @@ handleCountData();
                       </span>
                     ) : '-'}
                   </td>
+                  <td className="px-6 py-4 text-slate-600">{patient.status || '-'}</td>
                   <td className="px-6 py-4 text-slate-600">{patient.address}</td>
                   <td className="px-6 py-4 text-slate-600">{patient.created_date}</td>
                   <td className="px-6 py-4 text-slate-600">{patient.updated_date}</td>
@@ -2926,6 +2932,7 @@ handleCountData();
                 { label: 'Email Address', value: selectedPatient.email },
                 { label: 'Age', value: selectedPatient.age || '-' },
                 { label: 'Gender', value: selectedPatient.gender || '-' },
+                 { label: 'Status', value: selectedPatient.status || '-' },
                 { label: 'Address', value: selectedPatient.address, full: true },
                 { label: 'City', value: selectedPatient.city || '-' },
                 { label: 'Pincode', value: selectedPatient.pincode || '-' },
