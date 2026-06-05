@@ -3833,7 +3833,7 @@ export default function PatientsPage() {
               <tr>
                 {TABLE_COLS.map(({ key, icon, label }) => (
                   <th key={key} className="px-6 py-4 text-left">
-                    <button onClick={() => handleSort(key)} className="flex items-center gap-2 font-semibold text-slate-700 hover:text-emerald-600 transition-colors whitespace-nowrap">
+                    <button onClick={() => handleSort(key)} className="flex items-center gap-2 font-semibold uppercase text-slate-700 hover:text-emerald-600 transition-colors whitespace-nowrap">
                       {icon} {label} {getSortIcon(key)}
                     </button>
                   </th>
@@ -3894,7 +3894,7 @@ export default function PatientsPage() {
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
+        { (
           <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
             <div className="flex items-center justify-between">
               <p className="text-sm text-slate-600">
