@@ -824,7 +824,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Calendar, Plus, Search, Filter, X, Edit2, Trash2, Eye,
+  Calendar, Plus, Search, Filter, X, Edit2,Edit, Trash2, Eye,
   ChevronLeft, ChevronRight, Loader2, AlertCircle, ChevronDown,
   Download, FileText, Sheet, Printer
 } from 'lucide-react';
@@ -1540,12 +1540,22 @@ export default function AppointmentsPage() {
                 const doctor  = doctors.find(d => d.id === apt.doctorId);
                 return (
                   <tr key={apt.id} className="hover:bg-emerald-50/40 transition-colors">
-                    <td className="px-5 py-4 text-sm font-semibold text-slate-500">{srOffset + idx + 1}</td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-sm font-semibold text-slate-700">{`${patient.patientId}`}</span>
+                    <td className="px-5 py-4 text-sm text-slate-500">
+                      <div>
+                         <p className="font-semibold text-slate-800 text-sm">{srOffset + idx + 1}</p>
                       </div>
                     </td>
+                    
+                    {/* Patient */}
+                   <td className="px-6 py-4">
+  <div className="flex items-center gap-2">
+        <span className="flex-shrink-0 px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-xs font-semibold">
+          {patient?.patientId}
+        </span>
+      
+    <p className="font-semibold text-slate-800 text-sm">{patient?.name}</p>
+  </div>
+</td>
                     <td className="px-5 py-4 text-sm text-slate-600">{doctor?.name || `Dr. #${apt.doctorId}`}</td>
                     <td className="px-5 py-4 text-sm text-slate-600 whitespace-nowrap">
                       <div className="flex items-center gap-1.5">
@@ -1564,7 +1574,7 @@ export default function AppointmentsPage() {
                       </span>
                     </td>
                     <td className="px-5 py-4 text-sm text-slate-500 max-w-[160px] truncate">{apt.notes || '—'}</td>
-                    <td className="px-5 py-4">
+                    {/* <td className="px-5 py-4">
                       <div className="flex items-center gap-1">
                         <button onClick={() => openView(apt)} title="View" className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors">
                           <Eye className="w-4 h-4" />
@@ -1579,7 +1589,29 @@ export default function AppointmentsPage() {
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                    </td>
+                    </td> */}
+
+
+                    <td className="px-6 py-4">
+                                          <div className="flex items-center justify-center gap-1">
+                                            <button onClick={() => openView(apt)}
+                                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="View">
+                                              <Eye className="w-4 h-4" />
+                                            </button>
+                                            <button  onClick={() => printAppointment(apt, patients, doctors)}
+                                              className="p-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors" title="Print">
+                                              <Printer className="w-4 h-4" />
+                                            </button>
+                                            <button  onClick={() => openEdit(apt)}
+                                              className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" title="Edit">
+                                              <Edit className="w-4 h-4" />
+                                            </button>
+                                            <button onClick={() => openDelete(apt)}
+                                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                                              <Trash2 className="w-4 h-4" />
+                                            </button>
+                                          </div>
+                                        </td>
                   </tr>
                 );
               })}

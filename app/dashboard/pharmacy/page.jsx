@@ -846,8 +846,10 @@ export default function PharmacyPage() {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-200">
                 <tr>
-                  {['Sr.No', 'ID', 'Name', 'Type', 'Strength', 'Manufacturer', 'Stock', 'Status', 'Actions'].map((h, i) => (
-                    <th key={h} className={`px-6 py-4 font-semibold text-slate-700 ${i === 7 ? 'text-center' : 'text-left'}`}>{h}</th>
+                  {['Sr. No.', 'ID', 'Name', 'Type', 'Strength', 'Manufacturer', 'Stock', 'Status', 'Actions'].map((h, i) => (
+                    // <th key={h} className={`px-6 py-4 font-semibold text-slate-700 ${i === 7 ? 'text-center' : 'text-left'}`}>{h}</th>
+                  <th key={h} className="px-5 py-3.5 text-center text-xs font-bold text-slate-600  uppercase tracking-wider whitespace-nowrap">{h}</th>
+
                   ))}
                 </tr>
               </thead>

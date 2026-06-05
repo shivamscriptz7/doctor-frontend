@@ -394,7 +394,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import AuthProvider from '../components/Authprovider';
 import AddPatientModal from '../modal/Addpatientmodal'; // ← import karein apne path ke hisaab se
 import {
-  Activity, Calendar, Users, FileText, Pill,
+  Activity, Calendar, Users, FileText, Pill,Building2,ClipboardList,
   Stethoscope, BedDouble, DollarSign,
   ChevronLeft, ChevronRight, Plus, LogOut,
 } from 'lucide-react';
@@ -410,8 +410,8 @@ export default function DashboardLayout({ children }) {
     { id: 'appointments', label: 'Appointments',   icon: Calendar,    badge: null, path: '/dashboard/appointments' },
     { id: 'patients',     label: 'Patients',       icon: Users,       badge: null, path: '/dashboard/patients' },
     { id: 'doctors',      label: 'Doctors',        icon: Stethoscope, badge: null, path: '/dashboard/doctors' },
-    { id: 'prescriptions', label: 'Prescriptions',   icon: FileText,    badge: null, path: '/dashboard/prescriptions' },
-    { id: 'departments',  label: 'Departments',    icon: FileText,    badge: null, path: '/dashboard/departments' },
+    { id: 'prescriptions', label: 'Prescriptions',   icon: ClipboardList,    badge: null, path: '/dashboard/prescriptions' },
+    { id: 'departments',  label: 'Departments',    icon: Building2,    badge: null, path: '/dashboard/departments' },
     { id: 'pharmacy',     label: 'Pharmacy',       icon: Pill,        badge: null,  path: '/dashboard/pharmacy' },
     { id: 'beds',         label: 'Bed Management', icon: BedDouble,   badge: null, path: '/dashboard/beds' },
     { id: 'billing',      label: 'Billing',        icon: DollarSign,  badge: null, path: '/dashboard/billing' },
@@ -437,11 +437,15 @@ export default function DashboardLayout({ children }) {
   onMouseEnter={() => setIsCollapsed(false)}
   onMouseLeave={() => setIsCollapsed(true)}
   className={`relative bg-gradient-to-b from-emerald-600 to-teal-700 text-white transition-all duration-500 ease-out flex flex-col shadow-2xl ${
-    isCollapsed ? 'w-20' : 'w-72'
+    isCollapsed ? 'w-16' : 'w-60'
   }`}
+//   className={`relative bg-gradient-to-b from-emerald-600 to-teal-700 text-white transition-all duration-500 ease-out flex flex-col shadow-2xl ${
+//   isCollapsed ? 'w-16' : 'w-60'
+// }`}
 >
           {/* Logo */}
-          <div className="p-6 border-b border-emerald-500/30 relative overflow-hidden">
+          {/* <div className="p-6 border-b border-emerald-500/30 relative overflow-hidden"> */}
+          <div className="p-4 border-b border-emerald-500/30 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
             <div className="relative flex items-center gap-3">
               <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg transform transition-transform hover:scale-110">
@@ -458,19 +462,28 @@ export default function DashboardLayout({ children }) {
 
           {/* ── Quick Action: "New Patient" button ── */}
           {!isCollapsed && (
-            <div className="px-4 py-4">
-              <button
-                onClick={() => setShowAddPatient(true)} // ← modal open
-                className="w-full bg-white hover:bg-emerald-50 text-emerald-700 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 group"
-              >
-                <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-                <span>New Patient</span>
-              </button>
-            </div>
+           <div className="px-3 py-3">
+  <button
+    onClick={() => setShowAddPatient(true)}
+    className={`bg-white hover:bg-emerald-50 text-emerald-700 font-semibold h-11 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl group overflow-hidden transition-all duration-500 ease-out ${
+      isCollapsed ? 'w-10 px-0' : 'w-full px-4'
+    }`}
+  >
+    <Plus className="w-5 h-5 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
+    <span className={`text-sm whitespace-nowrap transition-all duration-200 ${
+      isCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto delay-300'
+    }`}>
+      New Patient
+    </span>
+  </button>
+</div>
           )}
 
+
+
+
           {/* Navigation */}
-          <nav className="flex-1 px-3 py-4 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500/50 scrollbar-track-transparent">
+          <nav className="flex-1 px-2 py-3 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500/50 scrollbar-track-transparent">
             <ul className="space-y-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
@@ -479,7 +492,7 @@ export default function DashboardLayout({ children }) {
                   <li key={item.id}>
                     <button
                       onClick={() => router.push(item.path)}
-                      className={`w-full group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+                      className={`w-full group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300  ${
                         isActive
                           ? 'bg-white text-emerald-700 shadow-lg'
                           : 'text-emerald-50 hover:bg-emerald-500/30 hover:text-white'

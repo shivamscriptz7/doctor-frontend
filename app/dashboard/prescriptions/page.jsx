@@ -2017,7 +2017,7 @@ export default function PrescriptionPage() {
               <thead className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-200">
                 <tr>
                   {['Sr. No.', 'Patient', 'Doctor', 'Type', 'Date', 'Medicines', 'Diagnosis', 'Actions'].map(h => (
-                    <th key={h} className={`px-6 py-4 text-left font-semibold text-slate-700 ${h === 'Actions' ? 'text-center' : ''}`}>{h}</th>
+                    <th key={h} className={`px-6 py-4 text-left font-semibold  text-slate-700 ${h === 'Actions' ? 'text-center' : ''}`}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -2106,7 +2106,7 @@ export default function PrescriptionPage() {
         )}
 
         {/* Pagination — UNCHANGED */}
-        {totalPages > 1 && (
+        {/* {totalPages > 1 && (
           <div className="px-6 py-4 border-t border-slate-100">
             <div className="flex items-center justify-between">
               <p className="text-sm text-slate-600">
@@ -2134,7 +2134,63 @@ export default function PrescriptionPage() {
               </div>
             </div>
           </div>
+        )} */}
+
+        {/* Pagination */}
+<div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
+  <div className="flex items-center justify-between">
+    <p className="text-sm text-slate-600">
+      Showing{' '}
+      <span className="font-semibold text-slate-800">
+        {filtered.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1}
+      </span>
+      {' '}to{' '}
+      <span className="font-semibold text-slate-800">
+        {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)}
+      </span>
+      {' '}of{' '}
+      <span className="font-semibold text-slate-800">{filtered.length}</span> results
+    </p>
+    <div className="flex items-center gap-2">
+      <button
+        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+        disabled={currentPage === 1}
+        className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+          currentPage === 1
+            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+            : 'bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200'
+        }`}>
+        Previous
+      </button>
+      <div className="flex items-center gap-1">
+        {getPageNumbers().map((p, i) =>
+          p === '...' ? (
+            <span key={`e${i}`} className="px-3 py-2 text-slate-400">...</span>
+          ) : (
+            <button key={p} onClick={() => setCurrentPage(p)}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                currentPage === p
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg'
+                  : 'bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200'
+              }`}>
+              {p}
+            </button>
+          )
         )}
+      </div>
+      <button
+        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+        disabled={currentPage === totalPages}
+        className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+          currentPage === totalPages
+            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+            : 'bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200'
+        }`}>
+        Next
+      </button>
+    </div>
+  </div>
+</div>
       </div>
 
       {/* ── Add Modal ── */}
