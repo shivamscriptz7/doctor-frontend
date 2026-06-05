@@ -2653,8 +2653,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
   Search, Download, ChevronDown, ChevronUp, ChevronsUpDown,
-  User, Phone, Mail, MapPin, Calendar, Edit, Trash2, Eye, Plus, X, FileText, Sheet, Printer
+  User, Phone, Mail, MapPin, Calendar, Edit, Trash2, Eye, Plus, X, FileText, Sheet, Printer,
+  Hash, UserCircle, UserCheck, Activity, Users, Stethoscope, CalendarPlus, CalendarCheck,Icon
 } from 'lucide-react';
+
 
 import { getPatients, createPatientApi, updatePatientApi, deletePatientApi, countPatientApi } from '../../lib/commonApis';
 import { showToast } from '../../lib/notification';
@@ -3735,20 +3737,21 @@ export default function PatientsPage() {
     return pages;
   };
 
+ 
   const TABLE_COLS = [
-    { key: 'patientNumber', icon: <User className="w-4 h-4" />, label: 'Patient ID' },
-    { key: 'name',          icon: <User className="w-4 h-4" />, label: 'Patient Name' },
-    { key: 'phone',         icon: <Phone className="w-4 h-4" />, label: 'Phone' },
-    { key: 'email',         icon: <Mail className="w-4 h-4" />, label: 'Email' },
-    { key: 'age',           icon: <User className="w-4 h-4" />, label: 'Age' },
-    { key: 'gender',        icon: <User className="w-4 h-4" />, label: 'Gender' },
-    { key: 'status',        icon: <User className="w-4 h-4" />, label: 'Status' },
-    { key: 'fatherName',    icon: <User className="w-4 h-4" />, label: 'Father Name' },
-    { key: 'disease',       icon: <FileText className="w-4 h-4" />, label: 'Disease' },
-    { key: 'address',       icon: <MapPin className="w-4 h-4" />, label: 'Address' },
-    { key: 'created_date',  icon: <Calendar className="w-4 h-4" />, label: 'Created' },
-    { key: 'updated_date',  icon: <Calendar className="w-4 h-4" />, label: 'Updated' },
-  ];
+  { key: 'patientNumber', label: 'Patient ID',   icon: Hash },
+  { key: 'name',          label: 'Patient Name', icon: User },
+  { key: 'phone',         label: 'Phone',        icon: Phone },
+  { key: 'email',         label: 'Email',        icon: Mail },
+  { key: 'age',           label: 'Age',          icon: UserCircle },
+  { key: 'gender',        label: 'Gender',       icon: UserCheck  },
+  { key: 'status',        label: 'Status',       icon: Activity },
+  { key: 'fatherName',    label: 'Father Name',  icon: Users },
+  { key: 'disease',       label: 'Disease',      icon: Stethoscope },
+  { key: 'address',       label: 'Address',      icon: MapPin },
+  { key: 'created_date',  label: 'Created',      icon: CalendarPlus },
+  { key: 'updated_date',  label: 'Updated',      icon: CalendarCheck },
+];
 
   return (
     <div className="p-8">
@@ -3831,20 +3834,35 @@ export default function PatientsPage() {
           <table className="w-full">
             <thead className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-200">
               <tr>
-                {TABLE_COLS.map(({ key, icon, label }) => (
-                  <th key={key} className="px-6 py-4 text-left">
-                    <button onClick={() => handleSort(key)} className="flex items-center gap-2 font-semibold uppercase text-slate-700 hover:text-emerald-600 transition-colors whitespace-nowrap">
-                      {icon} {label} {getSortIcon(key)}
-                    </button>
-                  </th>
-                ))}
-                <th className="px-6 py-4 text-center"><span className="font-semibold text-slate-700">Actions</span></th>
+              {TABLE_COLS.map(({ key, label, icon: Icon }) => (
+  <th key={key} className="px-6 py-4 text-left">
+    <button
+      onClick={() => handleSort(key)}
+      className="flex items-center gap-1.5 font-semibold text-sm text-slate-700 hover:text-emerald-600 transition-colors whitespace-nowrap"
+    >
+      <Icon className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+      {label}
+      {getSortIcon(key)}
+    </button>
+  </th>
+))}
+                <th className="px-5 py-3.5 text-center"><span className="font-semibold text-slate-700">Actions</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredPatients.length > 0 ? filteredPatients.map((patient) => (
                 <tr key={patient.id} className="hover:bg-emerald-50/50 transition-colors duration-200">
-                  <td className="px-6 py-4 text-slate-600 font-medium">{patient.patientNumber}</td>
+                  {/* <td className="px-6 py-4 text-slate-600 font-medium">{patient.patientNumber}</td> */}
+
+
+                       <td className="px-6 py-4">
+  <div className="flex items-center gap-2">
+        <span className="flex-shrink-0 px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-xs font-semibold">
+          {patient?.patientNumber}
+        </span>
+        </div>
+</td>
+                  
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <span className="font-semibold text-slate-800 whitespace-nowrap">{patient.name}</span>
