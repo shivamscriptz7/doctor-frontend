@@ -5024,6 +5024,7 @@ export default function BillingPage() {
           invoiceId: `INV-${item.id}`,
           patientId: item.patientId,
           patientName: item.patient?.name || `Patient #${item.patientId}`,
+          patientNumber: item.patient?.patientNumber,
           doctorId: item.doctorId,
           doctorName: item.doctor?.name || `Doctor #${item.doctorId}`,
           ipdOpd: item.type || 'OPD',                          // CHANGED: type → ipdOpd
@@ -5305,28 +5306,42 @@ export default function BillingPage() {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-200">
                 <tr>
-                  {['Invoice ID', 'Patient', 'Doctor', 'Type', 'Date', 'Charges', 'Oxygen', 'Total', 'Status', 'Actions'].map(h => (
+                  {['Sr. No.', 'Patient', 'Doctor', 'Type', 'Date',   'Total',  'Actions'].map(h => (
                     <th key={h} className={`px-4 py-4 text-left font-semibold text-slate-700 ${h === 'Actions' ? 'text-center' : ''}`}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
+
+
                 {paginated.length > 0 ? paginated.map(inv => (
                   <tr key={inv.id} className="hover:bg-emerald-50/40 transition-colors">
-                    <td className="px-4 py-4">
+
+ <td className="px-6 py-4">
+  <div className="flex items-center gap-2">
+    <span className="font-semibold text-slate-800">
+      {(currentPage - 1) * ITEMS_PER_PAGE + paginated.indexOf(inv) + 1}
+    </span>
+  </div>
+</td>
+                    {/* <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
                         <FileText className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                         <span className="font-semibold text-slate-800 text-sm">{inv.invoiceId}</span>
                       </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                          {inv.patientName.charAt(0)}
-                        </div>
-                        <p className="font-semibold text-slate-800 text-sm">{inv.patientName}</p>
-                      </div>
-                    </td>
+                    </td> */}
+
+                               {/* Patient */}
+                   <td className="px-6 py-4">
+  <div className="flex items-center gap-2">
+   
+        <span className="flex-shrink-0 px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-xs font-semibold">
+          {inv.patientNumber}
+        </span>
+     
+        <p className="font-semibold text-slate-800 text-sm">{inv.patientName}</p>
+  </div>
+</td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-1.5">
                         <Stethoscope className="w-4 h-4 text-teal-500 flex-shrink-0" />
@@ -5339,29 +5354,12 @@ export default function BillingPage() {
                       </span>
                     </td>
                     <td className="px-4 py-4 text-slate-600 text-sm">{inv.date}</td>
-                    <td className="px-4 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {(inv.charges || []).slice(0, 2).map((c, i) => (
-                          <span key={i} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs">{c.chargeName || c.category}</span>
-                        ))}
-                        {(inv.charges || []).length > 2 && (
-                          <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded text-xs font-medium">+{inv.charges.length - 2}</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      {inv.oxygenCharges?.enabled
-                        ? <span className="flex items-center gap-1 text-sky-600 text-xs font-semibold"><Wind className="w-3.5 h-3.5" />₹{parseFloat(inv.oxygenCharges.amount || 0).toLocaleString('en-IN')}</span>
-                        : <span className="text-slate-300 text-xs">—</span>}
-                    </td>
+            
+                    {/* <td className="px-4 py-4">
+                     {inv.oxygenCharges}
+                    </td> */}
                     <td className="px-4 py-4">
                       <span className="font-bold text-slate-800">₹{inv.totalAmount.toLocaleString('en-IN')}</span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize flex items-center gap-1.5 w-fit ${statusBadge(inv.status)}`}>
-                        {['active', 'paid'].includes(inv.status) ? <CheckCircle className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
-                        {inv.status}
-                      </span>
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center justify-center gap-1">
