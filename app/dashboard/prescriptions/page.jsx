@@ -2016,7 +2016,7 @@ export default function PrescriptionPage() {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-200">
                 <tr>
-                  {['Rx ID', 'Patient', 'Doctor', 'Type', 'Date', 'Medicines', 'Diagnosis', 'Actions'].map(h => (
+                  {['Sr. No.', 'Patient', 'Doctor', 'Type', 'Date', 'Medicines', 'Diagnosis', 'Actions'].map(h => (
                     <th key={h} className={`px-6 py-4 text-left font-semibold text-slate-700 ${h === 'Actions' ? 'text-center' : ''}`}>{h}</th>
                   ))}
                 </tr>
@@ -2024,32 +2024,28 @@ export default function PrescriptionPage() {
               <tbody className="divide-y divide-slate-100">
                 {paginated.length > 0 ? paginated.map(rx => (
                   <tr key={rx.id} className="hover:bg-emerald-50/40 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <ClipboardList className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                        <span className="font-semibold text-slate-800">#{rx.prescriptionId}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                          {rx.patientName?.charAt(0)}
-                        </div>
-                        <div>
-                           {/* CHANGE: patientNumber badge in listing — find from patients array */}
-                          {(() => {
-                            const pt = patients.find(p => String(p.id) === String(rx.patientId));
-                            return pt?.patientNumber ? (
-                              <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-xs font-semibold">
-                                {pt.patientNumber}
-                              </span>
-                            ) : null;
-                          })()}
-                          <p className="font-semibold text-slate-800 text-sm">{rx.patientName}</p>
-                         
-                        </div>
-                      </div>
-                    </td>
+                   <td className="px-6 py-4">
+  <div className="flex items-center gap-2">
+    <span className="font-semibold text-slate-800">
+      {(currentPage - 1) * ITEMS_PER_PAGE + paginated.indexOf(rx) + 1}
+    </span>
+  </div>
+</td>
+
+                    {/* Patient */}
+                   <td className="px-6 py-4">
+  <div className="flex items-center gap-2">
+    {(() => {
+      const pt = patients.find(p => String(p.id) === String(rx.patientId));
+      return pt?.patientNumber ? (
+        <span className="flex-shrink-0 px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-xs font-semibold">
+          {pt.patientNumber}
+        </span>
+      ) : null;
+    })()}
+    <p className="font-semibold text-slate-800 text-sm">{rx.patientName}</p>
+  </div>
+</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Stethoscope className="w-4 h-4 text-teal-500 flex-shrink-0" />

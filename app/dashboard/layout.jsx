@@ -400,19 +400,19 @@ import {
 } from 'lucide-react';
 
 export default function DashboardLayout({ children }) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [showAddPatient, setShowAddPatient] = useState(false); // ← new state
   const pathname = usePathname();
   const router = useRouter();
 
   const menuItems = [
     { id: 'dashboard',    label: 'Dashboard',      icon: Activity,    badge: null, path: '/dashboard' },
-    { id: 'appointments', label: 'Appointments',   icon: Calendar,    badge: '12', path: '/dashboard/appointments' },
+    { id: 'appointments', label: 'Appointments',   icon: Calendar,    badge: null, path: '/dashboard/appointments' },
     { id: 'patients',     label: 'Patients',       icon: Users,       badge: null, path: '/dashboard/patients' },
     { id: 'doctors',      label: 'Doctors',        icon: Stethoscope, badge: null, path: '/dashboard/doctors' },
     { id: 'prescriptions', label: 'Prescriptions',   icon: FileText,    badge: null, path: '/dashboard/prescriptions' },
     { id: 'departments',  label: 'Departments',    icon: FileText,    badge: null, path: '/dashboard/departments' },
-    { id: 'pharmacy',     label: 'Pharmacy',       icon: Pill,        badge: '3',  path: '/dashboard/pharmacy' },
+    { id: 'pharmacy',     label: 'Pharmacy',       icon: Pill,        badge: null,  path: '/dashboard/pharmacy' },
     { id: 'beds',         label: 'Bed Management', icon: BedDouble,   badge: null, path: '/dashboard/beds' },
     { id: 'billing',      label: 'Billing',        icon: DollarSign,  badge: null, path: '/dashboard/billing' },
   ];
@@ -426,11 +426,20 @@ export default function DashboardLayout({ children }) {
     <AuthProvider>
       <div className="flex h-screen bg-slate-50">
         {/* ── Sidebar ── */}
-        <aside
+        {/* <aside
           className={`relative bg-gradient-to-b from-emerald-600 to-teal-700 text-white transition-all duration-500 ease-out flex flex-col shadow-2xl ${
             isCollapsed ? 'w-20' : 'w-72'
           }`}
-        >
+        > */}
+
+
+        <aside
+  onMouseEnter={() => setIsCollapsed(false)}
+  onMouseLeave={() => setIsCollapsed(true)}
+  className={`relative bg-gradient-to-b from-emerald-600 to-teal-700 text-white transition-all duration-500 ease-out flex flex-col shadow-2xl ${
+    isCollapsed ? 'w-20' : 'w-72'
+  }`}
+>
           {/* Logo */}
           <div className="p-6 border-b border-emerald-500/30 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
@@ -514,12 +523,12 @@ export default function DashboardLayout({ children }) {
           </div>
 
           {/* Collapse toggle */}
-          <button
+          {/* <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="absolute -right-3 top-24 w-6 h-6 bg-white rounded-full shadow-lg flex items-center justify-center text-emerald-600 hover:bg-emerald-50 transition-all duration-300 hover:scale-110 z-10"
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
+          </button> */}
         </aside>
 
         {/* Main */}
