@@ -3596,7 +3596,7 @@ export default function PatientsPage() {
         ...formData,
         age: formData.age !== '' ? Number(formData.age) : null,
         gender: formData.gender || null,
-        status: formData.status || null,
+        // status: formData.status || null,
       };
 
       if (modal.type === 'edit') {
