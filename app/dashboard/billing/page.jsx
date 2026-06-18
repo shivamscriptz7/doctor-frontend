@@ -5689,6 +5689,8 @@ import {
 } from '../../lib/commonApis';
 import { showToast } from '../../lib/notification';
 
+import { useRef } from 'react';
+
 // ── Charge Categories ─────────────────────────────────────────────────────────
 const CHARGE_CATEGORIES = {
   'Consultation': ['OPD Doctor Fee', 'Specialist Consultation Fee', 'Follow-up Consultation', 'Tele-consultation'],
@@ -6278,7 +6280,7 @@ function InvoiceForm({ form, setForm, patients, doctors, onSubmit, onPrint, isSu
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div className="grid grid-cols-3 gap-4">
+      {/* <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient *</label>
           <select value={form.patientId} onChange={e => set('patientId', e.target.value)} required
@@ -6303,7 +6305,36 @@ function InvoiceForm({ form, setForm, patients, doctors, onSubmit, onPrint, isSu
             {IPD_OPD_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
           </select>
         </div>
-      </div>
+      </div> */}
+
+      <div className="grid grid-cols-3 gap-4">
+  <div>
+    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient *</label>
+    <EntitySelect
+      options={patients}
+      value={form.patientId}
+      onChange={v => set('patientId', v)}
+      placeholder="Select patient"
+    />
+  </div>
+  <div>
+    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Doctor *</label>
+    <EntitySelect
+      options={doctors}
+      value={form.doctorId}
+      onChange={v => set('doctorId', v)}
+      placeholder="Select doctor"
+    />
+  </div>
+  <div>
+    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">IPD / OPD *</label>
+    <select value={form.ipdOpd} onChange={e => set('ipdOpd', e.target.value)} required
+      className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
+      <option value="">Select Type</option>
+      {IPD_OPD_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
+</div>
 
       {/* ── CHANGE 4: Add Charge badge button ── */}
       <div>
@@ -6469,6 +6500,90 @@ function buildPrintObj(form, patients, doctors, invoiceId = 'PREVIEW', id = '') 
     totalAmount: chargesTotal + oxyAmt - discountAmt,
     notes: form.notes,
   };
+}
+
+function EntitySelect({ options, value, onChange, placeholder, idKey = 'id' }) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState('');
+  const ref = useRef(null);
+
+  const filtered = useMemo(() => {
+    const lower = q.toLowerCase();
+    return options.filter(o =>
+      o.name.toLowerCase().includes(lower) ||
+      (o.patientNumber && o.patientNumber.toLowerCase().includes(lower))
+    );
+  }, [options, q]);
+
+  const selected = options.find(o => String(o[idKey]) === String(value));
+
+  useEffect(() => {
+    const h = e => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
+  }, []);
+
+  const getSelectedLabel = (o) => {
+    if (!o) return null;
+    if (o.patientNumber) return `${o.patientNumber} · ${o.name}`;
+    return o.name;
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <button type="button" onClick={() => setOpen(v => !v)}
+        className={`w-full flex items-center justify-between px-4 py-2.5 bg-slate-50 border-2 rounded-xl text-sm transition-all ${open ? 'border-emerald-500 bg-white' : 'border-transparent'} text-slate-700`}>
+        <span className={selected ? 'text-slate-800 font-medium' : 'text-slate-400'}>
+          {selected ? getSelectedLabel(selected) : placeholder}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="absolute z-30 mt-1.5 w-full bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+          <div className="p-2 border-b border-slate-100">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+              <input
+                autoFocus
+                type="text"
+                value={q}
+                onChange={e => setQ(e.target.value)}
+                placeholder={
+                  options.length > 0 && options[0].patientNumber
+                    ? 'Search by name or patient no...'
+                    : 'Search...'
+                }
+                className="w-full pl-8 pr-3 py-1.5 text-sm bg-slate-50 rounded-lg focus:outline-none text-slate-800 placeholder-slate-400"
+              />
+            </div>
+          </div>
+          <div className="max-h-48 overflow-y-auto">
+            {filtered.length === 0
+              ? <p className="px-4 py-3 text-sm text-slate-400 text-center">No results</p>
+              : filtered.map(o => (
+                <button
+                  type="button"
+                  key={o[idKey]}
+                  onClick={() => { onChange(String(o[idKey])); setOpen(false); setQ(''); }}
+                  className={`w-full text-left px-4 py-2.5 text-sm hover:bg-emerald-50 transition-colors flex items-center gap-2.5 ${
+                    String(o[idKey]) === String(value) ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-slate-700'
+                  }`}
+                >
+                  {o.patientNumber && (
+                    <span className="flex-shrink-0 px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-xs font-semibold">
+                      {o.patientNumber}
+                    </span>
+                  )}
+                  <span className="truncate">{o.name}</span>
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════

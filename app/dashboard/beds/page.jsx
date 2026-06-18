@@ -894,648 +894,29 @@
 //   );
 // }
 
-// 'use client';
 
-// import { useState, useEffect, useMemo } from 'react';
-// import { Bed, Plus, Search, Filter, X, Edit, Trash2, Eye, Download, FileText, Sheet, ChevronDown } from 'lucide-react';
-// import { getBedApi, createBedApi, updateBedApi, deleteBedApi } from '../../lib/commonApis';
 
-// // // Modal Component
-// function Modal({ isOpen, onClose, title, children, size = 'md' }) {
-//   if (!isOpen) return null;
 
-//   const sizeClasses = {
-//     sm: 'max-w-md',
-//     md: 'max-w-2xl',
-//     lg: 'max-w-4xl',
-//   };
 
-//   return (
-//     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-//       <div
-//         className={`relative bg-white rounded-2xl shadow-2xl w-full ${sizeClasses[size]} border border-slate-100 flex flex-col max-h-[90vh]`}
-//         onClick={(e) => e.stopPropagation()}
-//       >
-//         <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-emerald-100 rounded-t-2xl flex-shrink-0">
-//           <h2 className="text-lg font-bold text-slate-800">{title}</h2>
-//           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
-//             <X className="w-5 h-5 text-slate-500" />
-//           </button>
-//         </div>
-//         <div className="p-6 overflow-y-auto">{children}</div>
-//       </div>
-//     </div>
-//   );
-// }
 
-// export default function BedsPage() {
-//   const [beds, setBeds] = useState([]);
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const [filterStatus, setFilterStatus] = useState('all');
-//   const [showExportMenu, setShowExportMenu] = useState(false);
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [itemsPerPage] = useState(16);
 
-//   // Modal states
-//   const [showAddModal, setShowAddModal] = useState(false);
-//   const [showEditModal, setShowEditModal] = useState(false);
-//   const [showDeleteModal, setShowDeleteModal] = useState(false);
-//   const [showViewModal, setShowViewModal] = useState(false);
-//   const [selectedBed, setSelectedBed] = useState(null);
 
-//   // Form state
-//   const [formData, setFormData] = useState({
-//     bedNumber: '',
-//     ward: '',
-//     bedType: '',
-//     status: 'available',
-//     patientId: '',
-//   });
 
-//   const statusOptions = ['all', 'available', 'occupied', 'maintenance'];
-//   const bedTypes = ['General', 'ICU', 'Emergency', 'Maternity', 'Pediatric'];
 
-//   // Load beds from API
-//   useEffect(() => {
-//     loadBeds();
-//   }, []);
 
-//   const loadBeds = async () => {
-//     try {
-//       // ✅ Fix
-// const res = await getBedApi(50, 1);
-// const raw = res.data?.beds || res.data || [];
-// const apiBeds = raw.map(item => ({
-//         id: item.id,
-//         bedNumber: item.bedNumber,
-//         ward: item.ward || '-',
-//         bedType: item.bedType || 'General',
-//         status: item.status || 'available',
-//         patient: item.patient?.name || null,
-//         patientId: item.patientId || null,
-//         floor: item.floor || '-',
-//         admittedDate: item.createdAt ? item.createdAt.split('T')[0] : '-',
-//       }));
-//       setBeds(apiBeds);
-//     } catch (err) {
-//       console.error('Failed to load beds:', err);
-//     }
-//   };
 
-//   // Handle form change
-//   const handleFormChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({ ...formData, [name]: value });
-//   };
 
-//   // Add Bed
-//   const handleAddBed = async (e) => {
-//     e.preventDefault();
-//     try {
-//       const payload = {
-//         bedNumber: formData.bedNumber,
-//         ward: formData.ward,
-//         bedType: formData.bedType,
-//         status: formData.status,
-//         patientId: formData.patientId ? parseInt(formData.patientId) : null,
-//       };
-      
-//       await createBedApi(payload);
-//       await loadBeds();
-//       setShowAddModal(false);
-//       resetForm();
-//     } catch (error) {
-//       console.error('Failed to create bed:', error);
-//       alert('Failed to create bed');
-//     }
-//   };
 
-//   // Edit Bed
-//   const handleEditClick = (bed) => {
-//     setSelectedBed(bed);
-//     setFormData({
-//       bedNumber: bed.bedNumber,
-//       ward: bed.ward,
-//       bedType: bed.bedType,
-//       status: bed.status,
-//       patientId: bed.patientId?.toString() || '',
-//     });
-//     setShowEditModal(true);
-//   };
 
-//   const handleUpdateBed = async (e) => {
-//     e.preventDefault();
-//     try {
-//       const payload = {
-//         bedNumber: formData.bedNumber,
-//         ward: formData.ward,
-//         bedType: formData.bedType,
-//         status: formData.status,
-//         patientId: formData.patientId ? parseInt(formData.patientId) : null,
-//       };
-      
-//       await updateBedApi(selectedBed.id, payload);
-//       await loadBeds();
-//       setShowEditModal(false);
-//       setSelectedBed(null);
-//       resetForm();
-//     } catch (error) {
-//       console.error('Failed to update bed:', error);
-//       alert('Failed to update bed');
-//     }
-//   };
 
-//   // Delete Bed
-//   const handleDeleteClick = (bed) => {
-//     setSelectedBed(bed);
-//     setShowDeleteModal(true);
-//   };
-
-//   const handleDeleteBed = async () => {
-//     try {
-//       await deleteBedApi(selectedBed.id);
-//       setBeds(prev => prev.filter(b => b.id !== selectedBed.id));
-//       setShowDeleteModal(false);
-//       setSelectedBed(null);
-//     } catch (error) {
-//       console.error('Failed to delete bed:', error);
-//       alert('Failed to delete bed');
-//     }
-//   };
-
-//   // View Bed
-//   const handleViewClick = (bed) => {
-//     setSelectedBed(bed);
-//     setShowViewModal(true);
-//   };
-
-//   const resetForm = () => {
-//     setFormData({
-//       bedNumber: '',
-//       ward: '',
-//       bedType: '',
-//       status: 'available',
-//       patientId: '',
-//     });
-//   };
-
-//   // Filter and Search
-//   const filteredBeds = useMemo(() => {
-//     return beds.filter(bed => {
-//       const matchesSearch =
-//         bed.bedNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         bed.ward.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         (bed.patient && bed.patient.toLowerCase().includes(searchTerm.toLowerCase()));
-
-//       const matchesStatus = filterStatus === 'all' || bed.status === filterStatus;
-
-//       return matchesSearch && matchesStatus;
-//     });
-//   }, [beds, searchTerm, filterStatus]);
-
-//   // Pagination
-//   const totalPages = Math.ceil(filteredBeds.length / itemsPerPage);
-//   const indexOfLastItem = currentPage * itemsPerPage;
-//   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-//   const currentBeds = filteredBeds.slice(indexOfFirstItem, indexOfLastItem);
-
-//   // Stats
-//   const stats = {
-//     total: beds.length,
-//     occupied: beds.filter(b => b.status === 'occupied').length,
-//     available: beds.filter(b => b.status === 'available').length,
-//     maintenance: beds.filter(b => b.status === 'maintenance').length,
-//   };
-
-//   const occupancyRate = stats.total > 0 ? ((stats.occupied / stats.total) * 100).toFixed(0) : 0;
-
-//   // Export functions
-//   const exportToExcel = () => {
-//     const headers = ['ID', 'Bed Number', 'Ward', 'Type', 'Status', 'Patient', 'Floor'];
-//     const csvData = [
-//       headers.join(','),
-//       ...filteredBeds.map(b => 
-//         `${b.id},"${b.bedNumber}","${b.ward}","${b.bedType}","${b.status}","${b.patient || 'N/A'}","${b.floor}"`
-//       )
-//     ].join('\n');
-
-//     const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-//     const link = document.createElement('a');
-//     link.setAttribute('href', URL.createObjectURL(blob));
-//     link.setAttribute('download', `beds_${new Date().toISOString().split('T')[0]}.csv`);
-//     link.style.visibility = 'hidden';
-//     document.body.appendChild(link);
-//     link.click();
-//     document.body.removeChild(link);
-//     setShowExportMenu(false);
-//   };
-
-//   const exportToPDF = () => {
-//     const htmlContent = `<!DOCTYPE html><html><head><title>Bed Management Report</title><style>body{font-family:Arial,sans-serif;margin:20px}h1{color:#059669;text-align:center}table{width:100%;border-collapse:collapse;margin-top:20px}th{background-color:#059669;color:white;padding:12px;text-align:left}td{padding:10px;border-bottom:1px solid #ddd}tr:hover{background-color:#f5f5f5}.header{text-align:center;margin-bottom:30px}</style></head><body><div class="header"><h1>MediCare Hospital - Bed Management Report</h1><p>Generated on: ${new Date().toLocaleDateString('en-IN')}</p><p><strong>Total Beds: ${filteredBeds.length}</strong></p></div><table><thead><tr><th>Bed Number</th><th>Ward</th><th>Type</th><th>Status</th><th>Patient</th></tr></thead><tbody>${filteredBeds.map(b => `<tr><td>${b.bedNumber}</td><td>${b.ward}</td><td>${b.bedType}</td><td>${b.status}</td><td>${b.patient || 'N/A'}</td></tr>`).join('')}</tbody></table></body></html>`;
-//     const printWindow = window.open('', '', 'height=600,width=800');
-//     printWindow.document.write(htmlContent);
-//     printWindow.document.close();
-//     printWindow.focus();
-//     setTimeout(() => { printWindow.print(); setShowExportMenu(false); }, 250);
-//   };
-
-//   const getPageNumbers = () => {
-//     const pageNumbers = [];
-//     const maxVisible = 5;
-//     if (totalPages <= maxVisible) {
-//       for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
-//     } else {
-//       if (currentPage <= 3) {
-//         for (let i = 1; i <= 4; i++) pageNumbers.push(i);
-//         pageNumbers.push('...');
-//         pageNumbers.push(totalPages);
-//       } else if (currentPage >= totalPages - 2) {
-//         pageNumbers.push(1);
-//         pageNumbers.push('...');
-//         for (let i = totalPages - 3; i <= totalPages; i++) pageNumbers.push(i);
-//       } else {
-//         pageNumbers.push(1);
-//         pageNumbers.push('...');
-//         pageNumbers.push(currentPage - 1);
-//         pageNumbers.push(currentPage);
-//         pageNumbers.push(currentPage + 1);
-//         pageNumbers.push('...');
-//         pageNumbers.push(totalPages);
-//       }
-//     }
-//     return pageNumbers;
-//   };
-
-//   const getStatusColor = (status) => {
-//     switch (status) {
-//       case 'available': return 'border-green-300 bg-green-50';
-//       case 'occupied': return 'border-blue-300 bg-blue-50';
-//       case 'maintenance': return 'border-amber-300 bg-amber-50';
-//       default: return 'border-slate-300 bg-slate-50';
-//     }
-//   };
-
-//   const getStatusBadge = (status) => {
-//     switch (status) {
-//       case 'available': return 'bg-green-100 text-green-700';
-//       case 'occupied': return 'bg-blue-100 text-blue-700';
-//       case 'maintenance': return 'bg-amber-100 text-amber-700';
-//       default: return 'bg-slate-100 text-slate-700';
-//     }
-//   };
-
-//   return (
-//     <div className="p-8">
-//       <div className="mb-8">
-//         <div className="flex items-center justify-between mb-4">
-//           <div>
-//             <h1 className="text-4xl font-bold text-slate-800 mb-2">Bed Management</h1>
-//             <p className="text-slate-600">Monitor and manage hospital bed allocation</p>
-//           </div>
-//           <div className="flex gap-3">
-//             <div className="relative">
-//               <button onClick={() => setShowExportMenu(!showExportMenu)} className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-300 flex items-center gap-2 text-slate-700 font-medium shadow-sm hover:shadow-md">
-//                 <Download className="w-4 h-4" />
-//                 Export
-//                 <ChevronDown className="w-4 h-4" />
-//               </button>
-//               {showExportMenu && (
-//                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 z-10 overflow-hidden">
-//                   <button onClick={exportToExcel} className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors flex items-center gap-3 text-slate-700">
-//                     <Sheet className="w-4 h-4 text-green-600" />
-//                     <span className="font-medium">Export to Excel</span>
-//                   </button>
-//                   <button onClick={exportToPDF} className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors flex items-center gap-3 text-slate-700 border-t border-slate-100">
-//                     <FileText className="w-4 h-4 text-red-600" />
-//                     <span className="font-medium">Export to PDF</span>
-//                   </button>
-//                 </div>
-//               )}
-//             </div>
-//             <button onClick={() => setShowAddModal(true)} className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 flex items-center gap-2 font-semibold shadow-lg">
-//               <Plus className="w-5 h-5" />
-//               Add Bed
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* Stats */}
-//         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-//           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-//             <p className="text-sm text-slate-600 mb-1">Total Beds</p>
-//             <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
-//           </div>
-//           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-//             <p className="text-sm text-slate-600 mb-1">Occupied</p>
-//             <p className="text-2xl font-bold text-blue-600">{stats.occupied}</p>
-//             <p className="text-xs text-slate-500 mt-1">{occupancyRate}% occupancy</p>
-//           </div>
-//           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-//             <p className="text-sm text-slate-600 mb-1">Available</p>
-//             <p className="text-2xl font-bold text-green-600">{stats.available}</p>
-//           </div>
-//           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-//             <p className="text-sm text-slate-600 mb-1">Maintenance</p>
-//             <p className="text-2xl font-bold text-amber-600">{stats.maintenance}</p>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Search and Filter */}
-//       <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 mb-6">
-//         <div className="flex gap-4">
-//           <div className="flex-1 relative">
-//             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-//             <input
-//               type="text"
-//               placeholder="Search by bed number, ward, or patient..."
-//               value={searchTerm}
-//               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-//               className="w-full pl-12 pr-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700"
-//             />
-//           </div>
-//           <select
-//             value={filterStatus}
-//             onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }}
-//             className="px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700 font-medium cursor-pointer"
-//           >
-//             {statusOptions.map(status => (
-//               <option key={status} value={status}>
-//                 {status === 'all' ? 'All Status' : status.charAt(0).toUpperCase() + status.slice(1)}
-//               </option>
-//             ))}
-//           </select>
-//         </div>
-//       </div>
-
-//       {/* Beds Grid */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-//         {currentBeds.length > 0 ? (
-//           currentBeds.map((bed) => (
-//             <div key={bed.id} className={`bg-white rounded-2xl p-6 shadow-lg border-2 ${getStatusColor(bed.status)} hover:shadow-xl transition-all duration-300`}>
-//               <div className="mb-4">
-//                 <div className="flex items-center justify-between mb-2">
-//                   <div className="flex items-center gap-3">
-//                     <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
-//                       <Bed className="w-6 h-6 text-white" />
-//                     </div>
-//                     <div className="min-w-0">
-//                       <h3 className="text-xl font-bold text-slate-800">{bed.bedNumber}</h3>
-//                       <p className="text-sm text-slate-600 truncate">{bed.ward}</p>
-//                     </div>
-//                   </div>
-//                 </div>
-//                 <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusBadge(bed.status)}`}>
-//                   {bed.status}
-//                 </span>
-//               </div>
-              
-//               <div className="space-y-2 mb-4">
-//                 <div className="flex justify-between text-sm">
-//                   <span className="text-slate-600">Type:</span>
-//                   <span className="font-semibold text-slate-800">{bed.bedType}</span>
-//                 </div>
-//                 <div className="flex justify-between text-sm">
-//                   <span className="text-slate-600">Floor:</span>
-//                   <span className="font-semibold text-slate-800">{bed.floor}</span>
-//                 </div>
-//                 {bed.status === 'occupied' && bed.patient && (
-//                   <>
-//                     <div className="flex justify-between text-sm">
-//                       <span className="text-slate-600">Patient:</span>
-//                       <span className="font-semibold text-slate-800 truncate ml-2">{bed.patient}</span>
-//                     </div>
-//                     <div className="flex justify-between text-sm">
-//                       <span className="text-slate-600">Admitted:</span>
-//                       <span className="font-semibold text-slate-800">{bed.admittedDate}</span>
-//                     </div>
-//                   </>
-//                 )}
-//               </div>
-
-//               <div className="flex gap-2">
-//                 <button onClick={() => handleViewClick(bed)} className="flex-1 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium flex items-center justify-center gap-1">
-//                   <Eye className="w-4 h-4" />
-//                   View
-//                 </button>
-//                 <button onClick={() => handleEditClick(bed)} className="flex-1 px-3 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors text-sm font-medium flex items-center justify-center gap-1">
-//                   <Edit className="w-4 h-4" />
-//                   Edit
-//                 </button>
-//                 <button onClick={() => handleDeleteClick(bed)} className="px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors">
-//                   <Trash2 className="w-4 h-4" />
-//                 </button>
-//               </div>
-//             </div>
-//           ))
-//         ) : (
-//           <div className="col-span-4 text-center py-12 bg-white rounded-2xl shadow-lg border border-slate-100">
-//             <Bed className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-//             <p className="text-slate-600 font-medium">No beds found</p>
-//           </div>
-//         )}
-//       </div>
-
-//       {/* Pagination */}
-//       {totalPages > 1 && (
-//         <div className="bg-white rounded-2xl shadow-lg border border-slate-100 px-6 py-4">
-//           <div className="flex items-center justify-between">
-//             <p className="text-sm text-slate-600">
-//               Showing <span className="font-semibold text-slate-800">{indexOfFirstItem + 1}</span> to{' '}
-//               <span className="font-semibold text-slate-800">{Math.min(indexOfLastItem, filteredBeds.length)}</span> of{' '}
-//               <span className="font-semibold text-slate-800">{filteredBeds.length}</span> results
-//             </p>
-//             <div className="flex items-center gap-2">
-//               <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${currentPage === 1 ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200'}`}>
-//                 Previous
-//               </button>
-//               <div className="flex items-center gap-1">
-//                 {getPageNumbers().map((pageNum, index) => (
-//                   pageNum === '...' ? (
-//                     <span key={`ellipsis-${index}`} className="px-3 py-2 text-slate-400">...</span>
-//                   ) : (
-//                     <button key={pageNum} onClick={() => setCurrentPage(pageNum)} className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${currentPage === pageNum ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200'}`}>
-//                       {pageNum}
-//                     </button>
-//                   )
-//                 ))}
-//               </div>
-//               <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${currentPage === totalPages ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200'}`}>
-//                 Next
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Add Bed Modal */}
-//       <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Add New Bed" size="md">
-//         <form onSubmit={handleAddBed} className="space-y-4">
-//           <div className="grid grid-cols-2 gap-4">
-//              <div>
-//                <label className="block text-sm font-semibold text-slate-700 mb-2">Bed Number *</label>
-//                <input type="text" name="bedNumber" value={formData.bedNumber} onChange={handleFormChange} required className="w-full px-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700" placeholder="B-101" />
-//            </div>
-//             <div>
-//               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Ward *</label>
-//               <input type="text" name="ward" value={formData.ward} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="General" />
-//             </div>
-//           </div>
-//           <div className="grid grid-cols-2 gap-4">
-//             <div>
-//               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Bed Type *</label>
-//               <select name="bedType" value={formData.bedType} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
-//                 <option value="">Select type</option>
-//                 {bedTypes.map(type => (
-//                   <option key={type} value={type}>{type}</option>
-//                 ))}
-//               </select>
-//             </div>
-//             <div>
-//               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Status *</label>
-//               <select name="status" value={formData.status} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
-//                 <option value="available">Available</option>
-//                 <option value="occupied">Occupied</option>
-//                 <option value="maintenance">Maintenance</option>
-//               </select>
-//             </div>
-//           </div>
-//           <div>
-//             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient ID (Optional)</label>
-//             <input type="number" name="patientId" value={formData.patientId} onChange={handleFormChange} className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" placeholder="Only if occupied" />
-//             <p className="text-xs text-slate-500 mt-1">Required only when status is "Occupied"</p>
-//           </div>
-//           <div className="flex gap-3 pt-4">
-//             <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">
-//               Cancel
-//             </button>
-//             <button type="submit" className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg">
-//               Add Bed
-//             </button>
-//           </div>
-//         </form>
-//       </Modal>
-
-//       {/* Edit Bed Modal */}
-//       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Bed" size="md">
-//         <form onSubmit={handleUpdateBed} className="space-y-4">
-//           <div className="grid grid-cols-2 gap-4">
-//             <div>
-//               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Bed Number *</label>
-//               <input type="text" name="bedNumber" value={formData.bedNumber} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" />
-//             </div>
-//             <div>
-//               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Ward *</label>
-//               <input type="text" name="ward" value={formData.ward} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" />
-//             </div>
-//           </div>
-//           <div className="grid grid-cols-2 gap-4">
-//             <div>
-//               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Bed Type *</label>
-//               <select name="bedType" value={formData.bedType} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
-//                 <option value="">Select type</option>
-//                 {bedTypes.map(type => (
-//                   <option key={type} value={type}>{type}</option>
-//                 ))}
-//               </select>
-//             </div>
-//             <div>
-//               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Status *</label>
-//               <select name="status" value={formData.status} onChange={handleFormChange} required className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm">
-//                 <option value="available">Available</option>
-//                 <option value="occupied">Occupied</option>
-//                 <option value="maintenance">Maintenance</option>
-//               </select>
-//             </div>
-//           </div>
-//           <div>
-//             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient ID (Optional)</label>
-//             <input type="number" name="patientId" value={formData.patientId} onChange={handleFormChange} className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm" />
-//             <p className="text-xs text-slate-500 mt-1">Required only when status is "Occupied"</p>
-//           </div>
-//           <div className="flex gap-3 pt-4">
-//             <button type="button" onClick={() => setShowEditModal(false)} className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">
-//               Cancel
-//             </button>
-//             <button type="submit" className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg">
-//               Update Bed
-//             </button>
-//           </div>
-//         </form>
-//       </Modal>
-
-//       {/* Delete Confirmation Modal */}
-//       <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} title="Delete Bed" size="sm">
-//         <div className="text-center space-y-4">
-//           <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-//             <Trash2 className="w-6 h-6 text-red-500" />
-//           </div>
-//           <div>
-//             <p className="text-slate-700 font-semibold">Delete Bed {selectedBed?.bedNumber}?</p>
-//             <p className="text-slate-500 text-sm mt-1">This action cannot be undone.</p>
-//           </div>
-//           <div className="flex gap-3">
-//             <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">
-//               Cancel
-//             </button>
-//             <button onClick={handleDeleteBed} className="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors">
-//               Delete
-//             </button>
-//           </div>
-//         </div>
-//       </Modal>
-
-//       {/* View Bed Modal */}
-//       <Modal isOpen={showViewModal} onClose={() => setShowViewModal(false)} title="Bed Details" size="md">
-//         {selectedBed && (
-//           <div className="space-y-0.5">
-//             <div className="flex justify-between py-2.5 border-b border-slate-50">
-//               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Bed Number</span>
-//               <span className="text-sm text-slate-700 font-medium">{selectedBed.bedNumber}</span>
-//             </div>
-//             <div className="flex justify-between py-2.5 border-b border-slate-50">
-//               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ward</span>
-//               <span className="text-sm text-slate-700 font-medium">{selectedBed.ward}</span>
-//             </div>
-//             <div className="flex justify-between py-2.5 border-b border-slate-50">
-//               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Bed Type</span>
-//               <span className="text-sm text-slate-700 font-medium">{selectedBed.bedType}</span>
-//             </div>
-//             <div className="flex justify-between py-2.5 border-b border-slate-50">
-//               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Floor</span>
-//               <span className="text-sm text-slate-700 font-medium">{selectedBed.floor}</span>
-//             </div>
-//             <div className="flex justify-between py-2.5 border-b border-slate-50">
-//               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</span>
-//               <span className={`text-sm font-semibold capitalize px-2.5 py-1 rounded-lg ${getStatusBadge(selectedBed.status)}`}>{selectedBed.status}</span>
-//             </div>
-//             {selectedBed.status === 'occupied' && (
-//               <>
-//                 <div className="flex justify-between py-2.5 border-b border-slate-50">
-//                   <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Patient</span>
-//                   <span className="text-sm text-slate-700 font-medium">{selectedBed.patient || 'N/A'}</span>
-//                 </div>
-//                 <div className="flex justify-between py-2.5">
-//                   <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Admitted Date</span>
-//                   <span className="text-sm text-slate-700 font-medium">{selectedBed.admittedDate}</span>
-//                 </div>
-//               </>
-//             )}
-//           </div>
-//         )}
-//       </Modal>
-
-//       {showExportMenu && <div className="fixed inset-0 z-0" onClick={() => setShowExportMenu(false)} />}
-//     </div>
-//   );
-// }
 
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
 import { Bed, Plus, Search, X, Edit, Trash2, Eye, Download, FileText, Sheet, ChevronDown } from 'lucide-react';
-import { getBedApi, createBedApi, updateBedApi, deleteBedApi ,countBedApi} from '../../lib/commonApis';
+import { getBedApi, createBedApi, updateBedApi, deleteBedApi ,countBedApi,getPatients } from '../../lib/commonApis';
 import { showToast } from '../../lib/notification';
+import { useRef } from 'react';
 
 
 function Modal({ isOpen, onClose, title, children, size = 'md' }) {
@@ -1565,6 +946,90 @@ function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   );
 }
 
+function EntitySelect({ options, value, onChange, placeholder, idKey = 'id' }) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState('');
+  const ref = useRef(null);
+
+  const filtered = useMemo(() => {
+    const lower = q.toLowerCase();
+    return options.filter(o =>
+      o.name.toLowerCase().includes(lower) ||
+      (o.patientNumber && o.patientNumber.toLowerCase().includes(lower))
+    );
+  }, [options, q]);
+
+  const selected = options.find(o => String(o[idKey]) === String(value));
+
+  useEffect(() => {
+    const h = e => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
+  }, []);
+
+  const getSelectedLabel = (o) => {
+    if (!o) return null;
+    if (o.patientNumber) return `${o.patientNumber} · ${o.name}`;
+    return o.name;
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <button type="button" onClick={() => setOpen(v => !v)}
+        className={`w-full flex items-center justify-between px-4 py-2.5 bg-slate-50 border-2 rounded-xl text-sm transition-all ${open ? 'border-emerald-500 bg-white' : 'border-transparent'} text-slate-700`}>
+        <span className={selected ? 'text-slate-800 font-medium' : 'text-slate-400'}>
+          {selected ? getSelectedLabel(selected) : placeholder}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="absolute z-30 mt-1.5 w-full bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+          <div className="p-2 border-b border-slate-100">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+              <input
+                autoFocus
+                type="text"
+                value={q}
+                onChange={e => setQ(e.target.value)}
+                placeholder={
+                  options.length > 0 && options[0].patientNumber
+                    ? 'Search by name or patient no...'
+                    : 'Search...'
+                }
+                className="w-full pl-8 pr-3 py-1.5 text-sm bg-slate-50 rounded-lg focus:outline-none text-slate-800 placeholder-slate-400"
+              />
+            </div>
+          </div>
+          <div className="max-h-48 overflow-y-auto">
+            {filtered.length === 0
+              ? <p className="px-4 py-3 text-sm text-slate-400 text-center">No results</p>
+              : filtered.map(o => (
+                <button
+                  type="button"
+                  key={o[idKey]}
+                  onClick={() => { onChange(String(o[idKey])); setOpen(false); setQ(''); }}
+                  className={`w-full text-left px-4 py-2.5 text-sm hover:bg-emerald-50 transition-colors flex items-center gap-2.5 ${
+                    String(o[idKey]) === String(value) ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-slate-700'
+                  }`}
+                >
+                  {o.patientNumber && (
+                    <span className="flex-shrink-0 px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-xs font-semibold">
+                      {o.patientNumber}
+                    </span>
+                  )}
+                  <span className="truncate">{o.name}</span>
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function BedsPage() {
   const [beds, setBeds] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -1580,7 +1045,7 @@ export default function BedsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedBed, setSelectedBed] = useState(null);
-
+const [patients, setPatients] = useState([]);
   // Form state
   const [formData, setFormData] = useState({
     bedNumber: '',
@@ -1639,6 +1104,15 @@ useEffect(() => {
         available: data.available,
         maintenance: data.maintenance,
       });
+    }).catch(err => console.error(err));
+
+     getPatients(100, 1)
+    .then(res => {
+      setPatients((res?.data?.data || res?.data || []).map(p => ({
+        id: p.id,
+        name: p.name,
+        patientNumber: p.patientNumber || null,
+      })));
     })
     .catch(err => console.error(err));
 }, [currentPage]);
@@ -2114,18 +1588,16 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
               </select>
             </div>
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient ID (Optional)</label>
-            <input
-              type="number"
-              name="patientId"
-              value={formData.patientId}
-              onChange={handleFormChange}
-              className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
-              placeholder="Only if occupied"
-            />
-            <p className="text-xs text-slate-500 mt-1">Required only when status is "Occupied"</p>
-          </div>
+         <div>
+  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient (Optional)</label>
+  <EntitySelect
+    options={patients}
+    value={formData.patientId}
+    onChange={v => setFormData(prev => ({ ...prev, patientId: v }))}
+    placeholder="Select patient (if occupied)"
+  />
+  <p className="text-xs text-slate-500 mt-1">Required only when status is "Occupied"</p>
+</div>
           <div className="flex gap-3 pt-4">
             <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">
               Cancel
@@ -2195,17 +1667,16 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
               </select>
             </div>
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient ID (Optional)</label>
-            <input
-              type="number"
-              name="patientId"
-              value={formData.patientId}
-              onChange={handleFormChange}
-              className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-slate-700 text-sm"
-            />
-            <p className="text-xs text-slate-500 mt-1">Required only when status is "Occupied"</p>
-          </div>
+        <div>
+  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient (Optional)</label>
+  <EntitySelect
+    options={patients}
+    value={formData.patientId}
+    onChange={v => setFormData(prev => ({ ...prev, patientId: v }))}
+    placeholder="Select patient (if occupied)"
+  />
+  <p className="text-xs text-slate-500 mt-1">Required only when status is "Occupied"</p>
+</div>
           <div className="flex gap-3 pt-4">
             <button type="button" onClick={() => setShowEditModal(false)} className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">
               Cancel

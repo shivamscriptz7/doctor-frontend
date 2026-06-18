@@ -3438,7 +3438,7 @@ function printPrescription(rx, patientFull) {
         <div class="follow-sub">or Earlier if not better</div>
         <div class="note-bar">Note: This prescription is only for the patient named above and should not be used for others.</div>
       </div>
-      <div class="qr-box">Scan for<br>Hospital<br>Location</div>
+     
       <div class="sig-area">
         <div class="sig-line"></div>
         <div class="sig-name">${rx.doctorName}</div>
