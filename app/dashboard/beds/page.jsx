@@ -28,9 +28,9 @@
 //       bed.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
 //       bed.ward.toLowerCase().includes(searchTerm.toLowerCase()) ||
 //       (bed.patient && bed.patient.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+
 //     const matchesFilter = filterStatus === 'all' || bed.status === filterStatus;
-    
+
 //     return matchesSearch && matchesFilter;
 //   });
 
@@ -77,7 +77,7 @@
 //                 <Download className="w-4 h-4" />
 //                 Export
 //               </button>
-              
+
 //               {showExportMenu && (
 //                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 z-10">
 //                   <button className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors text-slate-700 rounded-t-xl">
@@ -134,7 +134,7 @@
 //               className="w-full pl-12 pr-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-slate-700"
 //             />
 //           </div>
-          
+
 //           <div className="flex items-center gap-3">
 //             <select
 //               value={filterStatus}
@@ -146,7 +146,7 @@
 //               <option value="occupied">Occupied</option>
 //               <option value="maintenance">Maintenance</option>
 //             </select>
-            
+
 //             <button className="px-6 py-3 rounded-xl font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all duration-300 flex items-center gap-2">
 //               <Filter className="w-5 h-5" />
 //               More Filters
@@ -180,7 +180,7 @@
 //                 <p className="text-slate-600">Ward</p>
 //                 <p className="font-semibold text-slate-800">{bed.ward}</p>
 //               </div>
-              
+
 //               <div>
 //                 <p className="text-slate-600">Location</p>
 //                 <p className="font-medium text-slate-700">{bed.floor}</p>
@@ -348,7 +348,7 @@
 //         status: formData.status,
 //         patientId: formData.patientId ? parseInt(formData.patientId) : null,
 //       };
-      
+
 //       await createBedApi(payload);
 //       await loadBeds();
 //       setShowAddModal(false);
@@ -382,7 +382,7 @@
 //         status: formData.status,
 //         patientId: formData.patientId ? parseInt(formData.patientId) : null,
 //       };
-      
+
 //       await updateBedApi(selectedBed.id, payload);
 //       await loadBeds();
 //       setShowEditModal(false);
@@ -636,7 +636,7 @@
 //                   {bed.status}
 //                 </span>
 //               </div>
-              
+
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex justify-between text-sm">
 //                   <span className="text-slate-600">Type:</span>
@@ -914,7 +914,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Bed, Plus, Search, X, Edit, Trash2, Eye, Download, FileText, Sheet, ChevronDown } from 'lucide-react';
-import { getBedApi, createBedApi, updateBedApi, deleteBedApi ,countBedApi,getPatients } from '../../lib/commonApis';
+import { getBedApi, createBedApi, updateBedApi, deleteBedApi, countBedApi, getPatients } from '../../lib/commonApis';
 import { showToast } from '../../lib/notification';
 import { useRef } from 'react';
 
@@ -1010,9 +1010,8 @@ function EntitySelect({ options, value, onChange, placeholder, idKey = 'id' }) {
                   type="button"
                   key={o[idKey]}
                   onClick={() => { onChange(String(o[idKey])); setOpen(false); setQ(''); }}
-                  className={`w-full text-left px-4 py-2.5 text-sm hover:bg-emerald-50 transition-colors flex items-center gap-2.5 ${
-                    String(o[idKey]) === String(value) ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-slate-700'
-                  }`}
+                  className={`w-full text-left px-4 py-2.5 text-sm hover:bg-emerald-50 transition-colors flex items-center gap-2.5 ${String(o[idKey]) === String(value) ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-slate-700'
+                    }`}
                 >
                   {o.patientNumber && (
                     <span className="flex-shrink-0 px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-xs font-semibold">
@@ -1045,7 +1044,7 @@ export default function BedsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedBed, setSelectedBed] = useState(null);
-const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState([]);
   // Form state
   const [formData, setFormData] = useState({
     bedNumber: '',
@@ -1087,37 +1086,37 @@ const [patients, setPatients] = useState([]);
   // Reload whenever page changes
 
   const [stats, setStats] = useState({
-  total: 0,
-  occupied: 0,
-  available: 0,
-  maintenance: 0,
-});
-useEffect(() => {
-  loadBeds(currentPage);
-  countBedApi()
-    .then(res => {
-      const data = res.data;
+    total: 0,
+    occupied: 0,
+    available: 0,
+    maintenance: 0,
+  });
+  useEffect(() => {
+    loadBeds(currentPage);
+    countBedApi()
+      .then(res => {
+        const data = res.data;
 
-      setStats({
-        total: data.totalBeds,
-        occupied: data.occupied,
-        available: data.available,
-        maintenance: data.maintenance,
-      });
-    }).catch(err => console.error(err));
+        setStats({
+          total: data.totalBeds,
+          occupied: data.occupied,
+          available: data.available,
+          maintenance: data.maintenance,
+        });
+      }).catch(err => console.error(err));
 
-     getPatients(100, 1)
-    .then(res => {
-      setPatients((res?.data?.data || res?.data || []).map(p => ({
-        id: p.id,
-        name: p.name,
-        patientNumber: p.patientNumber || null,
-      })));
-    })
-    .catch(err => console.error(err));
-}, [currentPage]);
+    getPatients(100, 1)
+      .then(res => {
+        setPatients((res?.data?.data || res?.data || []).map(p => ({
+          id: p.id,
+          name: p.name,
+          patientNumber: p.patientNumber || null,
+        })));
+      })
+      .catch(err => console.error(err));
+  }, [currentPage]);
 
-const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.total) * 100) : 0;
+  const occupancyRate = stats.total > 0 ? Math.round((stats.occupied / stats.total) * 100) : 0;
 
   // Handle form change
   const handleFormChange = (e) => {
@@ -1137,13 +1136,13 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
         patientId: formData.patientId ? parseInt(formData.patientId) : null,
       };
       await createBedApi(payload);
-      showToast('success','Created','Bed created successfully!');
+      showToast('success', 'Created', 'Bed created successfully!');
       await loadBeds(currentPage);
       setShowAddModal(false);
       resetForm();
     } catch (error) {
       console.error('Failed to create bed:', error);
-      showToast('error','Failed','Failed to create bed!');
+      showToast('error', 'Failed', 'Failed to create bed!');
     }
   };
 
@@ -1171,14 +1170,14 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
         patientId: formData.patientId ? parseInt(formData.patientId) : null,
       };
       await updateBedApi(selectedBed.id, payload);
-      showToast('success','Updated','Bed updated successfully!');
+      showToast('success', 'Updated', 'Bed updated successfully!');
       await loadBeds(currentPage);
       setShowEditModal(false);
       setSelectedBed(null);
       resetForm();
     } catch (error) {
       console.error('Failed to update bed:', error);
-      showToast('error','Failed','Bed deleted successfully!');
+      showToast('error', 'Failed', 'Bed deleted successfully!');
     }
   };
 
@@ -1191,13 +1190,13 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
   const handleDeleteBed = async () => {
     try {
       await deleteBedApi(selectedBed.id);
-      showToast('success','Deleted','Bed deleted successfully!');
+      showToast('success', 'Deleted', 'Bed deleted successfully!');
       await loadBeds(currentPage);
       setShowDeleteModal(false);
       setSelectedBed(null);
     } catch (error) {
       console.error('Failed to delete bed:', error);
-      showToast('error','Failed','Failed to delete bed!');
+      showToast('error', 'Failed', 'Failed to delete bed!');
 
       alert('Failed to delete bed');
     }
@@ -1236,7 +1235,7 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalRecords);
 
-  
+
   // Export functions
   const exportToExcel = () => {
     const headers = ['ID', 'Bed Number', 'Ward', 'Type', 'Status', 'Patient', 'Floor'];
@@ -1355,25 +1354,25 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-  <p className="text-sm text-slate-600 mb-1">Total Beds</p>
-  <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
-</div>
+            <p className="text-sm text-slate-600 mb-1">Total Beds</p>
+            <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
+          </div>
 
-<div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-  <p className="text-sm text-slate-600 mb-1">Occupied</p>
-  <p className="text-2xl font-bold text-blue-600">{stats.occupied}</p>
-  <p className="text-xs text-slate-500 mt-1">{occupancyRate}% occupancy</p>
-</div>
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+            <p className="text-sm text-slate-600 mb-1">Occupied</p>
+            <p className="text-2xl font-bold text-blue-600">{stats.occupied}</p>
+            <p className="text-xs text-slate-500 mt-1">{occupancyRate}% occupancy</p>
+          </div>
 
-<div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-  <p className="text-sm text-slate-600 mb-1">Available</p>
-  <p className="text-2xl font-bold text-green-600">{stats.available}</p>
-</div>
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+            <p className="text-sm text-slate-600 mb-1">Available</p>
+            <p className="text-2xl font-bold text-green-600">{stats.available}</p>
+          </div>
 
-<div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-  <p className="text-sm text-slate-600 mb-1">Maintenance</p>
-  <p className="text-2xl font-bold text-amber-600">{stats.maintenance}</p>
-</div>
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+            <p className="text-sm text-slate-600 mb-1">Maintenance</p>
+            <p className="text-2xl font-bold text-amber-600">{stats.maintenance}</p>
+          </div>
         </div>
       </div>
 
@@ -1588,16 +1587,16 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
               </select>
             </div>
           </div>
-         <div>
-  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient (Optional)</label>
-  <EntitySelect
-    options={patients}
-    value={formData.patientId}
-    onChange={v => setFormData(prev => ({ ...prev, patientId: v }))}
-    placeholder="Select patient (if occupied)"
-  />
-  <p className="text-xs text-slate-500 mt-1">Required only when status is "Occupied"</p>
-</div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient (Optional)</label>
+            <EntitySelect
+              options={patients}
+              value={formData.patientId}
+              onChange={v => setFormData(prev => ({ ...prev, patientId: v }))}
+              placeholder="Select patient (if occupied)"
+            />
+            <p className="text-xs text-slate-500 mt-1">Required only when status is "Occupied"</p>
+          </div>
           <div className="flex gap-3 pt-4">
             <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">
               Cancel
@@ -1667,16 +1666,16 @@ const occupancyRate =  stats.total > 0 ? Math.round((stats.occupied / stats.tota
               </select>
             </div>
           </div>
-        <div>
-  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient (Optional)</label>
-  <EntitySelect
-    options={patients}
-    value={formData.patientId}
-    onChange={v => setFormData(prev => ({ ...prev, patientId: v }))}
-    placeholder="Select patient (if occupied)"
-  />
-  <p className="text-xs text-slate-500 mt-1">Required only when status is "Occupied"</p>
-</div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Patient (Optional)</label>
+            <EntitySelect
+              options={patients}
+              value={formData.patientId}
+              onChange={v => setFormData(prev => ({ ...prev, patientId: v }))}
+              placeholder="Select patient (if occupied)"
+            />
+            <p className="text-xs text-slate-500 mt-1">Required only when status is "Occupied"</p>
+          </div>
           <div className="flex gap-3 pt-4">
             <button type="button" onClick={() => setShowEditModal(false)} className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">
               Cancel

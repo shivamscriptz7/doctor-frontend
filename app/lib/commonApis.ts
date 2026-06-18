@@ -537,6 +537,14 @@ export async function countHospitalInvoiceApi() {
 }
 
 
+export async function getHospitalCharges() {
+  return apiFetch(`/price`, {
+    method: 'GET',
+  });
+}
+
+
+
 
 
  
