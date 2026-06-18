@@ -407,8 +407,8 @@ export default function DashboardLayout({ children }) {
 
   const menuItems = [
     { id: 'dashboard',    label: 'Dashboard',      icon: Activity,    badge: null, path: '/dashboard' },
-    { id: 'appointments', label: 'Appointments',   icon: Calendar,    badge: null, path: '/dashboard/appointments' },
     { id: 'patients',     label: 'Patients',       icon: Users,       badge: null, path: '/dashboard/patients' },
+    { id: 'appointments', label: 'Appointments',   icon: Calendar,    badge: null, path: '/dashboard/appointments' },
     { id: 'doctors',      label: 'Doctors',        icon: Stethoscope, badge: null, path: '/dashboard/doctors' },
     { id: 'prescriptions', label: 'Prescriptions',   icon: ClipboardList,    badge: null, path: '/dashboard/prescriptions' },
     { id: 'departments',  label: 'Departments',    icon: Building2,    badge: null, path: '/dashboard/departments' },

@@ -2658,7 +2658,7 @@ import {
 } from 'lucide-react';
 
 
-import { getPatients, createPatientApi, updatePatientApi, deletePatientApi, countPatientApi } from '../../lib/commonApis';
+import { getPatients, createPatientApi, updatePatientApi, deletePatientApi, countPatientApi,getHospitalCharges } from '../../lib/commonApis';
 import { showToast } from '../../lib/notification';
 
 // ─── Get Hospital Info from localStorage ─────────────────────────────────────
@@ -2671,15 +2671,52 @@ const getHospitalInfo = () => {
   } catch { return {}; }
 };
 
+
+const getCharges= async() =>{
+ const charges = await getHospitalCharges();
+ console.log(charges,'changes');
+
+}
 // ─── Print Patient ────────────────────────────────────────────────────────────
 const printPatient = (patient) => {
   const hospital = getHospitalInfo();
 
-  const now       = new Date();
-  const visitDate = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
-  const visitTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase();
+  const now = new Date();
 
-  const consultFee = 500;
+  // ── Use created_date from listing (YYYY-MM-DD) ─────────────────────
+  let visitDate, visitTime;
+
+  if (patient.created_date && patient.created_date !== '-') {
+    // Convert YYYY-MM-DD to proper format
+    const dateParts = patient.created_date.split('-');
+    const visitDateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+    visitDate = visitDateObj.toLocaleDateString('en-IN', { 
+      day: '2-digit', 
+      month: 'long', 
+      year: 'numeric' 
+    });
+
+    // Use current time (receipt printing time)
+    const now = new Date();
+    visitTime = now.toLocaleTimeString('en-IN', { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      hour12: true 
+    }).toUpperCase();
+  } 
+  else {
+    // Fallback for new patients
+    const now = new Date();
+    visitDate = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+    visitTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase();
+  }
+  // const consultFee = 300;
+  const consultFee = (() => {
+  const h = new Date().getHours();
+  return (h >= 19) ? 500 : 300;
+})();
+
   const upiId      = hospital.upiId || '';
   const hospName   = hospital.name  || 'MediCare Hospital';
   const upiString  = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(hospName)}&am=${consultFee}&cu=INR&tn=Consultation`;
@@ -3582,6 +3619,7 @@ export default function PatientsPage() {
   };
 
   useEffect(() => {
+    getCharges();
     handleCountData();
     fetchPatients(currentPage, itemsPerPage);
   }, [currentPage, itemsPerPage]);

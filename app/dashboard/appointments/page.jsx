@@ -2074,7 +2074,7 @@ const buildPrintAppointment = (apt, patients, doctors) => {
       <div class="info-row">
         <span class="i-lbl">Doctor</span>
         <span class="i-colon">:</span>
-        <span class="i-val">Dr. ${doctor?.name || `#${apt.doctorId}`}</span>
+        <span class="i-val">${doctor?.name || `${apt.doctorId}`}</span>
       </div>
       <div class="info-row">
         <span class="i-lbl">Date</span>
@@ -2387,7 +2387,7 @@ function ViewModal({ apt, onClose, onPrint, patients, doctors }) {
       <div className="space-y-0.5 mb-5">
         <Row label="Appointment ID" value={`#${apt.id}`} />
         <Row label="Patient"        value={patient?.name || `Patient #${apt.patientId}`} />
-        <Row label="Doctor"         value={doctor?.name  ? `Dr. ${doctor.name}` : `Dr. #${apt.doctorId}`} />
+        <Row label="Doctor"         value={doctor?.name  ? `${doctor.name}` : `${apt.doctorId}`} />
         <Row label="Date & Time"    value={apt.appointmentDate ? new Date(apt.appointmentDate).toLocaleString() : '—'} />
         <Row label="Type"           value={cap(apt.type)} />
         <Row label="Status"         value={cap(apt.status)} />
@@ -2576,7 +2576,7 @@ export default function AppointmentsPage() {
       return [
         idx + 1,
         `"${patient?.name || `Patient #${apt.patientId}`}"`,
-        `"${doctor?.name  || `Dr. #${apt.doctorId}`}"`,
+        `"${doctor?.name  || `${apt.doctorId}`}"`,
         apt.appointmentDate ? new Date(apt.appointmentDate).toLocaleString() : '—',
         cap(apt.type),
         cap(apt.status),
@@ -2599,7 +2599,7 @@ export default function AppointmentsPage() {
       return `<tr>
         <td>${idx + 1}</td><td>#${apt.id}</td>
         <td>${patient?.name || `Patient #${apt.patientId}`}</td>
-        <td>${doctor?.name  || `Dr. #${apt.doctorId}`}</td>
+        <td>${doctor?.name  || `${apt.doctorId}`}</td>
         <td>${apt.appointmentDate ? new Date(apt.appointmentDate).toLocaleString() : '—'}</td>
         <td>${cap(apt.type)}</td><td>${cap(apt.status)}</td><td>${apt.notes || '—'}</td>
       </tr>`;
@@ -2808,7 +2808,7 @@ export default function AppointmentsPage() {
                         <p className="font-semibold text-slate-800 text-sm">{patient?.name}</p>
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-sm text-slate-600">{doctor?.name || `Dr. #${apt.doctorId}`}</td>
+                    <td className="px-5 py-4 text-sm text-slate-600">{doctor?.name || `${apt.doctorId}`}</td>
                     <td className="px-5 py-4 text-sm text-slate-600 whitespace-nowrap">
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5 text-slate-400" />
