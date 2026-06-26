@@ -1709,6 +1709,7 @@ import {
 } from 'lucide-react';
 import { getAppointment, createAppointmentApi, udateAppointmentApi, deleteAppointmentApi, getPatients, getDoctorApi, countAppointmentApi } from '../../lib/commonApis';
 import { showToast } from '../../lib/notification';
+import { useRef } from 'react';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const EMPTY_FORM = {
@@ -2197,7 +2198,9 @@ const printAppointment = (apt, patients, doctors) => {
   setTimeout(() => w.print(), 400);
 };
 
-// ─── Searchable Dropdown ──────────────────────────────────────────────────────
+// Global state to track which dropdown is open
+let openDropdownSetter = null;
+
 function SearchableDropdown({ label, value, onChange, options, placeholder, required }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -2207,10 +2210,26 @@ function SearchableDropdown({ label, value, onChange, options, placeholder, requ
   );
   const selected = options.find(opt => opt.id === Number(value));
 
+  const handleOpen = () => {
+    if (!isOpen) {
+      // Close previously open dropdown
+      if (openDropdownSetter && openDropdownSetter !== setIsOpen) {
+        openDropdownSetter(false);
+      }
+      openDropdownSetter = setIsOpen;
+    }
+    setIsOpen(prev => !prev);
+    if (isOpen) setSearchTerm('');
+  };
+
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) { setSearchTerm(''); return; }
     const handler = (e) => {
-      if (!e.target.closest('.sd-container')) { setIsOpen(false); setSearchTerm(''); }
+      if (!e.target.closest('.sd-container')) {
+        setIsOpen(false);
+        setSearchTerm('');
+        if (openDropdownSetter === setIsOpen) openDropdownSetter = null;
+      }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -2223,7 +2242,7 @@ function SearchableDropdown({ label, value, onChange, options, placeholder, requ
       </label>
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleOpen}
         className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-xl text-left font-medium flex items-center justify-between focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-sm"
       >
         <span className={selected ? 'text-slate-700' : 'text-slate-400'}>
@@ -2243,7 +2262,7 @@ function SearchableDropdown({ label, value, onChange, options, placeholder, requ
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-emerald-500 transition-all"
+                className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 transition-all"
                 autoFocus
               />
             </div>
@@ -2253,13 +2272,24 @@ function SearchableDropdown({ label, value, onChange, options, placeholder, requ
               <button
                 key={opt.id}
                 type="button"
-                onClick={() => { onChange(opt.id); setIsOpen(false); setSearchTerm(''); }}
+                onClick={() => { onChange(opt.id); setIsOpen(false); setSearchTerm(''); openDropdownSetter = null; }}
                 className={`w-full text-left px-4 py-3 transition-all ${Number(value) === opt.id
                   ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold'
                   : 'text-slate-700 hover:bg-gradient-to-r hover:from-emerald-600 hover:to-teal-600 hover:text-white'
                 }`}
               >
-                <div className="font-medium">{opt.name}</div>
+                <div className="flex items-center gap-2">
+                  {opt.patientId && (
+                    <span className={`flex-shrink-0 px-1.5 py-0.5 rounded text-xs font-semibold border ${
+                      Number(value) === opt.id
+                        ? 'bg-white/20 text-white border-white/30'
+                        : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    }`}>
+                      {opt.patientId}
+                    </span>
+                  )}
+                  <span className="font-medium">{opt.name}</span>
+                </div>
                 {opt.specialty && (
                   <div className={`text-xs mt-0.5 ${Number(value) === opt.id ? 'text-emerald-100' : 'text-slate-500'}`}>
                     {opt.specialty}
