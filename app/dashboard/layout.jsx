@@ -415,6 +415,7 @@ export default function DashboardLayout({ children }) {
     { id: 'pharmacy',     label: 'Pharmacy',       icon: Pill,        badge: null,  path: '/dashboard/pharmacy' },
     { id: 'beds',         label: 'Bed Management', icon: BedDouble,   badge: null, path: '/dashboard/beds' },
     { id: 'billing',      label: 'Billing',        icon: DollarSign,  badge: null, path: '/dashboard/billing' },
+    { id: 'Laboratory',      label: 'Laboratory',        icon: DollarSign,  badge: null, path: '/dashboard/laboratory' },
   ];
 
   const handleLogout = () => {
