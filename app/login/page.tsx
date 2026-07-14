@@ -832,7 +832,7 @@ export default function HospitalAuth() {
               <div className="hidden lg:flex items-center pt-6 mt-2 border-t border-white/20">
                 <Zap className="w-3.5 h-3.5 text-emerald-200 mr-1.5 flex-shrink-0" />
                 <span className="text-emerald-100 text-xs">
-                  Powered by <span className="font-semibold text-white">MediCare Tech Solutions</span>
+                  Powered by. <span className="font-semibold text-white">MediCare Tech Solutions</span>
                 </span>
               </div>
             </div>
@@ -1039,3 +1039,5 @@ export default function HospitalAuth() {
     </div>
   );
 }
+
+// abc
