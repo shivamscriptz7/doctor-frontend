@@ -393,6 +393,7 @@ import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import AuthProvider from '../components/Authprovider';
 import AddPatientModal from '../modal/Addpatientmodal'; // ← import karein apne path ke hisaab se
+import ThemeToggle from '../components/ThemeToggle';
 import {
   Activity, Calendar, Users, FileText, Pill,Building2,ClipboardList,
   Stethoscope, BedDouble, DollarSign,
@@ -425,7 +426,7 @@ export default function DashboardLayout({ children }) {
 
   return (
     <AuthProvider>
-      <div className="flex h-screen bg-slate-50">
+      <div className="flex h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
         {/* ── Sidebar ── */}
         {/* <aside
           className={`relative bg-gradient-to-b from-emerald-600 to-teal-700 text-white transition-all duration-500 ease-out flex flex-col shadow-2xl ${
@@ -453,12 +454,15 @@ export default function DashboardLayout({ children }) {
                 <Activity className="w-6 h-6 text-emerald-600" strokeWidth={2.5} />
               </div>
               {!isCollapsed && (
-                <div className="overflow-hidden">
+                <div className="overflow-hidden flex-1">
                   <h1 className="font-bold text-xl tracking-tight">MediCare</h1>
                   <p className="text-xs text-emerald-100">Hospital System</p>
                 </div>
               )}
             </div>
+            {!isCollapsed && (
+              <ThemeToggle className="absolute top-4 right-4" />
+            )}
           </div>
 
           {/* ── Quick Action: "New Patient" button ── */}
@@ -546,7 +550,7 @@ export default function DashboardLayout({ children }) {
         </aside>
 
         {/* Main */}
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 overflow-y-auto text-slate-900 dark:text-slate-100">{children}</main>
 
         {/* ── Add Patient Modal ── */}
         <AddPatientModal
