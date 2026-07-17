@@ -26,3 +26,69 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* ============================================================
+   Dark mode retrofit
+   Pages were built with hardcoded light-theme Tailwind classes
+   (bg-white, text-slate-800, etc). Rather than editing every
+   component, we repaint those exact utility classes wherever
+   they appear inside .theme-surface (dashboard pages + login
+   page) when .dark is active. Sidebar/colored surfaces outside
+   .theme-surface are untouched so their white icon badges stay
+   correct.
+   ============================================================ */
+.dark .theme-surface,
+.dark .theme-surface * {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Surfaces */
+.dark .theme-surface .bg-white { background-color: #1e293b; }
+.dark .theme-surface .bg-slate-50 { background-color: #0f172a; }
+.dark .theme-surface .bg-slate-100 { background-color: #1e293b; }
+.dark .theme-surface .bg-slate-200 { background-color: #334155; }
+.dark .theme-surface .hover\:bg-slate-50:hover { background-color: #334155; }
+.dark .theme-surface .hover\:bg-slate-100:hover { background-color: #334155; }
+
+/* Text */
+.dark .theme-surface .text-slate-900 { color: #ffffff; }
+.dark .theme-surface .text-slate-800 { color: #f8fafc; }
+.dark .theme-surface .text-slate-700 { color: #cbd5e1; }
+.dark .theme-surface .text-slate-600 { color: #94a3b8; }
+.dark .theme-surface .text-slate-500 { color: #94a3b8; }
+.dark .theme-surface .hover\:text-slate-900:hover { color: #f8fafc; }
+.dark .theme-surface .hover\:text-slate-700:hover { color: #e2e8f0; }
+
+/* Borders & dividers */
+.dark .theme-surface .border-slate-100 { border-color: #334155; }
+.dark .theme-surface .border-slate-200 { border-color: #334155; }
+.dark .theme-surface .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: #334155; }
+
+/* Inputs (most forms use bg-white or border-slate-200 already covered above,
+   this just tightens focus rings against the dark surface) */
+.dark .theme-surface input,
+.dark .theme-surface select,
+.dark .theme-surface textarea {
+  color-scheme: dark;
+}
+
+/* ------------------------------------------------------------------
+   Modal headers & table theads always sit on a light emerald/teal
+   gradient (bg-gradient-to-r from-emerald-50 to-teal-50) regardless
+   of theme — that gradient never inverts to dark. So text inside
+   them must stay dark too, overriding the blanket text-color
+   repaint above. Covers every "Add/Edit/View" form header and every
+   listing table's column-label row across the whole app.
+   ------------------------------------------------------------------ */
+.dark .theme-surface [class*="from-emerald-50"] .text-slate-900,
+.dark .theme-surface [class*="from-emerald-50"] .text-slate-800,
+.dark .theme-surface [class*="from-emerald-50"] .text-slate-700,
+.dark .theme-surface [class*="from-emerald-50"] .text-slate-600,
+.dark .theme-surface [class*="from-teal-50"] .text-slate-900,
+.dark .theme-surface [class*="from-teal-50"] .text-slate-800,
+.dark .theme-surface [class*="from-teal-50"] .text-slate-700,
+.dark .theme-surface [class*="from-teal-50"] .text-slate-600,
+.dark .theme-surface [class*="from-emerald-50"] .hover\:text-slate-900:hover,
+.dark .theme-surface [class*="from-emerald-50"] .hover\:text-slate-700:hover {
+  color: #1e293b !important;
+}

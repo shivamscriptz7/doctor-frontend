@@ -486,6 +486,7 @@
 
 'use client';
 import { useState } from 'react';
+import ThemeToggle from '../components/ThemeToggle';
 import { useRouter } from 'next/navigation';
 import { Heart, Activity, Users, Shield, ArrowRight, Zap, Eye, EyeOff } from 'lucide-react';
 import { loginApi, signupApi } from '../lib/commonApis';
@@ -769,7 +770,11 @@ export default function HospitalAuth() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="theme-surface min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+
+      <div className="fixed top-5 right-5 z-50 bg-slate-900/80 dark:bg-white/10 backdrop-blur-sm rounded-full p-1 shadow-lg">
+        <ThemeToggle />
+      </div>
 
       {/* Animated blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -832,7 +837,7 @@ export default function HospitalAuth() {
               <div className="hidden lg:flex items-center pt-6 mt-2 border-t border-white/20">
                 <Zap className="w-3.5 h-3.5 text-emerald-200 mr-1.5 flex-shrink-0" />
                 <span className="text-emerald-100 text-xs">
-                  Powered by. <span className="font-semibold text-white">MediCare Tech Solutions</span>
+                  Powered by <span className="font-semibold text-white">MediCare Tech Solutions</span>
                 </span>
               </div>
             </div>
@@ -844,17 +849,22 @@ export default function HospitalAuth() {
           <div className="max-w-md mx-auto">
 
             {/* Toggle */}
-            <div className="flex bg-slate-100 rounded-2xl p-1.5 mb-8">
+            <div className="flex bg-slate-100 dark:bg-slate-800 rounded-2xl p-1.5 mb-8 relative">
               <button type="button" onClick={() => switchTab(true)}
-                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${isLogin ? 'bg-white text-emerald-600 shadow-md' : 'text-slate-600 hover:text-slate-900'
+                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 relative z-10 ${isLogin ? 'text-emerald-600 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}>
                 Sign In
               </button>
               <button type="button" onClick={() => switchTab(false)}
-                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${!isLogin ? 'bg-white text-emerald-600 shadow-md' : 'text-slate-600 hover:text-slate-900'
+                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 relative z-10 ${!isLogin ? 'text-emerald-600 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}>
                 Sign Up
               </button>
+              <span
+                className={`absolute top-1.5 bottom-1.5 w-[calc(50%-0.375rem)] rounded-xl bg-[#ffffff] dark:bg-emerald-600 shadow-md transition-transform duration-300 ease-out ${
+                  isLogin ? 'translate-x-0' : 'translate-x-[calc(100%+0.375rem)]'
+                }`}
+              />
             </div>
 
             <div className="mb-8">
@@ -987,7 +997,7 @@ export default function HospitalAuth() {
         </p>
         <div className="flex items-center gap-1.5 bg-white/70 backdrop-blur-sm border border-slate-200 rounded-full px-3 py-1.5 shadow-sm">
           <Zap className="w-3 h-3 text-emerald-500 flex-shrink-0" />
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-[#1e293b] font-medium">
             Powered by{' '}
             <span className="font-semibold text-emerald-600">MediCare Tech Solutions</span>
           </span>
@@ -1039,5 +1049,3 @@ export default function HospitalAuth() {
     </div>
   );
 }
-
-// abc
