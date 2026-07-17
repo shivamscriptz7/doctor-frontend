@@ -397,14 +397,17 @@ import ThemeToggle from '../components/ThemeToggle';
 import {
   Activity, Calendar, Users, FileText, Pill,Building2,ClipboardList,
   Stethoscope, BedDouble, DollarSign,
-  ChevronLeft, ChevronRight, Plus, LogOut,
+  Plus, LogOut,
 } from 'lucide-react';
 
 export default function DashboardLayout({ children }) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-  const [showAddPatient, setShowAddPatient] = useState(false); // ← new state
+  const [showAddPatient, setShowAddPatient] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Sidebar ki fixed width — yahan se control karo
+  const SIDEBAR_WIDTH_PX = 208; // w-52
+  const SIDEBAR_WIDTH_CLASS = 'w-52';
 
   const menuItems = [
     { id: 'dashboard',    label: 'Dashboard',      icon: Activity,    badge: null, path: '/dashboard' },
@@ -427,68 +430,37 @@ export default function DashboardLayout({ children }) {
   return (
     <AuthProvider>
       <div className="flex h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-        {/* ── Sidebar ── */}
-        {/* <aside
-          className={`relative bg-gradient-to-b from-emerald-600 to-teal-700 text-white transition-all duration-500 ease-out flex flex-col shadow-2xl ${
-            isCollapsed ? 'w-20' : 'w-72'
-          }`}
-        > */}
-
-
+        {/* ── Sidebar (fixed, hamesha same width — hover pe collapse/expand nahi hota) ── */}
         <aside
-  onMouseEnter={() => setIsCollapsed(false)}
-  onMouseLeave={() => setIsCollapsed(true)}
-  className={`relative bg-gradient-to-b from-emerald-600 to-teal-700 text-white transition-all duration-500 ease-out flex flex-col shadow-2xl ${
-    isCollapsed ? 'w-16' : 'w-60'
-  }`}
-//   className={`relative bg-gradient-to-b from-emerald-600 to-teal-700 text-white transition-all duration-500 ease-out flex flex-col shadow-2xl ${
-//   isCollapsed ? 'w-16' : 'w-60'
-// }`}
->
+          className={`fixed left-0 top-0 h-screen z-40 ${SIDEBAR_WIDTH_CLASS} bg-gradient-to-b from-emerald-600 to-teal-700 text-white flex flex-col shadow-2xl`}
+        >
           {/* Logo */}
-          {/* <div className="p-6 border-b border-emerald-500/30 relative overflow-hidden"> */}
           <div className="p-4 border-b border-emerald-500/30 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
             <div className="relative flex items-center gap-3">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg transform transition-transform hover:scale-110">
-                <Activity className="w-6 h-6 text-emerald-600" strokeWidth={2.5} />
+              <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center shadow-lg transform transition-transform hover:scale-110">
+                <Activity className="w-5 h-5 text-emerald-600" strokeWidth={2.5} />
               </div>
-              {!isCollapsed && (
-                <div className="overflow-hidden flex-1">
-                  <h1 className="font-bold text-xl tracking-tight">MediCare</h1>
-                  <p className="text-xs text-emerald-100">Hospital System</p>
-                </div>
-              )}
+              <div className="overflow-hidden flex-1">
+                <h1 className="font-bold text-lg tracking-tight">MediCare</h1>
+                <p className="text-[11px] text-emerald-100">Hospital System</p>
+              </div>
             </div>
-            {!isCollapsed && (
-              <ThemeToggle className="absolute top-4 right-4" />
-            )}
           </div>
 
-          {/* ── Quick Action: "New Patient" button ── */}
-          {!isCollapsed && (
-           <div className="px-3 py-3">
-  <button
-    onClick={() => setShowAddPatient(true)}
-    className={`bg-white hover:bg-emerald-50 text-emerald-700 font-semibold h-11 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl group overflow-hidden transition-all duration-500 ease-out ${
-      isCollapsed ? 'w-10 px-0' : 'w-full px-4'
-    }`}
-  >
-    <Plus className="w-5 h-5 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
-    <span className={`text-sm whitespace-nowrap transition-all duration-200 ${
-      isCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto delay-300'
-    }`}>
-      New Patient
-    </span>
-  </button>
-</div>
-          )}
-
-
-
+          {/* Quick Action: "New Patient" button */}
+          {/* <div className="px-3 py-3">
+            <button
+              onClick={() => setShowAddPatient(true)}
+              className="w-full bg-white hover:bg-emerald-50 text-emerald-700 font-semibold h-10 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl group px-4 transition-all duration-300"
+            >
+              <Plus className="w-4 h-4 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
+              <span className="text-sm whitespace-nowrap">New Patient</span>
+            </button>
+          </div> */}
 
           {/* Navigation */}
-          <nav className="flex-1 px-2 py-3 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500/50 scrollbar-track-transparent">
+          <nav className="flex-1 px-2 py-2 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500/50 scrollbar-track-transparent">
             <ul className="space-y-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
@@ -497,7 +469,7 @@ export default function DashboardLayout({ children }) {
                   <li key={item.id}>
                     <button
                       onClick={() => router.push(item.path)}
-                      className={`w-full group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300  ${
+                      className={`w-full group relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-300 ${
                         isActive
                           ? 'bg-white text-emerald-700 shadow-lg'
                           : 'text-emerald-50 hover:bg-emerald-500/30 hover:text-white'
@@ -506,21 +478,12 @@ export default function DashboardLayout({ children }) {
                       {isActive && (
                         <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-white rounded-xl animate-pulse" />
                       )}
-                      <Icon className={`relative w-5 h-5 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} strokeWidth={2} />
-                      {!isCollapsed && (
-                        <>
-                          <span className="relative flex-1 text-left font-medium">{item.label}</span>
-                          {item.badge && (
-                            <span className={`relative px-2 py-0.5 text-xs font-bold rounded-full ${isActive ? 'bg-emerald-600 text-white' : 'bg-white/20 text-white'}`}>
-                              {item.badge}
-                            </span>
-                          )}
-                        </>
-                      )}
-                      {isCollapsed && item.badge && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold shadow-lg">
+                      <Icon className={`relative w-4 h-4 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} strokeWidth={2} />
+                      <span className="relative flex-1 text-left font-medium text-sm">{item.label}</span>
+                      {item.badge && (
+                        <span className={`relative px-2 py-0.5 text-xs font-bold rounded-full ${isActive ? 'bg-emerald-600 text-white' : 'bg-white/20 text-white'}`}>
                           {item.badge}
-                        </div>
+                        </span>
                       )}
                     </button>
                   </li>
@@ -531,32 +494,32 @@ export default function DashboardLayout({ children }) {
 
           {/* Bottom */}
           <div className="p-3 border-t border-emerald-500/30 space-y-2">
+            <div className="flex justify-between items-center px-1">
+              <span className="text-xs font-medium text-emerald-50">Theme</span>
+              <ThemeToggle />
+            </div>
             <button
               onClick={handleLogout}
-              className="w-full group flex items-center gap-3 px-4 py-3 rounded-xl text-red-100 hover:bg-red-500/30 hover:text-white transition-all duration-300"
+              className="w-full group flex items-center gap-3 px-4 py-2.5 rounded-xl text-red-100 hover:bg-red-500/30 hover:text-white transition-all duration-300"
             >
-              <LogOut className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" strokeWidth={2} />
-              {!isCollapsed && <span className="flex-1 text-left font-medium">Logout</span>}
+              <LogOut className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" strokeWidth={2} />
+              <span className="flex-1 text-left font-medium text-sm">Logout</span>
             </button>
           </div>
-
-          {/* Collapse toggle */}
-          {/* <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="absolute -right-3 top-24 w-6 h-6 bg-white rounded-full shadow-lg flex items-center justify-center text-emerald-600 hover:bg-emerald-50 transition-all duration-300 hover:scale-110 z-10"
-          >
-            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button> */}
         </aside>
 
         {/* Main */}
-        <main className="flex-1 overflow-y-auto text-slate-900 dark:text-slate-100">{children}</main>
+        <main
+          className="theme-surface flex-1 overflow-y-auto text-slate-900 dark:text-slate-100"
+          style={{ marginLeft: SIDEBAR_WIDTH_PX }}
+        >
+          {children}
+        </main>
 
         {/* ── Add Patient Modal ── */}
         <AddPatientModal
           isOpen={showAddPatient}
           onClose={() => setShowAddPatient(false)}
-          // onSuccess: patient page pe ho to refresh hoga, warna kuch nahi
         />
 
         <style jsx>{`
